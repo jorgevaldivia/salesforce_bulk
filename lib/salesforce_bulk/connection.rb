@@ -54,11 +54,11 @@ module SalesforceBulk
 
       if host != @@LOGIN_HOST # Not login, need to add session id to header
         headers['X-SFDC-Session'] = @session_id;
-        puts "session id is: #{@session_id} --- #{headers.inspect}\n"
+        #puts "session id is: #{@session_id} --- #{headers.inspect}\n"
         path = "#{@@PATH_PREFIX}#{path}"
       end
 
-      puts "#{host} -- #{path} -- #{headers.inspect}\n"
+      #puts "#{host} -- #{path} -- #{headers.inspect}\n"
 
       http = Net::HTTP.new(host)
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
