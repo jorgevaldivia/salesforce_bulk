@@ -15,7 +15,7 @@ module SalesforceBulk
       @@API_VERSION = api_version
       @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
       @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-      @@LOGIN_HOST  = "#{opts[:test] ? 'test' : 'live'}.salesforce.com"
+      @@LOGIN_HOST  = "#{opts[:test] ? 'test' : 'login'}.salesforce.com"
       
       login()
     end
