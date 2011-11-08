@@ -4,10 +4,9 @@ module SalesforceBulk
 
     @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
     @@API_VERSION = nil
-    @@LOGIN_HOST = 'login.salesforce.com'
     @@INSTANCE_HOST = nil # Gets set in login()
 
-    def initialize(username, password, api_version)
+    def initialize(username, password, api_version, opts={})
       @username = username
       @password = password
       @session_id = nil
@@ -16,7 +15,8 @@ module SalesforceBulk
       @@API_VERSION = api_version
       @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
       @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-
+      @@LOGIN_HOST  = "#{opts[:test] ? 'test' : 'live'}.salesforce.com"
+      
       login()
     end
 
@@ -60,10 +60,7 @@ module SalesforceBulk
 
       #puts "#{host} -- #{path} -- #{headers.inspect}\n"
 
-      http = Net::HTTP.new(host)
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      resp = http.post(path, xml, headers)
-      return resp.body
+      https(host).post(path, xml, headers).body
     end
 
     def get_request(host, path, headers)
@@ -74,10 +71,14 @@ module SalesforceBulk
         headers['X-SFDC-Session'] = @session_id;
       end
 
-      http = Net::HTTP.new(host)
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      resp = http.get(path, headers)
-      return resp.body
+      https(host).get(path, headers).body
+    end
+
+    def https(host)
+      req = Net::HTTP.new(host, 443)
+      req.use_ssl = true
+      req.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      req
     end
 
     def parse_instance()
