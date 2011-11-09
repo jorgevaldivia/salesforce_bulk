@@ -1,4 +1,4 @@
-require 'net/http'
+require 'net/https'
 require 'xmlsimple'
 require 'csv'
 require "salesforce_bulk/version"
