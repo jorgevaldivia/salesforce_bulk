@@ -60,10 +60,7 @@ module SalesforceBulk
 
       #puts "#{host} -- #{path} -- #{headers.inspect}\n"
 
-      http = Net::HTTP.new(host)
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      resp = http.post(path, xml, headers)
-      return resp.body
+      https(host).post(path, xml, headers).body
     end
 
     def get_request(host, path, headers)
@@ -74,10 +71,14 @@ module SalesforceBulk
         headers['X-SFDC-Session'] = @session_id;
       end
 
-      http = Net::HTTP.new(host)
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      resp = http.get(path, headers)
-      return resp.body
+      https(host).get(path, headers).body
+    end
+
+    def https(host)
+      req = Net::HTTP.new(host, 443)
+      req.use_ssl = true
+      req.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      req
     end
 
     def parse_instance()
