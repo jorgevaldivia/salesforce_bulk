@@ -82,7 +82,7 @@ module SalesforceBulk
     end
 
     def parse_instance()
-      @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,1})-api/
+      @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
       @instance = $~.captures[0]
     end
 
