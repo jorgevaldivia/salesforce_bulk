@@ -1,4 +1,4 @@
-require 'net/http'
+require 'net/https'
 require 'xmlsimple'
 require 'csv'
 require "salesforce_bulk/version"
@@ -49,10 +49,9 @@ module SalesforceBulk
       end
       job.close_job()
 
-      state = job.check_batch_status()
       while true
-        #puts "\nstate is #{state}\n"
         state = job.check_batch_status()
+        #puts "\nstate is #{state}\n"
         if state != "Queued"
           break
         end
