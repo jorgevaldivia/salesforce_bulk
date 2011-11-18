@@ -34,7 +34,7 @@ module SalesforceBulk
 
     def close_job()
       xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
-      xml += "state>Closed</state>"
+      xml += "<state>Closed</state>"
       xml += "</jobInfo>"
 
       path = "job/#{@@job_id}"
