@@ -22,8 +22,6 @@ Gem::Specification.new do |s|
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
 
-  #s.add_development_dependency "net-http"
-  #s.add_development_dependency "xmlsimple"
-  #s.add_development_dependency "csv"
+  s.add_dependency "xml-simple"
 
 end
