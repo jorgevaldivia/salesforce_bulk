@@ -52,7 +52,7 @@ module SalesforceBulk
       while true
         state = job.check_batch_status()
         #puts "\nstate is #{state}\n"
-        if state != "Queued"
+        if state != "Queued" && state != "InProgress"
           break
         end
         sleep(2) # wait x seconds and check again
