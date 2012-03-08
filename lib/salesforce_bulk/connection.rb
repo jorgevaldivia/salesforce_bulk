@@ -7,15 +7,22 @@ module SalesforceBulk
     @@LOGIN_HOST = 'login.salesforce.com'
     @@INSTANCE_HOST = nil # Gets set in login()
 
-    def initialize(username, password, api_version)
-      @username = username
-      @password = password
+    def initialize(api_version *args)
+      @username = args[0]
+      @password = args[1]
       @session_id = nil
       @server_url = nil
       @instance = nil
       @@API_VERSION = api_version
       @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
       @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
+      is_sandbox = arge[2] || false
+      
+      login_prefix = "login"
+      if is_sandbox
+        login_prefix = "test"
+      end
+      @@LOGIN_HOST = login_prefix + '.salesforce.com'
 
       login()
     end
