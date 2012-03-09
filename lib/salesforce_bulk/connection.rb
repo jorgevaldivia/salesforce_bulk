@@ -16,7 +16,7 @@ module SalesforceBulk
       @@API_VERSION = api_version
       @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
       @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-      is_sandbox = arge[2] || false
+      is_sandbox = args[2] || false
       
       login_prefix = "login"
       if is_sandbox
