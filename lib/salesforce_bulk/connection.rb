@@ -14,7 +14,6 @@ module SalesforceBulk
       @server_url = nil
       @instance = nil
       @@API_VERSION = api_version
-      @@DEBUG = args[3]
       @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
       @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
       is_sandbox = args[2] || false
@@ -62,14 +61,10 @@ module SalesforceBulk
 
       if host != @@LOGIN_HOST # Not login, need to add session id to header
         headers['X-SFDC-Session'] = @session_id;
-        if @@DEBUG
           puts "session id is: #{@session_id} --- #{headers.inspect}\n"
-        end
         path = "#{@@PATH_PREFIX}#{path}"
       end
-      if @@DEBUG
         puts "#{host} -- #{path} -- #{headers.inspect}\n"
-      end
       https(host).post(path, xml, headers).body
     end
 
