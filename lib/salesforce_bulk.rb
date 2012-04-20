@@ -9,10 +9,14 @@ module SalesforceBulk
   # Your code goes here...
   class Api
 
-    @@SALESFORCE_API_VERSION = '23.0'
+    @@SALESFORCE_API_VERSION = '24.0'
 
-    def initialize(username, password)
-      @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION)
+    def initialize(username, password, in_sandbox=false)
+      if in_sandbox
+        @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
+      else
+        @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION)
+      end
     end
 
     def upsert(sobject, records, external_field)
