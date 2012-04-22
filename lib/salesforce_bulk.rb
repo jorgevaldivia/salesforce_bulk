@@ -12,15 +12,11 @@ module SalesforceBulk
     @@SALESFORCE_API_VERSION = '24.0'
 
     def initialize(username, password, in_sandbox=false)
-      if in_sandbox
-        @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
-      else
-        @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION)
-      end
+      @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
     end
 
-    def upsert(sobject, records, external_field)
-      self.do_operation('upsert', sobject, records, external_field)
+    def upsert(sobject, records, external_field, wait=false)
+      self.do_operation('upsert', sobject, records, external_field, wait)
     end
 
     def update(sobject, records)
@@ -39,9 +35,7 @@ module SalesforceBulk
       self.do_operation('query', sobject, query, nil)
     end
 
-    #private
-
-    def do_operation(operation, sobject, records, external_field)
+    def do_operation(operation, sobject, records, external_field, wait=false)
       job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection)
 
       # TODO: put this in one function
@@ -53,22 +47,24 @@ module SalesforceBulk
       end
       job.close_job()
 
-      while true
-        state = job.check_batch_status()
-        #puts "\nstate is #{state}\n"
-        if state != "Queued" && state != "InProgress"
-          break
+      if wait or operation == 'query'
+        while true
+          state = job.check_batch_status()
+          #puts "\nstate is #{state}\n"
+          if state != "Queued" && state != "InProgress"
+            break
+          end
+          sleep(2) # wait x seconds and check again
         end
-        sleep(2) # wait x seconds and check again
-      end
-
-      if state == 'Completed'
-        job.get_batch_result()
+        
+        if state == 'Completed'
+          job.get_batch_result()
+        else
+          return "There is an error in your job."
+        end
       else
-        return "error"
+        return "The job has been closed."
       end
-
     end
-
   end  # End class
-end
+end # End module

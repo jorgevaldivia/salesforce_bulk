@@ -38,6 +38,10 @@ Sample operations:
   records_to_upsert = Array.new
   records_to_upsert.push(upserted_account)
   salesforce.upsert("Account", records_to_upsert, "External_Field_Name") # Note that upsert accepts an extra parameter for the external field name
+  
+  OR
+  
+  salesforce.upsert("Account", records_to_upsert, "External_Field_Name", true) # last parameter indicates whether to wait until the batch finishes
 
   # Delete
   deleted_account = Hash["id" => "a00A0001009zA2m"] # We only specify the id of the records to delete

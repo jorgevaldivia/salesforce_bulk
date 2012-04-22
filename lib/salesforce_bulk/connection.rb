@@ -7,7 +7,7 @@ module SalesforceBulk
     @@LOGIN_HOST = 'login.salesforce.com'
     @@INSTANCE_HOST = nil # Gets set in login()
 
-    def initialize(username, password, api_version, in_sandbox=false)
+    def initialize(username, password, api_version, in_sandbox)
       @username = username
       @password = password
       @session_id = nil
