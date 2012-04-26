@@ -89,11 +89,11 @@ module SalesforceBulk
       response_parsed = XmlSimple.xml_in(response)
 
       begin
-        puts "check: #{response_parsed.inspect}\n"
+       # puts "check: #{response_parsed.inspect}\n"
         response_parsed['state'][0]
         
       rescue Exception => e
-          puts "check: #{response_parsed.inspect}\n"
+        #  puts "check: #{response_parsed.inspect}\n"
         nil
       end
     end
@@ -111,9 +111,9 @@ module SalesforceBulk
         path = "job/#{@@job_id}/batch/#{@@batch_id}/result/#{result_id}"
         headers = Hash.new
         headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
-          puts "path is: #{path}\n"
+      #    puts "path is: #{path}\n"
         response = @@connection.get_request(nil, path, headers)
-          puts "\n\nres2: #{response.inspect}\n\n"
+      #    puts "\n\nres2: #{response.inspect}\n\n"
       end
 
       response = response.lines.to_a[1..-1].join
