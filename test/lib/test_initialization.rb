@@ -30,4 +30,29 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.debugging, true
   end
   
+  test "should authorize and return successful response" do
+    options = {
+      :username => 'username',
+      :password => 'password',
+      :token => 'token'
+    }
+    
+    client = SalesforceBulk::Client.new(options)
+    
+    headers = {'Accept' => '*/*', 'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login', 'User-Agent' => 'Ruby'}
+    
+    request = File.open(File.join(File.dirname(__FILE__), '..', "fixtures/login_request.xml"), "rb").read
+    response = File.open(File.join(File.dirname(__FILE__), '..', "fixtures/login_response.xml"), "rb").read
+    
+    stub_request(:post, "https://#{client.host}/services/Soap/u/23.0").with(:body => request, :headers => headers).to_return(:body => response, :status => 200)
+    
+    client.authenticate()
+    
+    assert_requested :post, "https://#{client.host}/services/Soap/u/23.0", :body => request, :headers => headers, :times => 1
+    
+    assert_equal client.instance_host, 'na9.salesforce.com'
+    assert_equal client.instance_variable_get('@session_id'), 
+                 '00DE0000000YSKp!AQ4AQNQhDKLMORZx2NwZppuKfure.ChCmdI3S35PPxpNA5MHb3ZVxhYd5STM3euVJTI5.39s.jOBT.3mKdZ3BWFDdIrddS8O'
+  end
+  
 end
