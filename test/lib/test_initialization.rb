@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'salesforce_bulk'
 
 class TestInitialization < Test::Unit::TestCase
   
