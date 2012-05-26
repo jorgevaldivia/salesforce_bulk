@@ -39,12 +39,14 @@ class TestInitialization < Test::Unit::TestCase
     
     client = SalesforceBulk::Client.new(options)
     
-    headers = {'Accept' => '*/*', 'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login', 'User-Agent' => 'Ruby'}
+    headers = {'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login'}
     
     request = File.open(File.join(File.dirname(__FILE__), '..', "fixtures/login_request.xml"), "rb").read
     response = File.open(File.join(File.dirname(__FILE__), '..', "fixtures/login_response.xml"), "rb").read
     
-    stub_request(:post, "https://#{client.host}/services/Soap/u/23.0").with(:body => request, :headers => headers).to_return(:body => response, :status => 200)
+    stub_request(:post, "https://#{client.host}/services/Soap/u/23.0")
+      .with(:body => request, :headers => headers)
+      .to_return(:body => response, :status => 200)
     
     client.authenticate()
     
