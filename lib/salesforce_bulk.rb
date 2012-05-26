@@ -1,7 +1,8 @@
 require 'net/https'
 require 'xmlsimple'
 require 'csv'
-require "salesforce_bulk/version"
+require 'salesforce_bulk/version'
+require 'salesforce_bulk/client'
 require 'salesforce_bulk/job'
 require 'salesforce_bulk/connection'
 
