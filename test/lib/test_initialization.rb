@@ -11,13 +11,15 @@ class TestInitialization < Test::Unit::TestCase
     
     assert_equal client.host, 'login.salesforce.com'
     assert_equal client.version, '23.0'
+    assert_equal client.debugging, false
   end
   
   test "should accept various options" do
     options = {
       :username => 'username',
       :password => 'password',
-      :token => 'token'
+      :token => 'token',
+      :debugging => true
     }
     
     client = SalesforceBulk::Client.new(options)
@@ -25,6 +27,7 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.username, 'username'
     assert_equal client.password, 'password'
     assert_equal client.token, 'token'
+    assert_equal client.debugging, true
   end
   
 end
