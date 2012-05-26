@@ -1,5 +1,6 @@
 require 'test/unit'
 require 'shoulda'
+require 'salesforce_bulk'
 
 class Test::Unit::TestCase
   
