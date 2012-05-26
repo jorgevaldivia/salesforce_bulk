@@ -7,6 +7,9 @@ module SalesforceBulk
     # The host to use for authentication. Defaults to login.salesforce.com.
     attr_accessor :host
     
+    # The instance host to use for API calls. Determined from login response.
+    attr_accessor :instance_host
+    
     # The Salesforce password
     attr_accessor :password
     
@@ -29,6 +32,67 @@ module SalesforceBulk
       self.debugging = options[:debugging]
       self.host = options[:host]
       self.version = options[:version]
+      
+      @api_path_prefix = "/services/async/#{self.version}/"
     end
+    
+    def authenticate
+      xml = '<?xml version="1.0" encoding="utf-8"?>'
+      xml += '<env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+      xml += ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+      xml += ' xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">'
+      xml += "<env:Body>"
+      xml += '<n1:login xmlns:n1="urn:partner.soap.sforce.com">'
+      xml += "<n1:username>#{self.username}</n1:username>"
+      xml += "<n1:password>#{self.password}</n1:password>"
+      xml += "</n1:login>"
+      xml += "</env:Body>"
+      xml += "</env:Envelope>"
+      
+      headers = {'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login'}
+      
+      response = http_post("/services/Soap/u/#{self.version}", xml, headers)
+      data = XmlSimple.xml_in(response)
+      
+      @session_id = data['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
+      
+      url = data['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
+      
+      self.instance_host = "#{instance_id(url)}.salesforce.com"
+    end
+    
+    def http_post(path, xml, headers)
+      host = self.host
+      
+      if @session_id
+        headers['X-SFDC-Session'] = @session_id
+        host = self.instance_host
+        path = "#{@api_path_prefix}#{path}"
+      end
+      
+      https_request(host).post(path, xml, headers).body
+    end
+    
+    def http_get(path, headers)
+      path = path || "#{@api_path_prefix}#{path}"
+      
+      if @session_id
+        headers['X-SFDC-Session'] = @session_id
+      end
+      
+      https_request(self.host).get(path, headers).body
+    end
+    
+    def https_request(host)
+      req = Net::HTTP.new(host, 443)
+      req.use_ssl = true
+      req.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      req
+    end
+    
+    def instance_id(url)
+      url.match(/https:\/\/([a-z]{2,2}[0-9]{1,2})-api/)[1]
+    end
+    
   end
 end
