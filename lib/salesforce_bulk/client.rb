@@ -21,7 +21,7 @@ module SalesforceBulk
     
     def initialize(options={})
       self.username = options[:username]
-      self.password = options[:password]
+      self.password = "#{options[:password]}#{options[:token]}"
       self.token = options[:token]
       
       options = {:debugging => false, :host => 'login.salesforce.com', :version => '23.0'}.merge(options)
