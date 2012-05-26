@@ -25,7 +25,7 @@ class TestInitialization < Test::Unit::TestCase
     client = SalesforceBulk::Client.new(options)
     
     assert_equal client.username, 'username'
-    assert_equal client.password, 'password'
+    assert_equal client.password, 'passwordtoken'
     assert_equal client.token, 'token'
     assert_equal client.debugging, true
   end
