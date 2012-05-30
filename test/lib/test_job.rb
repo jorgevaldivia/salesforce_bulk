@@ -100,7 +100,7 @@ class TestJob < Test::Unit::TestCase
     
     job = @client.job(:upsert, :VideoEvent__c, :Id__c)
     job.instance_variable_set("@id", jobId)
-    info = job.status
+    info = job.info
     
     assert_requested :get, "#{api_url(@client)}job/#{jobId}", :body => '', :headers => headers, :times => 1
     
