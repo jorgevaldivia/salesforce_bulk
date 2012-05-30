@@ -11,6 +11,10 @@ class Test::Unit::TestCase
     define_method("test #{name.inspect}", &block)
   end
   
+  def api_url(client)
+    "https://#{@client.host}/services/async/#{@client.version}/"
+  end
+  
   def fixture_path
     File.expand_path("../fixtures", __FILE__)
   end
