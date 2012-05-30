@@ -10,7 +10,7 @@ class TestInitialization < Test::Unit::TestCase
     client = SalesforceBulk::Client.new
     
     assert_equal client.host, 'login.salesforce.com'
-    assert_equal client.version, '23.0'
+    assert_equal client.version, '24.0'
     assert_equal client.debugging, false
   end
   

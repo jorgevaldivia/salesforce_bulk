@@ -19,7 +19,7 @@ module SalesforceBulk
     # The Salesforce username
     attr_accessor :username
     
-    # The API version the client is using. Defaults to 23.0.
+    # The API version the client is using. Defaults to 24.0.
     attr_accessor :version
     
     def initialize(options={})
@@ -27,7 +27,7 @@ module SalesforceBulk
       self.password = "#{options[:password]}#{options[:token]}"
       self.token = options[:token]
       
-      options = {:debugging => false, :host => 'login.salesforce.com', :version => '23.0'}.merge(options)
+      options = {:debugging => false, :host => 'login.salesforce.com', :version => '24.0'}.merge(options)
       
       self.debugging = options[:debugging]
       self.host = options[:host]
