@@ -16,6 +16,24 @@ module SalesforceBulk
       @client = client
     end
     
+    def create
+      xml = '<?xml version="1.0" encoding="utf-8"?>'
+      xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
+      xml += "<operation>#{@operation}</operation>"
+      xml += "<object>#{@sobject}</object>"
+      xml += "<externalIdFieldName>#{@externalIdFieldName}</externalIdFieldName>" if @externalIdFieldName
+      xml += "<contentType>CSV</contentType>"
+      xml += "<concurrencyMode>#{@concurrencyMode}</concurrencyMode>" if @operation == :query
+      xml += "</jobInfo>"
+      
+      #puts "", xml
+      response = @client.http_post("job", xml)
+      data = XmlSimple.xml_in(response.body)
+      #puts "", response
+      @id = data['id'][0]
+      @state = data['state'][0]
+    end
+    
     def create_job()
       xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
       xml += "<operation>#{@@operation}</operation>"
