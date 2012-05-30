@@ -52,7 +52,10 @@ module SalesforceBulk
       headers = {'Content-Type' => 'text/xml', 'SOAPAction' => 'login'}
       
       response = http_post("/services/Soap/u/#{self.version}", xml, headers)
-      data = XmlSimple.xml_in(response)
+      
+      raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
+      
+      data = XmlSimple.xml_in(response.body)
       
       @session_id = data['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
       
@@ -76,7 +79,7 @@ module SalesforceBulk
         path = "#{@api_path_prefix}#{path}"
       end
       
-      https_request(host).post(path, xml, headers).body
+      https_request(host).post(path, xml, headers)
     end
     
     def http_get(path, headers={})
@@ -88,7 +91,7 @@ module SalesforceBulk
         headers['X-SFDC-Session'] = @session_id
       end
       
-      https_request(self.host).get(path, headers).body
+      https_request(self.host).get(path, headers)
     end
     
     def https_request(host)
