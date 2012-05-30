@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload"><operation>upsert</operation><object>VideoEvent__c</object><externalIdFieldName>Id__c</externalIdFieldName><contentType>CSV</contentType></jobInfo>
