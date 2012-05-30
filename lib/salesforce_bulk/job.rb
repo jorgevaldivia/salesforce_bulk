@@ -61,7 +61,8 @@ module SalesforceBulk
     end
     
     def create_job()
-      xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
+      xml = '<?xml version="1.0" encoding="utf-8"?>'
+      xml += "<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
       xml += "<operation>#{@@operation}</operation>"
       xml += "<object>#{@@sobject}</object>"
       if !@@external_field.nil? # This only happens on upsert
