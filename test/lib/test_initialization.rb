@@ -43,13 +43,13 @@ class TestInitialization < Test::Unit::TestCase
     request = fixture("login_request.xml")
     response = fixture("login_response.xml")
     
-    stub_request(:post, "https://#{client.host}/services/Soap/u/23.0")
+    stub_request(:post, "https://#{client.host}/services/Soap/u/24.0")
       .with(:body => request, :headers => headers)
       .to_return(:body => response, :status => 200)
     
     client.authenticate()
     
-    assert_requested :post, "https://#{client.host}/services/Soap/u/23.0", :body => request, :headers => headers, :times => 1
+    assert_requested :post, "https://#{client.host}/services/Soap/u/24.0", :body => request, :headers => headers, :times => 1
     
     assert_equal client.instance_host, 'na9.salesforce.com'
     assert_equal client.instance_variable_get('@session_id'), 
