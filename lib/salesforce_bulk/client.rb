@@ -62,6 +62,10 @@ module SalesforceBulk
     end
     
     def http_post(path, xml, headers)
+    def job(operation, sobject, id, mode=:parallel)
+      Job.new(operation, sobject, id, mode, self)
+    end
+    
       host = self.host
       
       if @session_id
