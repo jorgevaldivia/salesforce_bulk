@@ -1,18 +1,21 @@
 module SalesforceBulk
-
   class Job
-
-    def initialize(operation, sobject, records, external_field, connection)
-
-      @@operation = operation
-      @@sobject = sobject
-      @@external_field = external_field
-      @@records = records
-      @@connection = connection
-      @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
-
+    
+    attr_reader :concurrencyMode
+    attr_reader :externalIdFieldName
+    attr_reader :id
+    attr_reader :operation
+    attr_reader :sobject
+    attr_reader :state
+    
+    def initialize(operation, sobject, externalId, mode, client)
+      @operation = operation
+      @sobject = sobject
+      @externalIdFieldName = externalId
+      @concurrencyMode = mode
+      @client = client
     end
-
+    
     def create_job()
       xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
       xml += "<operation>#{@@operation}</operation>"
