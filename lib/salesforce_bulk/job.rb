@@ -60,6 +60,12 @@ module SalesforceBulk
       @state = data['state'][0]
     end
     
+    def status
+      response = @client.http_get("job/#{id}")
+      data = XmlSimple.xml_in(response.body)
+      #puts "","",response
+      @state = data['state'][0]
+    end
     
     
     
