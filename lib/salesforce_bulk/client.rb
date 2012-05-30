@@ -49,7 +49,7 @@ module SalesforceBulk
       xml += "</env:Body>"
       xml += "</env:Envelope>"
       
-      headers = {'Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login'}
+      headers = {'Content-Type' => 'text/xml', 'SOAPAction' => 'login'}
       
       response = http_post("/services/Soap/u/#{self.version}", xml, headers)
       data = XmlSimple.xml_in(response)
@@ -61,12 +61,14 @@ module SalesforceBulk
       self.instance_host = "#{instance_id(url)}.salesforce.com"
     end
     
-    def http_post(path, xml, headers)
     def job(operation, sobject, id, mode=:parallel)
       Job.new(operation, sobject, id, mode, self)
     end
     
+    def http_post(path, xml, headers={})
       host = self.host
+      
+      headers = {'Content-Type' => 'application/xml'}.merge(headers)
       
       if @session_id
         headers['X-SFDC-Session'] = @session_id
@@ -77,8 +79,10 @@ module SalesforceBulk
       https_request(host).post(path, xml, headers).body
     end
     
-    def http_get(path, headers)
+    def http_get(path, headers={})
       path = path || "#{@api_path_prefix}#{path}"
+      
+      headers = {'Content-Type' => 'application/xml'}.merge(headers)
       
       if @session_id
         headers['X-SFDC-Session'] = @session_id
