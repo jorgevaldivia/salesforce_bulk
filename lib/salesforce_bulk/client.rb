@@ -83,7 +83,7 @@ module SalesforceBulk
     end
     
     def http_get(path, headers={})
-      path = path || "#{@api_path_prefix}#{path}"
+      path = "#{@api_path_prefix}#{path}"
       
       headers = {'Content-Type' => 'application/xml'}.merge(headers)
       
@@ -91,7 +91,7 @@ module SalesforceBulk
         headers['X-SFDC-Session'] = @session_id
       end
       
-      https_request(self.host).get(path, headers)
+      https_request(self.instance_host).get(path, headers)
     end
     
     def https_request(host)
