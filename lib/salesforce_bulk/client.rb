@@ -64,8 +64,40 @@ module SalesforceBulk
       self.instance_host = "#{instance_id(url)}.salesforce.com"
     end
     
-    def job(operation, sobject, id, mode=:parallel)
-      Job.new(operation, sobject, id, mode, self)
+    def add_job(options={})
+#       job = Job.new(self, options)
+#       job.create
+#       job
+      job = Job.new(self, options)
+      
+      xml = '<?xml version="1.0" encoding="utf-8"?>'
+      xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
+      xml += "<operation>#{job.operation}</operation>"
+      xml += "<object>#{job.sobject}</object>"
+      xml += "<externalIdFieldName>#{job.externalIdFieldName}</externalIdFieldName>" if job.externalIdFieldName
+      xml += "<contentType>CSV</contentType>"
+      xml += "<concurrencyMode>#{job.concurrencyMode}</concurrencyMode>" if job.operation == :query
+      xml += "</jobInfo>"
+      
+      #puts "", xml
+      response = http_post("job", xml)
+      data = XmlSimple.xml_in(response.body)
+      #puts "", response
+      
+      job.id = data['id'][0]
+      job.state = data['state'][0]
+      job
+    end
+    
+    def job(id="")
+      if id
+        job = Job.new(self, :id => id)
+        job.info
+      else
+        job = Job.new(self)
+      end  
+      
+      job
     end
     
     def http_post(path, xml, headers={})
