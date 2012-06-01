@@ -13,14 +13,33 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should return initialized job object" do
-    job = @client.job(:upsert, :VideoEvent__c, :Id__c)
+    job = SalesforceBulk::Job.new(@client, :operation => :upsert, :sobject => :VideoEvent__c, :externalIdFieldName => :Id__c)
     
     assert_not_nil job
     
     assert_equal job.operation, :upsert
     assert_equal job.sobject, :VideoEvent__c
     assert_equal job.externalIdFieldName, :Id__c
-    assert_equal job.concurrencyMode, :parallel
+    assert_equal job.concurrencyMode, nil
+  end
+  
+  test "should return initialized job object when only given an id" do
+    bypass_authentication(@client)
+    
+    headers = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
+    response = fixture("job_info_response.xml")
+    jobId = "750E00000004N1mIAE"
+    
+    stub_request(:get, "#{api_url(@client)}job/#{jobId}")
+      .with(:body => '', :headers => headers)
+      .to_return(:body => response, :status => 200)
+    
+    job = @client.job(jobId)
+    
+    assert_requested :get, "#{api_url(@client)}job/#{jobId}", :body => '', :headers => headers, :times => 1
+    
+    assert_equal job.id, jobId
+    assert_equal job.state, 'Open'
   end
   
   test "should create job and return successful response" do
@@ -34,8 +53,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.job(:upsert, :VideoEvent__c, :Id__c)
-    job.create
+    job = @client.add_job(:operation => :upsert, :sobject => :VideoEvent__c, :externalIdFieldName => :Id__c)
     
     assert_requested :post, "#{api_url(@client)}job", :body => request, :headers => headers, :times => 1
     
@@ -55,8 +73,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.job(:upsert, :VideoEvent__c, :Id__c)
-    job.instance_variable_set("@id", jobId)
+    job = SalesforceBulk::Job.new(@client, :id => jobId)
     job.close
     
     assert_requested :post, "#{api_url(@client)}job/#{jobId}", :body => request, :headers => headers, :times => 1
@@ -77,8 +94,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.job(:upsert, :VideoEvent__c, :Id__c)
-    job.instance_variable_set("@id", jobId)
+    job = SalesforceBulk::Job.new(@client, :id => jobId)
     job.abort
     
     assert_requested :post, "#{api_url(@client)}job/#{jobId}", :body => request, :headers => headers, :times => 1
@@ -98,9 +114,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => '', :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.job(:upsert, :VideoEvent__c, :Id__c)
-    job.instance_variable_set("@id", jobId)
-    info = job.info
+    job = @client.job(jobId)
     
     assert_requested :get, "#{api_url(@client)}job/#{jobId}", :body => '', :headers => headers, :times => 1
     
