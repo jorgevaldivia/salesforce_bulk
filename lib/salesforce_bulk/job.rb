@@ -62,6 +62,18 @@ module SalesforceBulk
       @state = data['state'][0]
     end
     
+    def batch(data)
+      batch = Batch.new(@client)
+      batch.data = data
+      batch.create(self)
+    end
+    
+    def batch_status
+      response = @client.http_get("job/#{id}/batch")
+      data = XmlSimple.xml_in(response.body)
+      puts "","",response,""
+      #@state = data['state'][0]
+    end
     
     
     
