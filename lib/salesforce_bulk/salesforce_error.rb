@@ -9,10 +9,18 @@ module SalesforceBulk
     def initialize(response)
       self.response = response
       
-      data = XmlSimple.xml_in(response.body)
+      data = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       
       if data
-        message = url = data['Body'][0]['Fault'][0]['faultstring'][0]
+        # seems responses for CSV requests use a different XML return format 
+        # (use invalid_error.xml for reference)
+        if !data['exceptionMessage'].nil?
+          message = data['exceptionMessage']
+        else
+          # SOAP error response
+          message = data['Body']['Fault']['faultstring']
+        end
+        
         self.error_code = response.code
       end
       
