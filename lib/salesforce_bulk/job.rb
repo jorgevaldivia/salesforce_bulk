@@ -170,6 +170,13 @@ module SalesforceBulk
 
       response = @@connection.get_request(nil, path, headers)
 
+#
+# FIXME ? 
+# ENHANCE ?
+# Loop through all results and collect each. All results are not returned in a single response.
+# https://github.com/WWJacob/salesforce_bulk/commit/8f9e68c390230e885823e45cd2616ac3159697ef
+#
+
       if(@@operation == "query") # The query op requires us to do another request to get the results
         response_parsed = XmlSimple.xml_in(response)
         result_id = response_parsed["result"][0]
@@ -184,6 +191,10 @@ module SalesforceBulk
 
       end
 
+#
+# FIXME ?
+# https://github.com/WWJacob/salesforce_bulk/commit/6a9527a5dca6e2eb74e192e9476f614b59726d3d
+#
       response = response.lines.to_a[1..-1].join
       csvRows = CSV.parse(response)
     end
