@@ -3,35 +3,30 @@ module SalesforceBulk
     
     attr_reader :concurrencyMode
     attr_reader :externalIdFieldName
-    attr_reader :id
+    attr_accessor :id
     attr_reader :operation
     attr_reader :sobject
-    attr_reader :state
+    attr_accessor :state
     
-    def initialize(operation, sobject, externalId, mode, client)
-      @operation = operation
-      @sobject = sobject
-      @externalIdFieldName = externalId
-      @concurrencyMode = mode
+    def initialize(client, options={})
       @client = client
+      @operation = options[:operation]
+      
+      if !@operation.nil?
+        if @operation == :upsert
+          @externalIdFieldName = options[:externalIdFieldName]
+        elsif @operation == :query
+          @concurrencyMode = options[:concurrencyMode] || :parallel
+        end
+        
+        @sobject = options[:sobject]
+      else
+        @id = options[:id]
+      end
     end
     
     def create
-      xml = '<?xml version="1.0" encoding="utf-8"?>'
-      xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
-      xml += "<operation>#{@operation}</operation>"
-      xml += "<object>#{@sobject}</object>"
-      xml += "<externalIdFieldName>#{@externalIdFieldName}</externalIdFieldName>" if @externalIdFieldName
-      xml += "<contentType>CSV</contentType>"
-      xml += "<concurrencyMode>#{@concurrencyMode}</concurrencyMode>" if @operation == :query
-      xml += "</jobInfo>"
-      
-      #puts "", xml
-      response = @client.http_post("job", xml)
-      data = XmlSimple.xml_in(response.body)
-      #puts "", response
-      @id = data['id'][0]
-      @state = data['state'][0]
+      #@client.add_job()
     end
     
     def close
