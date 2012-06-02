@@ -51,9 +51,21 @@ class TestInitialization < Test::Unit::TestCase
     
     assert_requested :post, "https://#{client.host}/services/Soap/u/24.0", :body => request, :headers => headers, :times => 1
     
-    assert_equal client.instance_host, 'na9.salesforce.com'
+    assert_equal client.instance_host, 'na9-api.salesforce.com'
     assert_equal client.instance_variable_get('@session_id'), 
                  '00DE0000000YSKp!AQ4AQNQhDKLMORZx2NwZppuKfure.ChCmdI3S35PPxpNA5MHb3ZVxhYd5STM3euVJTI5.39s.jOBT.3mKdZ3BWFDdIrddS8O'
+  end
+  
+  test "should parse instance id from server url" do
+    client = SalesforceBulk::Client.new
+    
+    
+    assert_equal client.instance_id('https://na1-api.salesforce.com'), 'na1-api'
+    assert_equal client.instance_id('https://na23-api.salesforce.com'), 'na23-api'
+    assert_equal client.instance_id('https://na345-api.salesforce.com'), 'na345-api'
+    
+    # protocol shouldn't matter, its just part of the host name we are after
+    assert_equal client.instance_id('://na1-api.salesforce.com'), 'na1-api'
   end
   
 end
