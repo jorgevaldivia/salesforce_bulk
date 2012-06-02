@@ -23,25 +23,6 @@ class TestJob < Test::Unit::TestCase
     assert_equal job.concurrencyMode, nil
   end
   
-  test "should return initialized job object when only given an id" do
-    bypass_authentication(@client)
-    
-    headers = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
-    response = fixture("job_info_response.xml")
-    jobId = "750E00000004N1mIAE"
-    
-    stub_request(:get, "#{api_url(@client)}job/#{jobId}")
-      .with(:body => '', :headers => headers)
-      .to_return(:body => response, :status => 200)
-    
-    job = @client.job(jobId)
-    
-    assert_requested :get, "#{api_url(@client)}job/#{jobId}", :body => '', :headers => headers, :times => 1
-    
-    assert_equal job.id, jobId
-    assert_equal job.state, 'Open'
-  end
-  
   test "should create job and return successful response" do
     bypass_authentication(@client)
     
