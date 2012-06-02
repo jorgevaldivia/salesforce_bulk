@@ -214,7 +214,7 @@ module SalesforceBulk
     end
     
     def instance_id(url)
-      url.match(/https:\/\/([a-z]{2,2}[0-9]{1,2})-api/)[1]
+      url.match(/:\/\/([a-zA-Z0-9-]{2,}).salesforce.com/)[1]
     end
     
   end
