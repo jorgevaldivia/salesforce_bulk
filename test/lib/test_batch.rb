@@ -13,44 +13,43 @@ class TestBatch < Test::Unit::TestCase
     @batch = SalesforceBulk::Batch.new
   end
   
-  test "state is marked as queued" do
-    @batch.state = "QUEUED"
-    assert @batch.queued?
+  test "state?" do
+    @batch.state = "Completed"
+    assert @batch.state?('Completed')
     
-    @batch.state = "queued"
+    @batch.state = "COMPLETED"
+    assert @batch.state?('completed')
+    
+    @batch.state = "Failed"
+    assert !@batch.state?('Queued')
+  end
+  
+  test "state is marked queued" do
+    @batch.state = "Queued"
     assert @batch.queued?
     
     @batch.state = nil
     assert !@batch.queued?
   end
   
-  test "state is marked as in progress" do
-    @batch.state = "INPROGRESS"
-    assert @batch.in_progress?
-    
-    @batch.state = "inprogress"
+  test "state is marked in progress" do
+    @batch.state = "InProgress"
     assert @batch.in_progress?
     
     @batch.state = nil
     assert !@batch.in_progress?
   end
   
-  test "state is marked as completed" do
-    @batch.state = "COMPLETED"
-    assert @batch.completed?
-    
-    @batch.state = "completed"
+  test "state is marked completed" do
+    @batch.state = "Completed"
     assert @batch.completed?
     
     @batch.state = nil
     assert !@batch.completed?
   end
   
-  test "state is marked as failed" do
-    @batch.state = "FAILED"
-    assert @batch.failed?
-    
-    @batch.state = "failed"
+  test "state is marked failed" do
+    @batch.state = "Failed"
     assert @batch.failed?
     
     @batch.state = nil
