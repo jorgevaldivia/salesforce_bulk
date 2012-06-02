@@ -64,10 +64,61 @@ module SalesforceBulk
       self.instance_host = "#{instance_id(url)}.salesforce.com"
     end
     
+    def abort_job(jobId)
+      xml = '<?xml version="1.0" encoding="utf-8"?>'
+      xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
+      xml += "<state>Aborted</state>"
+      xml += "</jobInfo>"
+      
+      #puts "","",xml
+      response = http_post("job/#{jobId}", xml)
+      data = XmlSimple.xml_in(response.body, :ForceArray => false)
+      #puts "","",response
+      
+      job = Job.new(self)
+      job.id = data['id']
+      job.state = data['state']
+      job
+    end
+    
+    def add_batch(jobId, data)
+      if data.is_a? String
+        # query
+      else
+        # all other operations
+        keys = data.first.keys
+        output_csv = keys.to_csv
+        
+        #puts "", keys.inspect,"",""
+        
+        data.each do |item|
+          item_values = keys.map { |key| item[key] }
+          output_csv += item_values.to_csv
+        end
+        
+        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
+        
+        #puts "","",output_csv,"",""
+        
+        response = http_post("job/#{jobId}/batch", output_csv, headers)
+        
+        #puts "","",response,"",""
+        
+        raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
+        
+        result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
+        
+        #puts "","",result,"",""
+        
+        batch = Batch.new
+        batch.id = result['id']
+        batch.jobId = result['jobId']
+        batch.state = result['state']
+        batch
+      end
+    end
+    
     def add_job(options={})
-#       job = Job.new(self, options)
-#       job.create
-#       job
       job = Job.new(self, options)
       
       xml = '<?xml version="1.0" encoding="utf-8"?>'
@@ -81,22 +132,53 @@ module SalesforceBulk
       
       #puts "", xml
       response = http_post("job", xml)
-      data = XmlSimple.xml_in(response.body)
+      data = XmlSimple.xml_in(response.body, :ForceArray => false)
       #puts "", response
       
-      job.id = data['id'][0]
-      job.state = data['state'][0]
+      job.id = data['id']
+      job.state = data['state']
       job
     end
     
-    def job(id="")
-      if id
-        job = Job.new(self, :id => id)
-        job.info
-      else
-        job = Job.new(self)
-      end  
+    def batch_info(jobId, batchId)
+      headers = {"Content-Type" => "text/csv; charset=UTF-8"}
+      response = http_get("job/#{jobId}/batch/#{batchId}", headers)
+      #puts "","",response,"",""
+      result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
+      #puts "","",result,"",""
       
+      batch = Batch.new
+      batch.id = result['id']
+      batch.jobId = result['jobId']
+      batch.state = result['state']
+      batch
+    end
+    
+    def close_job(jobId)
+      xml = '<?xml version="1.0" encoding="utf-8"?>'
+      xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
+      xml += "<state>Closed</state>"
+      xml += "</jobInfo>"
+      
+      #puts "","",xml
+      response = http_post("job/#{jobId}", xml)
+      data = XmlSimple.xml_in(response.body, :ForceArray => false)
+      #puts "","",response
+      
+      job = Job.new(self)
+      job.id = data['id']
+      job.state = data['state']
+      job
+    end
+    
+    def job_info(jobId)
+      response = http_get("job/#{jobId}")
+      data = XmlSimple.xml_in(response.body, :ForceArray => false)
+      #puts "","",response
+      
+      job = Job.new(self)
+      job.id = data['id']
+      job.state = data['state']
       job
     end
     
