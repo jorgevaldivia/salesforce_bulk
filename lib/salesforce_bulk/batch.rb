@@ -1,7 +1,6 @@
 module SalesforceBulk
   class Batch
     
-    attr_reader :client
     attr_accessor :data
     attr_accessor :id
     attr_accessor :jobId
@@ -14,8 +13,8 @@ module SalesforceBulk
 # <systemModstamp>2009-04-14T18:15:59.000Z</systemModstamp>
 # <numberRecordsProcessed>0</numberRecordsProcessed>
     
-    def initialize(client)
-      @client = client
+    def initialize
+      
     end
     
     end
