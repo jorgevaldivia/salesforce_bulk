@@ -19,8 +19,8 @@ class TestInitialization < Test::Unit::TestCase
       :username => 'MyUsername',
       :password => 'MyPassword',
       :token => 'MySecurityToken',
-      :debugging => true
-      :host => 'newhost.salesforce.com'
+      :debugging => true,
+      :host => 'newhost.salesforce.com',
       :version => '1.0'
     }
     
