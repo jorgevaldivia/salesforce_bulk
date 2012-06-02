@@ -59,7 +59,6 @@ class TestInitialization < Test::Unit::TestCase
   test "should parse instance id from server url" do
     client = SalesforceBulk::Client.new
     
-    
     assert_equal client.instance_id('https://na1-api.salesforce.com'), 'na1-api'
     assert_equal client.instance_id('https://na23-api.salesforce.com'), 'na23-api'
     assert_equal client.instance_id('https://na345-api.salesforce.com'), 'na345-api'
