@@ -18,39 +18,6 @@ module SalesforceBulk
       @client = client
     end
     
-    def create(job)
-      if data.is_a? String
-        # query
-      else
-        # all other operations
-        #keys = data.reduce({}) {|h,pairs| puts 'reduce'; pairs.each {|k,v| puts 'pairs.each'; (h[k] ||= []) << v}; h}.keys
-        keys = data.first.keys
-        output_csv = keys.to_csv
-        
-        #puts "", keys.inspect,"",""
-        
-        data.each do |item|
-          item_values = keys.map { |key| item[key] }
-          output_csv += item_values.to_csv
-        end
-        
-        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
-        
-        #puts "","",output_csv,"",""
-        
-        response = @client.http_post("job/#{job.id}123/batch/", output_csv, headers)
-        
-        puts "","",response,"",""
-        
-        raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
-        
-        result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
-        
-        puts "","",result,"",""
-        
-        @id = result["id"]
-        @state = result["state"]
-      end
     end
   end
 end
