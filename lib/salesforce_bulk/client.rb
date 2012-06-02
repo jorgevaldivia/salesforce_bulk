@@ -138,6 +138,21 @@ module SalesforceBulk
       job
     end
     
+    def batch_info_list(jobId)
+      response = http_get("job/#{jobId}/batch")
+      #puts "","",response,"",""
+      result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
+      #puts "","",result,"",""
+      
+      result['batchInfo'].collect do |info|
+        batch = Batch.new
+        batch.id = info['id']
+        batch.jobId = info['jobId']
+        batch.state = info['state']
+        batch
+      end
+    end
+    
     def batch_info(jobId, batchId)
       headers = {"Content-Type" => "text/csv; charset=UTF-8"}
       response = http_get("job/#{jobId}/batch/#{batchId}", headers)
