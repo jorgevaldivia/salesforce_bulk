@@ -82,9 +82,11 @@ module SalesforceBulk
     end
     
     def add_batch(jobId, data)
+      # Despite the content for a query operation batch being plain text we 
+      # still have to specify CSV content type per API docs.
+      headers = {"Content-Type" => "text/csv; charset=UTF-8"}
+      
       if data.is_a? String # query
-        # That's right. No CSV content but API still specifies we use this Content-Type...
-        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
         response = http_post("job/#{jobId}/batch", data, headers)
         raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
       else # all other operations
@@ -99,7 +101,6 @@ module SalesforceBulk
         #puts "", keys.inspect,"",""
         #puts "","",output_csv,"",""
         
-        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
         response = http_post("job/#{jobId}/batch", output_csv, headers)
         #puts "","",response,"",""
         raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
