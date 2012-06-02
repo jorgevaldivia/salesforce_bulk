@@ -53,7 +53,6 @@ module SalesforceBulk
       
       response = http_post("/services/Soap/u/#{self.version}", xml, headers)
       
-      raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
       
       data = XmlSimple.xml_in(response.body)
       
@@ -88,7 +87,6 @@ module SalesforceBulk
       
       if data.is_a? String # query
         response = http_post("job/#{jobId}/batch", data, headers)
-        raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
       else # all other operations
         keys = data.first.keys
         output_csv = keys.to_csv
@@ -103,7 +101,6 @@ module SalesforceBulk
         
         response = http_post("job/#{jobId}/batch", output_csv, headers)
         #puts "","",response,"",""
-        raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
       end
       
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
@@ -206,7 +203,13 @@ module SalesforceBulk
         path = "#{@api_path_prefix}#{path}"
       end
       
-      https_request(host).post(path, xml, headers)
+      response = https_request(host).post(path, xml, headers)
+      
+      if response.is_a?(Net::HTTPSuccess)
+        response
+      else
+        raise SalesforceError.new(response)
+      end
     end
     
     def http_get(path, headers={})
