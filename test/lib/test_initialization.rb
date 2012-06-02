@@ -2,11 +2,11 @@ require 'test_helper'
 
 class TestInitialization < Test::Unit::TestCase
   
-  test "should return initialized client object" do
+  test "return initialized client object" do
     assert_not_nil SalesforceBulk::Client.new
   end
   
-  test "should define default options if none provided" do
+  test "default option values set if none provided" do
     client = SalesforceBulk::Client.new
     
     assert_equal client.host, 'login.salesforce.com'
@@ -34,7 +34,7 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.version, options[:version]
   end
   
-  test "should authorize and return successful response" do
+  test "authentication" do
     options = {
       :username => 'username',
       :password => 'password',
@@ -60,7 +60,7 @@ class TestInitialization < Test::Unit::TestCase
                  '00DE0000000YSKp!AQ4AQNQhDKLMORZx2NwZppuKfure.ChCmdI3S35PPxpNA5MHb3ZVxhYd5STM3euVJTI5.39s.jOBT.3mKdZ3BWFDdIrddS8O'
   end
   
-  test "should parse instance id from server url" do
+  test "parsing instance id from server url" do
     client = SalesforceBulk::Client.new
     
     assert_equal client.instance_id('https://na1-api.salesforce.com'), 'na1-api'
