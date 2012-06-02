@@ -11,6 +11,7 @@ class TestBatch < Test::Unit::TestCase
     
     @client = SalesforceBulk::Client.new(options)
     @batch = SalesforceBulk::Batch.new
+    @headers = {"Content-Type" => "text/csv; charset=UTF-8", 'X-Sfdc-Session' => '123456789'}
   end
   
   test "state?" do
@@ -57,9 +58,6 @@ class TestBatch < Test::Unit::TestCase
   end
   
   test "should add a batch to a job and return a successful response" do
-    bypass_authentication(@client)
-    
-    headers = {"Content-Type" => "text/csv; charset=UTF-8", 'X-Sfdc-Session' => '123456789'}
     request = fixture("batch_create_request.csv")
     response = fixture("batch_create_response.xml")
     jobId = "750E00000004N7uIAE"
@@ -67,13 +65,14 @@ class TestBatch < Test::Unit::TestCase
       {:Id__c => '12345', :Title__c => "This is a test video"}
     ]
     
+    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job/#{jobId}/batch")
-      .with(:body => request, :headers => headers)
+      .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
     
     batch = @client.add_batch(jobId, data)
     
-    assert_requested :post, "#{api_url(@client)}job/#{jobId}/batch", :body => request, :headers => headers, :times => 1
+    assert_requested :post, "#{api_url(@client)}job/#{jobId}/batch", :body => request, :headers => @headers, :times => 1
     
     assert_equal batch.jobId, jobId
     assert_equal batch.state, 'Queued'
@@ -101,20 +100,18 @@ class TestBatch < Test::Unit::TestCase
   end
   
   test "should retrieve batch info" do
-    bypass_authentication(@client)
-    
-    headers = {"Content-Type" => "text/csv; charset=UTF-8", 'X-Sfdc-Session' => '123456789'}
     response = fixture("batch_info_response.xml")
     jobId = "750E00000004N97IAE"
     batchId = "751E00000004ZRbIAM"
     
+    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{jobId}/batch/#{batchId}")
-      .with(:headers => headers)
+      .with(:headers => @headers)
       .to_return(:body => response, :status => 200)
     
     batch = @client.batch_info(jobId, batchId)
     
-    assert_requested :get, "#{api_url(@client)}job/#{jobId}/batch/#{batchId}", :headers => headers, :times => 1
+    assert_requested :get, "#{api_url(@client)}job/#{jobId}/batch/#{batchId}", :headers => @headers, :times => 1
     
     assert_equal batch.jobId, jobId
     assert_equal batch.state, 'Completed'
