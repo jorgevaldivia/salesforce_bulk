@@ -17,7 +17,6 @@ class TestJob < Test::Unit::TestCase
     job = SalesforceBulk::Job.new(@client, :operation => :upsert, :sobject => :VideoEvent__c, :externalIdFieldName => :Id__c)
     
     assert_not_nil job
-    
     assert_equal job.operation, :upsert
     assert_equal job.sobject, :VideoEvent__c
     assert_equal job.externalIdFieldName, :Id__c
@@ -25,11 +24,10 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should create job and return successful response" do
-    bypass_authentication(@client)
-    
     request = fixture("job_create_request.xml")
     response = fixture("job_create_response.xml")
     
+    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -43,12 +41,11 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should close job and return successful response" do
-    bypass_authentication(@client)
-    
     request = fixture("job_close_request.xml")
     response = fixture("job_close_response.xml")
     jobId = "750E00000004MzbIAE"
     
+    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job/#{jobId}")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -62,12 +59,11 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should abort job and return successful response" do
-    bypass_authentication(@client)
-    
     request = fixture("job_abort_request.xml")
     response = fixture("job_abort_response.xml")
     jobId = "750E00000004N1NIAU"
     
+    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job/#{jobId}")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -81,11 +77,10 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should return job info" do
-    bypass_authentication(@client)
-    
     response = fixture("job_info_response.xml")
     jobId = "750E00000004N1mIAE"
     
+    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{jobId}")
       .with(:body => '', :headers => @headers)
       .to_return(:body => response, :status => 200)
