@@ -80,7 +80,24 @@ class TestBatch < Test::Unit::TestCase
   end
   
   test "should retrieve info for all batches in a job in a single request" do
+    response = fixture("batch_info_list_response.xml")
+    jobId = "750E00000004N97IAE"
     
+    bypass_authentication(@client)
+    stub_request(:get, "#{api_url(@client)}job/#{jobId}/batch").to_return(:body => response, :status => 200)
+    
+    batches = @client.batch_info_list(jobId)
+    
+    assert_requested :get, "#{api_url(@client)}job/#{jobId}/batch", :times => 1
+    
+    assert_kind_of Array, batches
+    assert_kind_of SalesforceBulk::Batch, batches.first
+    
+    assert_equal batches.length, 2
+    assert_equal batches.first.jobId, jobId
+    assert_equal batches.first.id, "751E00000004ZRbIAM"
+    assert_equal batches[1].jobId, jobId
+    assert_equal batches[1].id, "751E00000004ZQsIAM"
   end
   
   test "should retrieve batch info" do
