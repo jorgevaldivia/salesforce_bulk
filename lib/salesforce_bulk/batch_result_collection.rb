@@ -1,35 +1,28 @@
 module SalesforceBulk
   class BatchResultCollection < Array
     
-    attr_reader :client
-    attr_reader :currentIndex
     attr_reader :batchId
     attr_reader :jobId
-    attr_reader :resultIds
     
-    def initialize(client, jobId, batchId, resultIds) #previousResultId, nextResultId, currentResultId
-      @client = client
+    def initialize(jobId, batchId)
       @jobId = jobId
       @batchId = batchId
-      @resultIds = resultIds
-      @currentIndex = resultIds.first
-      
     end
     
-    def next?
-      
+    def any_failures?
+      self.any? { |result| result.error.length > 0 }
     end
     
-    def next
-      
+    def failed
+      self.select { |result| result.error.length > 0 }
     end
     
-    def previous?
-      
+    def completed
+      self.select { |result| result.success }
     end
     
-    def previous
-      
+    def created
+      self.select { |result| result.success && result.created }
     end
     
   end
