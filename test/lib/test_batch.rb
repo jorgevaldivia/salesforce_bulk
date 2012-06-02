@@ -120,4 +120,31 @@ class TestBatch < Test::Unit::TestCase
     assert_equal batch.state, 'Completed'
   end
   
+  test "should return batch result for a non-querying job" do
+    response = fixture("batch_result_list_response.csv")
+    jobId = "750E00000004NRa"
+    batchId = "751E00000004ZmK"
+    
+    # Batches that are created using CSV will always return 
+    # results in CSV format despite requesting with XML content type.
+    # Thus the content type header is ignored.
+    
+    bypass_authentication(@client)
+    stub_request(:get, "#{api_url(@client)}job/#{jobId}/batch/#{batchId}/result").to_return(:body => response, :status => 200)
+    
+    results = @client.batch_result_list(jobId, batchId)
+    
+    assert_requested :get, "#{api_url(@client)}job/#{jobId}/batch/#{batchId}/result", :times => 1
+    
+    assert_kind_of SalesforceBulk::BatchResultCollection, results
+    assert_kind_of Array, results
+    
+    assert_equal results.jobId, jobId
+    assert_equal results.batchId, batchId
+    
+    assert_equal results.first.success, 'true'
+    assert_equal results.first.created, 'false'
+    assert_equal results.first.error, ''
+  end
+  
 end
