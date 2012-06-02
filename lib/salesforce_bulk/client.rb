@@ -53,7 +53,6 @@ module SalesforceBulk
       
       response = http_post("/services/Soap/u/#{self.version}", xml, headers)
       
-      
       data = XmlSimple.xml_in(response.body)
       
       @session_id = data['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
@@ -125,7 +124,7 @@ module SalesforceBulk
       xml += "<concurrencyMode>#{job.concurrencyMode}</concurrencyMode>" if job.operation == :query
       xml += "</jobInfo>"
       
-      #puts "", xml
+      #puts "", xml, ""
       response = http_post("job", xml)
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
       #puts "", response
@@ -162,6 +161,35 @@ module SalesforceBulk
       batch.jobId = result['jobId']
       batch.state = result['state']
       batch
+    end
+    
+    def batch_result_list(jobId, batchId)
+      response = http_get("job/#{jobId}/batch/#{batchId}/result")
+      
+      if response.body =~ /<.*?>/m
+        result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
+      else
+        result = response.body.lines.to_a.join
+        result = CSV.parse(result)[1..-1]
+      end
+      
+      #puts "",response,""
+      #puts "",result.inspect,""
+      
+      result = BatchResultCollection.new(jobId, batchId)
+      CSV.parse(response.body.lines.to_a[1..-1].join) do |row|
+        br = BatchResult.new
+        br.id = row[0]
+        # FIXME: conver String to Boolean
+        br.success = row[1]
+        # FIXME: conver String to Boolean
+        br.created = row[2]
+        br.error = row[3]
+        
+        result << br
+      end
+      #puts "",result.inspect,""
+      result
     end
     
     def close_job(jobId)
