@@ -75,6 +75,21 @@ module SalesforceBulk
 #
       response = response.lines.to_a[1..-1].join
       csvRows = CSV.parse(response)
+
+#
+# TODO
+# Implement addition
+# https://github.com/nswarr/salesforce_bulk/commit/217fe0bba27b953f515af88467ed8984871aebf4#diff-2
+#
+      CSV.parse(response).map do |row|
+        {
+          :id => row[0],
+          :success => row[1],
+          :created => row[2],
+          :error_message => row[3]
+        }
+      end
+
     end
 
   end
