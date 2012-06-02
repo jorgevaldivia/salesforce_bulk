@@ -18,26 +18,23 @@ module SalesforceBulk
     end
     
     def in_progress?
-      is_state 'inprogress'
+      ?state 'InProgress'
     end
     
     def queued?
-      is_state 'queued'
+      state? 'Queued'
     end
     
     def completed?
-      is_state 'completed'
+      state? 'Completed'
     end
     
     def failed?
-      is_state 'failed'
+      state? 'Failed'
     end
     
-    private
-      
-      def is_state(value)
-        !self.state.nil? && self.state.casecmp(value) == 0
-      end
-      
+    def state?(value)
+      !self.state.nil? && self.state.casecmp(value) == 0
+    end
   end
 end
