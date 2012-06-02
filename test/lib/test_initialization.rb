@@ -69,6 +69,11 @@ class TestInitialization < Test::Unit::TestCase
     
     # protocol shouldn't matter, its just part of the host name we are after
     assert_equal client.instance_id('://na1-api.salesforce.com'), 'na1-api'
+    assert_equal client.instance_id('://na23-api.salesforce.com'), 'na23-api'
+    
+    # in fact the .com portion shouldn't matter either
+    assert_equal client.instance_id('://na1-api.salesforce'), 'na1-api'
+    assert_equal client.instance_id('://na23-api.salesforce'), 'na23-api'
   end
   
 end
