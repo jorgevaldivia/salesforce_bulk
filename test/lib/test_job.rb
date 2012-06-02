@@ -95,7 +95,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => '', :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.job(jobId)
+    job = @client.job_info(jobId)
     
     assert_requested :get, "#{api_url(@client)}job/#{jobId}", :body => '', :headers => headers, :times => 1
     
