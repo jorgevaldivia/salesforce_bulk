@@ -93,4 +93,17 @@ class TestJob < Test::Unit::TestCase
     assert_equal job.state, 'Open'
   end
   
+  test "should raise SalesforceError on invalid job" do
+    response = fixture("invalid_job_error.xml")
+    
+    bypass_authentication(@client)
+    stub_request(:post, "#{api_url(@client)}job")
+      .to_return(:body => response, :status => 500)
+    
+    # used VideoEvent__c for testing, no Video__c object exists so error should be raised
+    assert_raise SalesforceBulk::SalesforceError do
+      job = @client.add_job(:operation => :upsert, :sobject => :Video__c, :externalIdFieldName => :Id__c)
+    end
+  end
+  
 end
