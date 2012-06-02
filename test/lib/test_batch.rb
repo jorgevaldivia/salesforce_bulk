@@ -80,6 +80,10 @@ class TestBatch < Test::Unit::TestCase
     assert_equal batch.state, 'Queued'
   end
   
+  test "should retrieve info for all batches in a job in a single request" do
+    
+  end
+  
   test "should retrieve batch info" do
     bypass_authentication(@client)
     
