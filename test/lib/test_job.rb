@@ -54,8 +54,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = SalesforceBulk::Job.new(@client, :id => jobId)
-    job.close
+    job = @client.close_job(jobId)
     
     assert_requested :post, "#{api_url(@client)}job/#{jobId}", :body => request, :headers => headers, :times => 1
     
@@ -75,8 +74,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => headers)
       .to_return(:body => response, :status => 200)
     
-    job = SalesforceBulk::Job.new(@client, :id => jobId)
-    job.abort
+    job = @client.abort_job(jobId)
     
     assert_requested :post, "#{api_url(@client)}job/#{jobId}", :body => request, :headers => headers, :times => 1
     
