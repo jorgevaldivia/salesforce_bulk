@@ -82,40 +82,37 @@ module SalesforceBulk
     end
     
     def add_batch(jobId, data)
-      if data.is_a? String
-        # query
-      else
-        # all other operations
+      if data.is_a? String # query
+        # That's right. No CSV content but API still specifies we use this Content-Type...
+        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
+        response = http_post("job/#{jobId}/batch", data, headers)
+        raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
+      else # all other operations
         keys = data.first.keys
         output_csv = keys.to_csv
-        
-        #puts "", keys.inspect,"",""
         
         data.each do |item|
           item_values = keys.map { |key| item[key] }
           output_csv += item_values.to_csv
         end
         
-        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
-        
+        #puts "", keys.inspect,"",""
         #puts "","",output_csv,"",""
         
+        headers = {"Content-Type" => "text/csv; charset=UTF-8"}
         response = http_post("job/#{jobId}/batch", output_csv, headers)
-        
         #puts "","",response,"",""
-        
         raise SalesforceError.new(response) unless response.is_a?(Net::HTTPSuccess)
-        
-        result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
-        
-        #puts "","",result,"",""
-        
-        batch = Batch.new
-        batch.id = result['id']
-        batch.jobId = result['jobId']
-        batch.state = result['state']
-        batch
       end
+      
+      result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
+      #puts "","",result,"",""
+      
+      batch = Batch.new
+      batch.id = result['id']
+      batch.jobId = result['jobId']
+      batch.state = result['state']
+      batch
     end
     
     def add_job(options={})
