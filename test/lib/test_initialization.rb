@@ -14,20 +14,24 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.debugging, false
   end
   
-  test "should accept various options" do
+  test "overriding option defaults and providing login info" do
     options = {
-      :username => 'username',
-      :password => 'password',
-      :token => 'token',
+      :username => 'MyUsername',
+      :password => 'MyPassword',
+      :token => 'MySecurityToken',
       :debugging => true
+      :host => 'newhost.salesforce.com'
+      :version => '1.0'
     }
     
     client = SalesforceBulk::Client.new(options)
     
-    assert_equal client.username, 'username'
-    assert_equal client.password, 'passwordtoken'
-    assert_equal client.token, 'token'
-    assert_equal client.debugging, true
+    assert_equal client.username, options[:username]
+    assert_equal client.password, "#{options[:password]}#{options[:token]}"
+    assert_equal client.token, options[:token]
+    assert_equal client.debugging, options[:debugging]
+    assert_equal client.host, options[:host]
+    assert_equal client.version, options[:version]
   end
   
   test "should authorize and return successful response" do
