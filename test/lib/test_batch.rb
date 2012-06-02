@@ -60,9 +60,11 @@ class TestBatch < Test::Unit::TestCase
   test "should add a batch to a job and return a successful response" do
     request = fixture("batch_create_request.csv")
     response = fixture("batch_create_response.xml")
-    jobId = "750E00000004N7uIAE"
+    jobId = "750E00000004NRfIAM"
+    batchId = "751E00000004ZmUIAU"
     data = [
-      {:Id__c => '12345', :Title__c => "This is a test video"}
+      {:Id__c => '12345', :Title__c => "This is a test video", :IsPreview__c => nil},
+      {:Id__c => '23456', :Title__c => "A second test!", :IsPreview__c => true}
     ]
     
     bypass_authentication(@client)
@@ -74,6 +76,7 @@ class TestBatch < Test::Unit::TestCase
     
     assert_requested :post, "#{api_url(@client)}job/#{jobId}/batch", :body => request, :headers => @headers, :times => 1
     
+    assert_equal batch.id, batchId
     assert_equal batch.jobId, jobId
     assert_equal batch.state, 'Queued'
   end
