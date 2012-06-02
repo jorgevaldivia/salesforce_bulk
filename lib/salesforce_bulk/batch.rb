@@ -18,7 +18,7 @@ module SalesforceBulk
     end
     
     def in_progress?
-      ?state 'InProgress'
+      state? 'InProgress'
     end
     
     def queued?
