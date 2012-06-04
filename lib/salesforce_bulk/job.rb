@@ -25,22 +25,6 @@ module SalesforceBulk
       end
     end
     
-    def batch_info_list
-      response = @client.http_get("job/#{id}/batch")
-      data = XmlSimple.xml_in(response.body)
-      puts "","",response,""
-      #@state = data['state'][0]
-    end
-    
-    def add_query
-      path = "job/#{@@job_id}/batch/"
-      headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
-      
-      response = @@connection.post_xml(nil, path, @@records, headers)
-      response_parsed = XmlSimple.xml_in(response)
-
-      @@batch_id = response_parsed['id'][0]
-    end
     
     def get_batch_result()
       path = "job/#{@@job_id}/batch/#{@@batch_id}/result"
@@ -54,7 +38,6 @@ module SalesforceBulk
 # Loop through all results and collect each. All results are not returned in a single response.
 # https://github.com/WWJacob/salesforce_bulk/commit/8f9e68c390230e885823e45cd2616ac3159697ef
 #
-
       if(@@operation == "query") # The query op requires us to do another request to get the results
         response_parsed = XmlSimple.xml_in(response)
         result_id = response_parsed["result"][0]
@@ -66,7 +49,6 @@ module SalesforceBulk
         
         response = @@connection.get_request(nil, path, headers)
         #puts "\n\nres2: #{response.inspect}\n\n"
-
       end
 
 #
@@ -89,7 +71,6 @@ module SalesforceBulk
           :error_message => row[3]
         }
       end
-
     end
 
   end
