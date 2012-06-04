@@ -16,5 +16,9 @@ module SalesforceBulk
     def initialize(attrs={})
       
     end
+    
+    def error?
+      error.present?
+    end
   end
 end
