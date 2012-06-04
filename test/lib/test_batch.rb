@@ -142,8 +142,8 @@ class TestBatch < Test::Unit::TestCase
     assert_equal results.jobId, jobId
     assert_equal results.batchId, batchId
     
-    assert_equal results.first.success, 'true'
-    assert_equal results.first.created, 'false'
+    assert_equal results.first.success, true
+    assert_equal results.first.created, false
     assert_equal results.first.error, ''
   end
   
