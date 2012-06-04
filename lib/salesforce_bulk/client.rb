@@ -180,10 +180,8 @@ module SalesforceBulk
       CSV.parse(response.body.lines.to_a[1..-1].join) do |row|
         br = BatchResult.new
         br.id = row[0]
-        # FIXME: conver String to Boolean
-        br.success = row[1]
-        # FIXME: conver String to Boolean
-        br.created = row[2]
+        br.success = row[1].to_b
+        br.created = row[2].to_b
         br.error = row[3]
         
         result << br
