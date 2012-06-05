@@ -15,19 +15,19 @@ module SalesforceBulk
     end
     
     def next?
-      
+      @currentIndex < length - 1
     end
     
     def next
-      
+      # if has next, calls method on client to fetch data and returns new collection instance
     end
     
     def previous?
-      
+      @currentIndex > 0
     end
     
     def previous
-      
+      # if has previous, calls method on client to fetch data and returns new collection instance
     end
     
   end
