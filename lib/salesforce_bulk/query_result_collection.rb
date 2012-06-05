@@ -19,7 +19,7 @@ module SalesforceBulk
     end
     
     def next?
-      @currentIndex < length - 1
+      @nextResultId.present?
     end
     
     def next
@@ -27,7 +27,7 @@ module SalesforceBulk
     end
     
     def previous?
-      @currentIndex > 0
+      @previousResultId.present?
     end
     
     def previous
