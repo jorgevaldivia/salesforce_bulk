@@ -39,21 +39,19 @@ class TestQueryResultCollection < Test::Unit::TestCase
   end
   
   test "next?" do
-    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId)
-    collection.push *@resultIds
+    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
     assert collection.next?
     
-    collection.instance_variable_set("@currentIndex", 2)
+    collection.instance_variable_set("@nextResultId", nil)
     assert !collection.next?
   end
   
   test "previous?" do
-    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId)
-    collection.push *@resultIds
-    assert !collection.previous?
-    
-    collection.instance_variable_set("@currentIndex", 2)
+    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
     assert collection.previous?
+    
+    collection.instance_variable_set("@previousResultId", nil)
+    assert !collection.previous?
   end
   
 end
