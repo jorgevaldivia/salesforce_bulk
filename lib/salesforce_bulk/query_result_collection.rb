@@ -5,13 +5,17 @@ module SalesforceBulk
     attr_reader :currentIndex
     attr_reader :batchId
     attr_reader :jobId
-    attr_reader :resultIds
+    attr_reader :resultId
+    attr_reader :previousResultId
+    attr_reader :nextResultId
     
-    def initialize(client, jobId, batchId, currentIndex=0)
+    def initialize(client, jobId, batchId, resultId=nil, previousResultId=nil, nextResultId=nil)
       @client = client
       @jobId = jobId
       @batchId = batchId
-      @currentIndex = currentIndex
+      @resultId = resultId
+      @previousResultId = previousResultId
+      @nextResultId = nextResultId
     end
     
     def next?
