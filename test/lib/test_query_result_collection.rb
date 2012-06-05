@@ -26,4 +26,22 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal collection.currentIndex, 5
   end
   
+  test "next?" do
+    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId)
+    collection.push *@resultIds
+    assert collection.next?
+    
+    collection.instance_variable_set("@currentIndex", 2)
+    assert !collection.next?
+  end
+  
+  test "previous?" do
+    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId)
+    collection.push *@resultIds
+    assert !collection.previous?
+    
+    collection.instance_variable_set("@currentIndex", 2)
+    assert collection.previous?
+  end
+  
 end
