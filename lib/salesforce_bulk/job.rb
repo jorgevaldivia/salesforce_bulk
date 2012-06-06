@@ -1,8 +1,8 @@
 module SalesforceBulk
   class Job
     
-    attr_reader :concurrencyMode
-    attr_reader :externalIdFieldName
+    attr_reader :concurrency_mode
+    attr_reader :external_id_field_name
     attr_accessor :id
     attr_reader :operation
     attr_reader :sobject
@@ -14,9 +14,9 @@ module SalesforceBulk
       
       if !@operation.nil?
         if @operation == :upsert
-          @externalIdFieldName = options[:externalIdFieldName]
+          @external_id_field_name = options[:external_id_field_name]
         elsif @operation == :query
-          @concurrencyMode = options[:concurrencyMode] || :parallel
+          @concurrency_mode = options[:concurrency_mode] || :parallel
         end
         
         @sobject = options[:sobject]

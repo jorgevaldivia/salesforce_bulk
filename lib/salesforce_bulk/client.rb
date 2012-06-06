@@ -119,9 +119,9 @@ module SalesforceBulk
       xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
       xml += "<operation>#{job.operation}</operation>"
       xml += "<object>#{job.sobject}</object>"
-      xml += "<externalIdFieldName>#{job.externalIdFieldName}</externalIdFieldName>" if job.externalIdFieldName
+      xml += "<externalIdFieldName>#{job.external_id_field_name}</externalIdFieldName>" if job.external_id_field_name
       xml += "<contentType>CSV</contentType>"
-      xml += "<concurrencyMode>#{job.concurrencyMode}</concurrencyMode>" if job.operation == :query
+      xml += "<concurrencyMode>#{job.concurrency_mode}</concurrencyMode>" if job.operation == :query
       xml += "</jobInfo>"
       
       #puts "", xml, ""

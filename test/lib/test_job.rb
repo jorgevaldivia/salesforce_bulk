@@ -14,13 +14,13 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should return initialized job object" do
-    job = SalesforceBulk::Job.new(@client, :operation => :upsert, :sobject => :VideoEvent__c, :externalIdFieldName => :Id__c)
+    job = SalesforceBulk::Job.new(@client, :operation => :upsert, :sobject => :VideoEvent__c, :external_id_field_name => :Id__c)
     
     assert_not_nil job
     assert_equal job.operation, :upsert
     assert_equal job.sobject, :VideoEvent__c
-    assert_equal job.externalIdFieldName, :Id__c
-    assert_equal job.concurrencyMode, nil
+    assert_equal job.external_id_field_name, :Id__c
+    assert_equal job.concurrency_mode, nil
   end
   
   test "should create job and return successful response" do
@@ -32,7 +32,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.add_job(:operation => :upsert, :sobject => :VideoEvent__c, :externalIdFieldName => :Id__c)
+    job = @client.add_job(:operation => :upsert, :sobject => :VideoEvent__c, :external_id_field_name => :Id__c)
     
     assert_requested :post, "#{api_url(@client)}job", :body => request, :headers => @headers, :times => 1
     
@@ -102,7 +102,7 @@ class TestJob < Test::Unit::TestCase
     
     # used VideoEvent__c for testing, no Video__c object exists so error should be raised
     assert_raise SalesforceBulk::SalesforceError do
-      job = @client.add_job(:operation => :upsert, :sobject => :Video__c, :externalIdFieldName => :Id__c)
+      job = @client.add_job(:operation => :upsert, :sobject => :Video__c, :external_id_field_name => :Id__c)
     end
   end
   
