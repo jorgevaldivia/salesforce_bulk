@@ -2,7 +2,6 @@ module SalesforceBulk
   class QueryResultCollection < Array
     
     attr_reader :client
-    attr_reader :currentIndex
     attr_reader :batchId
     attr_reader :jobId
     attr_reader :totalSize
