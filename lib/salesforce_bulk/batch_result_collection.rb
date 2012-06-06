@@ -1,12 +1,12 @@
 module SalesforceBulk
   class BatchResultCollection < Array
     
-    attr_reader :batchId
-    attr_reader :jobId
+    attr_reader :batch_id
+    attr_reader :job_id
     
-    def initialize(jobId, batchId)
-      @jobId = jobId
-      @batchId = batchId
+    def initialize(job_id, batch_id)
+      @job_id = job_id
+      @batch_id = batch_id
     end
     
     def any_failures?

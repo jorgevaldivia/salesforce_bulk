@@ -107,7 +107,7 @@ module SalesforceBulk
       
       batch = Batch.new
       batch.id = result['id']
-      batch.jobId = result['jobId']
+      batch.job_id = result['jobId']
       batch.state = result['state']
       batch
     end
@@ -143,7 +143,7 @@ module SalesforceBulk
       result['batchInfo'].collect do |info|
         batch = Batch.new
         batch.id = info['id']
-        batch.jobId = info['jobId']
+        batch.job_id = info['jobId']
         batch.state = info['state']
         batch
       end
@@ -158,7 +158,7 @@ module SalesforceBulk
       
       batch = Batch.new
       batch.id = result['id']
-      batch.jobId = result['jobId']
+      batch.job_id = result['jobId']
       batch.state = result['state']
       batch
     end

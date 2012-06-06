@@ -3,7 +3,7 @@ module SalesforceBulk
     
     attr_accessor :data
     attr_accessor :id
-    attr_accessor :jobId
+    attr_accessor :job_id
     attr_accessor :state
     
 # <id>751D0000000004rIAA</id>
