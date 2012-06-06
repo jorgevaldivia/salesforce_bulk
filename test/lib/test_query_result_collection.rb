@@ -16,6 +16,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     @resultId = @resultIds[1]
     @previousResultId = @resultIds.first
     @nextResultId = @resultIds.last
+    @collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
   end
   
   test "initilize using defaults" do
@@ -23,35 +24,32 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal collection.client, @client
     assert_equal collection.jobId, @jobId
     assert_equal collection.batchId, @batchId
-    assert_equal collection.resultId, nil
-    assert_equal collection.previousResultId, nil
-    assert_equal collection.nextResultId, nil
+    assert_nil collection.resultId
+    assert_nil collection.previousResultId
+    assert_nil collection.nextResultId
   end
   
   test "initilize with all values" do
-    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
-    assert_equal collection.client, @client
-    assert_equal collection.jobId, @jobId
-    assert_equal collection.batchId, @batchId
-    assert_equal collection.resultId, @resultId
-    assert_equal collection.previousResultId, @previousResultId
-    assert_equal collection.nextResultId, @nextResultId
+    assert_equal @collection.client, @client
+    assert_equal @collection.jobId, @jobId
+    assert_equal @collection.batchId, @batchId
+    assert_equal @collection.resultId, @resultId
+    assert_equal @collection.previousResultId, @previousResultId
+    assert_equal @collection.nextResultId, @nextResultId
   end
   
   test "next?" do
-    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
-    assert collection.next?
+    assert @collection.next?
     
-    collection.instance_variable_set("@nextResultId", nil)
-    assert !collection.next?
+    @collection.instance_variable_set('@nextResultId', '')
+    assert !@collection.next?
   end
   
   test "previous?" do
-    collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
-    assert collection.previous?
+    assert @collection.previous?
     
-    collection.instance_variable_set("@previousResultId", nil)
-    assert !collection.previous?
+    @collection.instance_variable_set('@previousResultId', '')
+    assert !@collection.previous?
   end
   
 end
