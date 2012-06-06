@@ -23,7 +23,8 @@ module SalesforceBulk
     end
     
     def next
-      # if has next, calls method on client to fetch data and returns new collection instance
+      # if calls method on client to fetch data and returns new collection instance
+      SalesforceBulk::QueryResultCollection.new(self.client, self.jobId, self.batchId)
     end
     
     def previous?
@@ -32,6 +33,7 @@ module SalesforceBulk
     
     def previous
       # if has previous, calls method on client to fetch data and returns new collection instance
+      SalesforceBulk::QueryResultCollection.new(self.client, self.jobId, self.batchId)
     end
     
   end
