@@ -45,11 +45,19 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert !@collection.next?
   end
   
+  test "next" do
+    assert_kind_of SalesforceBulk::QueryResultCollection, @collection.next
+  end
+  
   test "previous?" do
     assert @collection.previous?
     
     @collection.instance_variable_set('@previousResultId', '')
     assert !@collection.previous?
+  end
+  
+  test "previous" do
+    assert_kind_of SalesforceBulk::QueryResultCollection, @collection.previous
   end
   
 end
