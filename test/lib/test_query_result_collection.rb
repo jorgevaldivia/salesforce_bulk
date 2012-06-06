@@ -13,17 +13,20 @@ class TestQueryResultCollection < Test::Unit::TestCase
     @jobId = "123"
     @batchId = "234"
     @resultIds = ["12","23","34"]
+    @totalSize = @resultIds.length
     @resultId = @resultIds[1]
     @previousResultId = @resultIds.first
     @nextResultId = @resultIds.last
-    @collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @resultId, @previousResultId, @nextResultId)
+    @collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId, @totalSize, @resultId, @previousResultId, @nextResultId)
   end
   
   test "initilize using defaults" do
     collection = SalesforceBulk::QueryResultCollection.new(@client, @jobId, @batchId)
+    
     assert_equal collection.client, @client
     assert_equal collection.jobId, @jobId
     assert_equal collection.batchId, @batchId
+    assert_equal collection.totalSize, 0
     assert_nil collection.resultId
     assert_nil collection.previousResultId
     assert_nil collection.nextResultId
@@ -33,6 +36,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal @collection.client, @client
     assert_equal @collection.jobId, @jobId
     assert_equal @collection.batchId, @batchId
+    assert_equal @collection.totalSize, @totalSize
     assert_equal @collection.resultId, @resultId
     assert_equal @collection.previousResultId, @previousResultId
     assert_equal @collection.nextResultId, @nextResultId
