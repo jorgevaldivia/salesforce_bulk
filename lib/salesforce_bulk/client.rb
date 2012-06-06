@@ -169,24 +169,24 @@ module SalesforceBulk
       if response.body =~ /<.*?>/m
         result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       else
-        result = response.body.lines.to_a.join
-        result = CSV.parse(result)[1..-1]
+        #result = response.body.lines.to_a.join
+        #result = CSV.parse(result)[1..-1]
+        result = BatchResultCollection.new(jobId, batchId)
+        
+        CSV.parse(response.body.lines.to_a[1..-1].join) do |row|
+          br = BatchResult.new
+          br.id = row[0]
+          br.success = row[1].to_b
+          br.created = row[2].to_b
+          br.error = row[3]
+          
+          result << br
+        end
       end
       
       #puts "",response,""
       #puts "",result.inspect,""
       
-      result = BatchResultCollection.new(jobId, batchId)
-      CSV.parse(response.body.lines.to_a[1..-1].join) do |row|
-        br = BatchResult.new
-        br.id = row[0]
-        br.success = row[1].to_b
-        br.created = row[2].to_b
-        br.error = row[3]
-        
-        result << br
-      end
-      #puts "",result.inspect,""
       result
     end
     
