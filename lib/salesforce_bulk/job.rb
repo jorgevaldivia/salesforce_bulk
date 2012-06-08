@@ -16,7 +16,7 @@ module SalesforceBulk
         if @operation == :upsert
           @external_id_field_name = options[:external_id_field_name]
         elsif @operation == :query
-          @concurrency_mode = options[:concurrency_mode] || :parallel
+          @concurrency_mode = options[:concurrency_mode] || :Parallel
         end
         
         @sobject = options[:sobject]
