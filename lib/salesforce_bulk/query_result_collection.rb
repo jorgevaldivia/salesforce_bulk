@@ -6,21 +6,20 @@ module SalesforceBulk
     attr_reader :job_id
     attr_reader :total_size
     attr_reader :result_id
-    attr_reader :previous_result_id
-    attr_reader :next_result_id
+    attr_reader :result_ids
     
-    def initialize(client, job_id, batch_id, total_size=0, result_id=nil, previous_result_id=nil, next_result_id=nil)
+    def initialize(client, job_id, batch_id, total_size=0, result_id=nil, result_ids=[])
       @client = client
       @job_id = job_id
       @batch_id = batch_id
       @total_size = total_size
       @result_id = result_id
-      @previous_result_id = previous_result_id
-      @next_result_id = next_result_id
+      @result_ids = result_ids
+      @current_index = result_ids.index(result_id)
     end
     
     def next?
-      @next_result_id.present?
+      @result_ids.present? && @current_index < @result_ids.length - 1
     end
     
     def next
@@ -29,7 +28,7 @@ module SalesforceBulk
     end
     
     def previous?
-      @previous_result_id.present?
+      @result_ids.present? && @current_index > 0
     end
     
     def previous
