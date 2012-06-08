@@ -237,7 +237,7 @@ module SalesforceBulk
       job
     end
     
-    def http_post(path, xml, headers={})
+    def http_post(path, body, headers={})
       host = self.host
       
       headers = {'Content-Type' => 'application/xml'}.merge(headers)
@@ -248,7 +248,7 @@ module SalesforceBulk
         path = "#{@api_path_prefix}#{path}"
       end
       
-      response = https_request(host).post(path, xml, headers)
+      response = https_request(host).post(path, body, headers)
       
       if response.is_a?(Net::HTTPSuccess)
         response
