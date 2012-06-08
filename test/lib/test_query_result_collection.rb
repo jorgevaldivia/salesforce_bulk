@@ -15,9 +15,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     @result_ids = ["12","23","34"]
     @total_size = @result_ids.length
     @result_id = @result_ids[1]
-    @previous_result_id = @result_ids.first
-    @next_result_id = @result_ids.last
-    @collection = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @total_size, @result_id, @previous_result_id, @next_result_id)
+    @collection = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @total_size, @result_id, @result_ids)
   end
   
   test "initilize using defaults" do
@@ -28,8 +26,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal collection.batch_id, @batch_id
     assert_equal collection.total_size, 0
     assert_nil collection.result_id
-    assert_nil collection.previous_result_id
-    assert_nil collection.next_result_id
+    assert_equal collection.result_ids, []
   end
   
   test "initilize with all values" do
@@ -38,14 +35,16 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal @collection.batch_id, @batch_id
     assert_equal @collection.total_size, @total_size
     assert_equal @collection.result_id, @result_id
-    assert_equal @collection.previous_result_id, @previous_result_id
-    assert_equal @collection.next_result_id, @next_result_id
+    assert_equal @collection.result_ids, @result_ids
   end
   
   test "next?" do
     assert @collection.next?
     
-    @collection.instance_variable_set('@next_result_id', '')
+    @collection.instance_variable_set('@current_index', @result_ids.length)
+    assert !@collection.next?
+    
+    @collection.instance_variable_set('@result_ids', nil)
     assert !@collection.next?
   end
   
@@ -56,7 +55,10 @@ class TestQueryResultCollection < Test::Unit::TestCase
   test "previous?" do
     assert @collection.previous?
     
-    @collection.instance_variable_set('@previous_result_id', '')
+    @collection.instance_variable_set('@current_index', 0)
+    assert !@collection.previous?
+    
+    @collection.instance_variable_set('@result_ids', nil)
     assert !@collection.previous?
   end
   
