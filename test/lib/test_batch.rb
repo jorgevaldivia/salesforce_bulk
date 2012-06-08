@@ -12,6 +12,7 @@ class TestBatch < Test::Unit::TestCase
     @client = SalesforceBulk::Client.new(options)
     @batch = SalesforceBulk::Batch.new
     @headers = {"Content-Type" => "text/csv; charset=UTF-8", 'X-Sfdc-Session' => '123456789'}
+    @headersWithXml = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
   end
   
   test "state?" do
