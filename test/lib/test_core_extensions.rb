@@ -9,6 +9,7 @@ class TestCoreExtensions < Test::Unit::TestCase
     assert_equal "FALSE".to_b, false
     assert_equal "  true  ".to_b, true
     assert_equal "  false  ".to_b, false
+    assert_equal "Any true value".to_b, "Any true value"
   end
   
   # Taken from ActiveSupport: /activesupport/test/core_ext/blank_test.rb
