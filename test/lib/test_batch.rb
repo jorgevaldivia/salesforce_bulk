@@ -170,4 +170,21 @@ class TestBatch < Test::Unit::TestCase
     assert_kind_of SalesforceBulk::QueryResultCollection, result
   end
   
+  test "retrieve and parse a query result successfully" do
+    response = fixture("query_result_response.csv")
+    job_id = "750E00000004NnR"
+    batch_id = "751E00000004aEY"
+    result_id = "752E0000000TNaq"
+    
+    bypass_authentication(@client)
+    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}")
+      .with(:headers => @headers)
+      .to_return(:body => response, :status => 200)
+    
+    result = @client.query_result(job_id, batch_id, result_id, [result_id])
+    
+    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}", :headers => @headers, :times => 1
+    assert result.length == 4
+  end
+  
 end
