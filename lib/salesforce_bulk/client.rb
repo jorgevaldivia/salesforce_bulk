@@ -167,7 +167,6 @@ module SalesforceBulk
       response = http_get("job/#{jobId}/batch/#{batchId}/result")
       
       if response.body =~ /<.*?>/m
-        #puts "",response,""
         result = XmlSimple.xml_in(response.body)
         
         if result['result'].present?
@@ -175,11 +174,7 @@ module SalesforceBulk
           
           result = query_result(jobId, batchId, result['result'].first, result['result'])
         end
-        
-        #puts "",result,""
       else
-        #result = response.body.lines.to_a.join
-        #result = CSV.parse(result)[1..-1]
         result = BatchResultCollection.new(jobId, batchId)
         
         CSV.parse(response.body.lines.to_a[1..-1].join) do |row|
@@ -192,23 +187,22 @@ module SalesforceBulk
           result << br
         end
       end
-      #puts "",result.inspect,""
+      
       result
     end
     
     def query_result(job_id, batch_id, result_id, result_ids)
       headers = {"Content-Type" => "text/csv; charset=UTF-8"}
       response = http_get("job/#{job_id}/batch/#{batch_id}/result/#{result_id}", headers)
-      puts "","",response,"",""
+      puts "",response,""
       
       lines = response.body.lines.to_a
       headers = CSV.parse_line(lines.shift).collect { |header| header.to_sym }
       
       result = QueryResultCollection.new(self, job_id, batch_id, lines.length, result_id, result_ids)
       
-      CSV.parse(lines.join, :headers => headers, :converters => [:all, lambda{|s| s.to_b if s.kind_of? String }]) do |row|
-        #puts "",header_line,"",row,""
-        #puts "",Hash[headers.zip(row.fields)],""
+      #CSV.parse(lines.join, :headers => headers, :converters => [:all, lambda{|s| s.to_b if s.kind_of? String }]) do |row|
+      CSV.parse(lines.join, :headers => headers) do |row|
         result << Hash[row.headers.zip(row.fields)]
       end
       puts "",result,""
