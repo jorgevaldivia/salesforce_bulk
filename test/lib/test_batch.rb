@@ -149,4 +149,25 @@ class TestBatch < Test::Unit::TestCase
     assert_equal results.first.error, ''
   end
   
+  test "retrieve result id for a query operation" do
+    response = fixture("query_result_list_response.xml")
+    job_id = "750E00000004NnR"
+    batch_id = "751E00000004aEY"
+    result_id = "752E0000000TNaq"
+    
+    bypass_authentication(@client)
+    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result")
+      .with(:headers => @headersWithXml)
+      .to_return(:body => response, :status => 200)
+    
+    @client.expects(:query_result)
+      .with(job_id, batch_id, result_id, [result_id])
+      .returns(SalesforceBulk::QueryResultCollection.new(job_id, batch_id, result_id))
+    
+    result = @client.batch_result_list(job_id, batch_id)
+    
+    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :headers => @headersWithXml, :times => 1
+    assert_kind_of SalesforceBulk::QueryResultCollection, result
+  end
+  
 end
