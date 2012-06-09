@@ -14,7 +14,7 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should return initialized job object" do
-    job = SalesforceBulk::Job.new(@client, :operation => :upsert, :sobject => :VideoEvent__c, :external_id_field_name => :Id__c)
+    job = SalesforceBulk::Job.new(:operation => :upsert, :sobject => :VideoEvent__c, :external_id_field_name => :Id__c)
     
     assert_not_nil job
     assert_equal job.operation, :upsert
@@ -24,7 +24,7 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "any operation other than upsert should not set external id field name" do
-    job = SalesforceBulk::Job.new(@client, :operation => :query, :external_id_field_name => :Id__c)
+    job = SalesforceBulk::Job.new(:operation => :query, :external_id_field_name => :Id__c)
     
     assert_nil job.external_id_field_name
   end
