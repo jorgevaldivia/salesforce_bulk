@@ -23,6 +23,10 @@ class TestJob < Test::Unit::TestCase
     assert_nil job.concurrency_mode
   end
   
+  test "any operation other than upsert should not set external id field name" do
+    job = SalesforceBulk::Job.new(@client, :operation => :query, :external_id_field_name => :Id__c)
+    
+    assert_nil job.external_id_field_name
   end
   
   test "should create job and return successful response" do
