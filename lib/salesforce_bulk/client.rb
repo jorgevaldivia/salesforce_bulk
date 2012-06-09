@@ -120,7 +120,7 @@ module SalesforceBulk
       xml += "<operation>#{job.operation}</operation>"
       xml += "<object>#{job.sobject}</object>"
       xml += "<externalIdFieldName>#{job.external_id_field_name}</externalIdFieldName>" if job.external_id_field_name
-      xml += "<concurrencyMode>#{job.concurrency_mode}</concurrencyMode>" if job.operation == :query
+      xml += "<concurrencyMode>#{job.concurrency_mode}</concurrencyMode>" if job.concurrency_mode
       xml += "<contentType>CSV</contentType>"
       xml += "</jobInfo>"
       
