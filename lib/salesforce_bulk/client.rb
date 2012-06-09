@@ -73,7 +73,7 @@ module SalesforceBulk
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
       #puts "","",response
       
-      job = Job.new(self)
+      job = Job.new
       job.id = data['id']
       job.state = data['state']
       job
@@ -113,7 +113,7 @@ module SalesforceBulk
     end
     
     def add_job(options={})
-      job = Job.new(self, options)
+      job = Job.new(options)
       
       xml = '<?xml version="1.0" encoding="utf-8"?>'
       xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
@@ -220,7 +220,7 @@ module SalesforceBulk
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
       #puts "","",response
       
-      job = Job.new(self)
+      job = Job.new
       job.id = data['id']
       job.state = data['state']
       job
@@ -231,7 +231,7 @@ module SalesforceBulk
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
       #puts "","",response
       
-      job = Job.new(self)
+      job = Job.new
       job.id = data['id']
       job.state = data['state']
       job
