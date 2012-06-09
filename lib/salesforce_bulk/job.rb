@@ -8,8 +8,7 @@ module SalesforceBulk
     attr_reader :sobject
     attr_accessor :state
     
-    def initialize(client, options={})
-      @client = client
+    def initialize(options={})
       @operation = options[:operation]
       
       if !@operation.nil?
