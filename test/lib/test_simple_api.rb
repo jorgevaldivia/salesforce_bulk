@@ -13,9 +13,9 @@ class TestSimpleApi < Test::Unit::TestCase
   end
   
   test "upsert" do
-    @client.expects(:add_job).once.returns(SalesforceBulk::Job.new
+    @client.expects(:add_job).once.returns(SalesforceBulk::Job.new)
     @client.expects(:add_batch).once.returns(SalesforceBulk::Batch.new)
-    @client.expects(:close_job).once.returns(SalesforceBulk::Job.new
+    @client.expects(:close_job).once.returns(SalesforceBulk::Job.new)
     @client.expects(:batch_info).at_least_once.returns(SalesforceBulk::Batch.new)
     @client.expects(:batch_result_list).once
     
