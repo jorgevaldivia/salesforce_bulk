@@ -2,13 +2,10 @@ require 'test_helper'
 
 class TestInitialization < Test::Unit::TestCase
   
-  test "return initialized client object" do
-    assert_not_nil SalesforceBulk::Client.new
-  end
-  
   test "default option values set if none provided" do
     client = SalesforceBulk::Client.new
     
+    assert_not_nil SalesforceBulk::Client.new
     assert_equal client.host, 'login.salesforce.com'
     assert_equal client.version, '24.0'
     assert_equal client.debugging, false
