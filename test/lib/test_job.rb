@@ -20,7 +20,9 @@ class TestJob < Test::Unit::TestCase
     assert_equal job.operation, :upsert
     assert_equal job.sobject, :VideoEvent__c
     assert_equal job.external_id_field_name, :Id__c
-    assert_equal job.concurrency_mode, nil
+    assert_nil job.concurrency_mode
+  end
+  
   end
   
   test "should create job and return successful response" do
