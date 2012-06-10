@@ -12,14 +12,17 @@ class TestInitialization < Test::Unit::TestCase
     @client = SalesforceBulk::Client.new(options)
   end
   
-  test "default option values set if none provided" do
+  test "initialization with default values" do
     assert_not_nil @client
+    assert_equal @client.username, 'username'
+    assert_equal @client.password, 'passwordtoken'
+    assert_equal @client.token, 'token'
     assert_equal @client.host, 'login.salesforce.com'
     assert_equal @client.version, '24.0'
     assert_equal @client.debugging, false
   end
   
-  test "overriding option defaults and providing login info" do
+  test "initialization overriding all default values" do
     options = {
       :username => 'MyUsername',
       :password => 'MyPassword',
