@@ -18,7 +18,7 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal @client.password, 'passwordtoken'
     assert_equal @client.token, 'token'
     assert_equal @client.host, 'login.salesforce.com'
-    assert_equal @client.version, '24.0'
+    assert_equal @client.version, 24.0
     assert_equal @client.debugging, false
   end
   
@@ -29,7 +29,7 @@ class TestInitialization < Test::Unit::TestCase
       :token => 'MySecurityToken',
       :debugging => true,
       :host => 'newhost.salesforce.com',
-      :version => '1.0'
+      :version => 1.0
     }
     
     client = SalesforceBulk::Client.new(options)
@@ -40,6 +40,17 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.debugging, options[:debugging]
     assert_equal client.host, options[:host]
     assert_equal client.version, options[:version]
+  end
+  
+  test "initialization with a YAML file" do
+    client = SalesforceBulk::Client.new(fixture_path('config.yml'))
+    
+    assert_equal client.username, 'MyUsername'
+    assert_equal client.password, 'MyPasswordMySecurityToken'
+    assert_equal client.token, 'MySecurityToken'
+    assert_equal client.debugging, true
+    assert_equal client.host, 'myhost.mydomain.com'
+    assert_equal client.version, 88.0
   end
   
   test "authentication" do
