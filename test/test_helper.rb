@@ -21,12 +21,12 @@ class Test::Unit::TestCase
     client.instance_variable_set('@instance_host', 'na9.salesforce.com')
   end
   
-  def fixture_path
-    File.expand_path("../fixtures", __FILE__)
+  def fixture_path(file)
+    File.expand_path("../fixtures/#{file}", __FILE__)
   end
   
   def fixture(file)
-    File.new(fixture_path + '/' + file).read
+    File.new(fixture_path(file)).read
   end
   
 end
