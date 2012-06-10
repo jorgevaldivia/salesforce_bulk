@@ -12,19 +12,4 @@ class TestCoreExtensions < Test::Unit::TestCase
     assert_equal "Any true value".to_b, "Any true value"
   end
   
-  # Taken from ActiveSupport: /activesupport/test/core_ext/blank_test.rb
-  
-  BLANK = [ nil, false, '', '   ', "  \n\t  \r ", [], {} ]
-  NOT   = [ Object.new, true, 0, 1, 'a', [nil], { nil => 0 } ]
-  
-  test "blank?" do
-    BLANK.each { |v| assert v.blank?,  "#{v.inspect} should be blank" }
-    NOT.each   { |v| assert !v.blank?, "#{v.inspect} should not be blank" }
-  end
-  
-  test "present?" do
-    BLANK.each { |v| assert !v.present?, "#{v.inspect} should not be present" }
-    NOT.each   { |v| assert v.present?,  "#{v.inspect} should be present" }
-  end
-  
 end
