@@ -28,6 +28,8 @@ module SalesforceBulk
         options.symbolize_keys!
       end
       
+      # TODO: add assert_valid_keys check
+      
       self.username = options[:username]
       self.password = "#{options[:password]}#{options[:token]}"
       self.token = options[:token]
