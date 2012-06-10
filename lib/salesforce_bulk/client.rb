@@ -25,6 +25,9 @@ module SalesforceBulk
     def initialize(options={})
       if options.is_a?(String)
         options = YAML.load_file(options)
+        # FIXME: ActiveSupport gem provides a symbolize_keys method. We 
+        # use other ActiveSupport methods that we copied over.. perhaps 
+        # just best to include the gem now. Its clear we need it.
         options = options.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
       end
       
