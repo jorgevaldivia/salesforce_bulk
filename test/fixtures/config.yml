@@ -1,0 +1,7 @@
+---
+username: MyUsername
+password: MyPassword
+token: MySecurityToken
+debugging: true
+host: myhost.mydomain.com
+version: 88.0
