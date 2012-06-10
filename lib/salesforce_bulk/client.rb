@@ -23,11 +23,16 @@ module SalesforceBulk
     attr_accessor :version
     
     def initialize(options={})
+      if options.is_a?(String)
+        options = YAML.load_file(options)
+        options = options.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+      end
+      
       self.username = options[:username]
       self.password = "#{options[:password]}#{options[:token]}"
       self.token = options[:token]
       
-      options = {:debugging => false, :host => 'login.salesforce.com', :version => '24.0'}.merge(options)
+      options = {:debugging => false, :host => 'login.salesforce.com', :version => 24.0}.merge(options)
       
       self.debugging = options[:debugging]
       self.host = options[:host]
