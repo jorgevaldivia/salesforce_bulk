@@ -119,15 +119,13 @@ module SalesforceBulk
       batch
     end
     
-    def add_job(options={})
-      job = Job.new(options)
-      
+    def add_job(operation, sobject, options={})
       xml = '<?xml version="1.0" encoding="utf-8"?>'
       xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
-      xml += "<operation>#{job.operation}</operation>"
-      xml += "<object>#{job.sobject}</object>"
-      xml += "<externalIdFieldName>#{job.external_id_field_name}</externalIdFieldName>" if job.external_id_field_name
-      xml += "<concurrencyMode>#{job.concurrency_mode}</concurrencyMode>" if job.concurrency_mode
+      xml += "<operation>#{operation}</operation>"
+      xml += "<object>#{sobject}</object>"
+      xml += "<externalIdFieldName>#{options[:external_id_field_name]}</externalIdFieldName>" if options[:external_id_field_name]
+      xml += "<concurrencyMode>#{options[:concurrency_mode]}</concurrencyMode>" if options[:concurrency_mode]
       xml += "<contentType>CSV</contentType>"
       xml += "</jobInfo>"
       
@@ -136,6 +134,7 @@ module SalesforceBulk
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
       #puts "", response
       
+      job = Job.new
       job.id = data['id']
       job.state = data['state']
       job
