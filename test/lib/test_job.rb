@@ -14,19 +14,19 @@ class TestJob < Test::Unit::TestCase
   end
   
   test "should return initialized job object" do
-    job = SalesforceBulk::Job.new(:operation => :upsert, :sobject => :VideoEvent__c, :external_id_field_name => :Id__c)
+    attrs = {
+      'operation' => 'upsert',
+      'sobject' => 'VideoEvent__c',
+      'external_id_field_name' => 'Id__c',
+      'concurrency_mode' => 'Parallel'
+    }
+    job = SalesforceBulk::Job.new(attrs)
     
     assert_not_nil job
-    assert_equal job.operation, :upsert
-    assert_equal job.sobject, :VideoEvent__c
-    assert_equal job.external_id_field_name, :Id__c
-    assert_nil job.concurrency_mode
-  end
-  
-  test "any operation other than upsert should not set external id field name" do
-    job = SalesforceBulk::Job.new(:operation => :query, :external_id_field_name => :Id__c)
-    
-    assert_nil job.external_id_field_name
+    assert_equal job.operation, attrs['operation']
+    assert_equal job.sobject, attrs['sobject']
+    assert_equal job.external_id_field_name, attrs['external_id_field_name']
+    assert_equal job.concurrency_mode, attrs['concurrency_mode']
   end
   
   test "should create job and return successful response" do
