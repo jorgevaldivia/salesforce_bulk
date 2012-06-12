@@ -1,7 +1,6 @@
 module SalesforceBulk
   class Batch
     
-    attr_accessor :data
     attr_accessor :id
     attr_accessor :job_id
     attr_accessor :state
