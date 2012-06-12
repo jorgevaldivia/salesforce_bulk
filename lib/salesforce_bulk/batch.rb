@@ -33,7 +33,7 @@ module SalesforceBulk
     end
     
     def state?(value)
-      !self.state.nil? && self.state.casecmp(value) == 0
+      self.state.present? && self.state.casecmp(value) == 0
     end
   end
 end
