@@ -38,7 +38,7 @@ class TestJob < Test::Unit::TestCase
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.add_job(:operation => :upsert, :sobject => :VideoEvent__c, :external_id_field_name => :Id__c)
+    job = @client.add_job(:upsert, :VideoEvent__c, :external_id_field_name => :Id__c)
     
     assert_requested :post, "#{api_url(@client)}job", :body => request, :headers => @headers, :times => 1
     
@@ -108,7 +108,7 @@ class TestJob < Test::Unit::TestCase
     
     # used VideoEvent__c for testing, no Video__c object exists so error should be raised
     assert_raise SalesforceBulk::SalesforceError do
-      job = @client.add_job(:operation => :upsert, :sobject => :Video__c, :external_id_field_name => :Id__c)
+      job = @client.add_job(:upsert, :Video__c, :external_id_field_name => :Id__c)
     end
   end
   
