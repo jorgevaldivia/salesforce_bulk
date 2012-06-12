@@ -30,19 +30,12 @@ module SalesforceBulk
 #  <apiActiveProcessingTime>0</apiActiveProcessingTime>
 #  <apexProcessingTime>0</apexProcessingTime>
     
-    def initialize(options={})
-      @operation = options[:operation]
-      
-      if !@operation.nil?
-        if @operation == :upsert
-          @external_id_field_name = options[:external_id_field_name]
-        end
-        
-        @concurrency_mode = options[:concurrency_mode]
-        @sobject = options[:sobject]
-      else
-        @id = options[:id]
-      end
+    def initialize(attrs={})
+      @operation = attrs['operation']
+      @external_id_field_name = attrs['external_id_field_name']
+      @concurrency_mode = attrs['concurrency_mode']
+      @sobject = attrs['sobject']
+      @id = attrs['id']
     end
     
   end
