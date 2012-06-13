@@ -176,8 +176,6 @@ module SalesforceBulk
         result = XmlSimple.xml_in(response.body)
         
         if result['result'].present?
-          col = QueryResultCollection.new(self, jobId, batchId, 0, result['result'].first, result['result'])
-          
           result = query_result(jobId, batchId, result['result'].first, result['result'])
         end
       else
