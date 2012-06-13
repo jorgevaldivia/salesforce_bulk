@@ -75,10 +75,8 @@ module SalesforceBulk
       xml += "<state>Aborted</state>"
       xml += "</jobInfo>"
       
-      #puts "","",xml
       response = http_post("job/#{jobId}", xml)
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
-      #puts "","",response
       
       job = Job.new
       job.id = data['id']
@@ -142,9 +140,7 @@ module SalesforceBulk
     
     def batch_info_list(jobId)
       response = http_get("job/#{jobId}/batch")
-      #puts "","",response,"",""
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
-      #puts "","",result,"",""
       
       result['batchInfo'].collect do |info|
         batch = Batch.new
@@ -219,10 +215,8 @@ module SalesforceBulk
       xml += "<state>Closed</state>"
       xml += "</jobInfo>"
       
-      #puts "","",xml
       response = http_post("job/#{jobId}", xml)
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
-      #puts "","",response
       
       job = Job.new
       job.id = data['id']
@@ -233,7 +227,6 @@ module SalesforceBulk
     def job_info(jobId)
       response = http_get("job/#{jobId}")
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
-      #puts "","",response
       
       job = Job.new
       job.id = data['id']
