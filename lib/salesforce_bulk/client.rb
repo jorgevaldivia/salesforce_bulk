@@ -152,8 +152,7 @@ module SalesforceBulk
     end
     
     def batch_info(jobId, batchId)
-      headers = {"Content-Type" => "text/csv; charset=UTF-8"}
-      response = http_get("job/#{jobId}/batch/#{batchId}", headers)
+      response = http_get("job/#{jobId}/batch/#{batchId}")
       #puts "","",response,"",""
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       #puts "","",result,"",""
