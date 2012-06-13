@@ -11,6 +11,8 @@ class TestJob < Test::Unit::TestCase
     
     @client = SalesforceBulk::Client.new(options)
     @headers = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
+    
+    bypass_authentication(@client)
   end
   
   test "should return initialized job object" do
@@ -33,7 +35,6 @@ class TestJob < Test::Unit::TestCase
     request = fixture("job_create_request.xml")
     response = fixture("job_create_response.xml")
     
-    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -51,7 +52,6 @@ class TestJob < Test::Unit::TestCase
     response = fixture("job_close_response.xml")
     jobId = "750E00000004MzbIAE"
     
-    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job/#{jobId}")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -69,7 +69,6 @@ class TestJob < Test::Unit::TestCase
     response = fixture("job_abort_response.xml")
     jobId = "750E00000004N1NIAU"
     
-    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job/#{jobId}")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -86,7 +85,6 @@ class TestJob < Test::Unit::TestCase
     response = fixture("job_info_response.xml")
     jobId = "750E00000004N1mIAE"
     
-    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{jobId}")
       .with(:body => '', :headers => @headers)
       .to_return(:body => response, :status => 200)
@@ -102,7 +100,6 @@ class TestJob < Test::Unit::TestCase
   test "should raise SalesforceError on invalid job" do
     response = fixture("invalid_job_error.xml")
     
-    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job")
       .to_return(:body => response, :status => 500)
     
