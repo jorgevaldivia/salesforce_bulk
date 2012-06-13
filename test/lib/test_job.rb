@@ -100,12 +100,10 @@ class TestJob < Test::Unit::TestCase
   test "should raise SalesforceError on invalid job" do
     response = fixture("invalid_job_error.xml")
     
-    stub_request(:post, "#{api_url(@client)}job")
-      .to_return(:body => response, :status => 500)
+    stub_request(:post, "#{api_url(@client)}job").to_return(:body => response, :status => 500)
     
-    # used VideoEvent__c for testing, no Video__c object exists so error should be raised
     assert_raise SalesforceBulk::SalesforceError do
-      job = @client.add_job(:upsert, :Video__c, :external_id_field_name => :Id__c)
+      job = @client.add_job(:upsert, :SomeNonExistingObject__c, :external_id_field_name => :Id__c)
     end
   end
   
