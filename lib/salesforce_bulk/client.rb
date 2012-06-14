@@ -139,11 +139,7 @@ module SalesforceBulk
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       
       result['batchInfo'].collect do |info|
-        batch = Batch.new
-        batch.id = info['id']
-        batch.job_id = info['jobId']
-        batch.state = info['state']
-        batch
+        Batch.new_from_xml(info)
       end
     end
     
