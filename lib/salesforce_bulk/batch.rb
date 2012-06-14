@@ -1,19 +1,31 @@
 module SalesforceBulk
   class Batch
     
-    attr_accessor :created_at
+    attr_accessor :apex_processing_time
+    attr_accessor :api_active_processing_time
+    attr_accessor :ended_at    
+    attr_accessor :failed_records
     attr_accessor :id
     attr_accessor :job_id
     attr_accessor :processed_records
+    attr_accessor :started_at
     attr_accessor :state
-    attr_accessor :updated_at
+    attr_accessor :total_processing_time
     
-# <id>751D0000000004rIAA</id>
-# <jobId>750D0000000002lIAA</jobId>
-# <state>InProgress</state>
-# <createdDate>2009-04-14T18:15:59.000Z</createdDate>
-# <systemModstamp>2009-04-14T18:15:59.000Z</systemModstamp>
-# <numberRecordsProcessed>0</numberRecordsProcessed>
+    def self.new_from_xml(data)
+      batch = self.new
+      batch.id = data['id']
+      batch.job_id = data['jobId']
+      batch.state = data['state']
+      batch.started_at = data['createdDate']
+      batch.ended_at = data['systemModstamp']
+      batch.processed_records = data['numberRecordsProcessed'].to_i
+      batch.failed_records = data['numberRecordsFailed'].to_i
+      batch.total_processing_time = data['totalProcessingTime'].to_i
+      batch.api_active_processing_time = data['apiActiveProcessingTime'].to_i
+      batch.apex_processing_time = data['apex_processing_time'].to_i
+      batch
+    end
     
     def initialize
       
