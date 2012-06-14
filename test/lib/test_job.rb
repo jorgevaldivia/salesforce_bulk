@@ -15,7 +15,7 @@ class TestJob < Test::Unit::TestCase
     bypass_authentication(@client)
   end
   
-  test "should return initialized job object" do
+  test "initialization" do
     attrs = {
       'operation' => 'upsert',
       'sobject' => 'VideoEvent__c',
