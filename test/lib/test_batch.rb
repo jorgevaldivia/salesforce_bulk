@@ -10,6 +10,7 @@ class TestBatch < Test::Unit::TestCase
     }
     
     @client = SalesforceBulk::Client.new(options)
+    bypass_authentication(@client)
     @batch = SalesforceBulk::Batch.new
     @headers = {"Content-Type" => "text/csv; charset=UTF-8", 'X-Sfdc-Session' => '123456789'}
     @headersWithXml = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
@@ -86,7 +87,6 @@ class TestBatch < Test::Unit::TestCase
     response = fixture("batch_info_list_response.xml")
     job_id = "750E00000004N97IAE"
     
-    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch").with(:headers => @headersWithXml).to_return(:body => response, :status => 200)
     
     batches = @client.batch_info_list(job_id)
@@ -108,7 +108,6 @@ class TestBatch < Test::Unit::TestCase
     job_id = "750E00000004N97IAE"
     batch_id = "751E00000004ZRbIAM"
     
-    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}")
       .with(:headers => @headersWithXml)
       .to_return(:body => response, :status => 200)
@@ -130,7 +129,6 @@ class TestBatch < Test::Unit::TestCase
     # results in CSV format despite requesting with XML content type.
     # Thus the content type header is ignored.
     
-    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").to_return(:body => response, :status => 200)
     
     results = @client.batch_result_list(job_id, batch_id)
@@ -155,7 +153,6 @@ class TestBatch < Test::Unit::TestCase
     batch_id = "751E00000004aEY"
     result_id = "752E0000000TNaq"
     
-    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result")
       .with(:headers => @headersWithXml)
       .to_return(:body => response, :status => 200)
@@ -176,7 +173,6 @@ class TestBatch < Test::Unit::TestCase
     batch_id = "751E00000004aEY"
     result_id = "752E0000000TNaq"
     
-    bypass_authentication(@client)
     stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}")
       .with(:headers => @headers)
       .to_return(:body => response, :status => 200)
