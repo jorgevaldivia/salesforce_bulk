@@ -176,14 +176,8 @@ module SalesforceBulk
       else
         result = BatchResultCollection.new(jobId, batchId)
         
-        CSV.parse(response.body.lines.to_a[1..-1].join) do |row|
-          br = BatchResult.new
-          br.id = row[0]
-          br.success = row[1].to_b
-          br.created = row[2].to_b
-          br.error = row[3]
-          
-          result << br
+        CSV.parse(response.body, :headers => true) do |row|
+          result << BatchResult.new(row[0], row[1].to_b, row[2].to_b, row[3])
         end
       end
       
