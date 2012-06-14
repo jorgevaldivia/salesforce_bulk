@@ -16,6 +16,22 @@ class TestBatch < Test::Unit::TestCase
     @headersWithXml = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
   end
   
+  test "initialize from XML" do
+    xml = fixture("batch_info_response.xml")
+    batch = SalesforceBulk::Batch.new_from_xml(XmlSimple.xml_in(xml, 'ForceArray' => false))
+    
+    assert_equal batch.id, '751E00000004ZRbIAM'
+    assert_equal batch.job_id, '750E00000004N97IAE'
+    assert_equal batch.state, 'Completed'
+    assert_equal batch.started_at, '2012-05-31T01:22:47.000Z'
+    assert_equal batch.ended_at, '2012-05-31T01:22:47.000Z'
+    assert_equal batch.processed_records, 2
+    assert_equal batch.failed_records, 0
+    assert_equal batch.total_processing_time, 72
+    assert_equal batch.api_active_processing_time, 28
+    assert_equal batch.apex_processing_time, 0
+  end
+  
   test "state?" do
     @batch.state = "Completed"
     assert @batch.state?('Completed')
