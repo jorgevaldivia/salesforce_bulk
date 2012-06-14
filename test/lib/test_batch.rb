@@ -23,8 +23,8 @@ class TestBatch < Test::Unit::TestCase
     assert_equal batch.id, '751E00000004ZRbIAM'
     assert_equal batch.job_id, '750E00000004N97IAE'
     assert_equal batch.state, 'Completed'
-    assert_equal batch.started_at, '2012-05-31T01:22:47.000Z'
-    assert_equal batch.ended_at, '2012-05-31T01:22:47.000Z'
+    assert_equal batch.started_at, DateTime.parse('2012-05-31T01:22:47.000Z')
+    assert_equal batch.ended_at, DateTime.parse('2012-05-31T01:22:47.000Z')
     assert_equal batch.processed_records, 2
     assert_equal batch.failed_records, 0
     assert_equal batch.total_processing_time, 72
