@@ -31,6 +31,13 @@ class TestJob < Test::Unit::TestCase
     assert_equal job.concurrency_mode, attrs['concurrency_mode']
   end
   
+  test "initialization from XML" do
+    xml = fixture("job_info_response.xml")
+    job = SalesforceBulk::Job.new_from_xml(XmlSimple.xml_in(xml, 'ForceArray' => false))
+    
+    assert_equal job.id, '750E00000004N1mIAE'
+  end
+  
   test "should create job and return successful response" do
     request = fixture("job_create_request.xml")
     response = fixture("job_create_response.xml")
