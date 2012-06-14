@@ -17,8 +17,8 @@ module SalesforceBulk
       batch.id = data['id']
       batch.job_id = data['jobId']
       batch.state = data['state']
-      batch.started_at = data['createdDate']
-      batch.ended_at = data['systemModstamp']
+      batch.started_at = DateTime.parse(data['createdDate'])
+      batch.ended_at = DateTime.parse(data['systemModstamp'])
       batch.processed_records = data['numberRecordsProcessed'].to_i
       batch.failed_records = data['numberRecordsFailed'].to_i
       batch.total_processing_time = data['totalProcessingTime'].to_i
