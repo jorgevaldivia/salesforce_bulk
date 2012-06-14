@@ -267,7 +267,7 @@ module SalesforceBulk
     end
     
     def instance_id(url)
-      url.presence.match(/:\/\/([a-zA-Z0-9-]{2,}).salesforce/)[1]
+      url.match(/:\/\/([a-zA-Z0-9-]{2,}).salesforce/)[1]
     end
     
     def upsert(sobject, external_id, data, concurrency_mode=nil)
