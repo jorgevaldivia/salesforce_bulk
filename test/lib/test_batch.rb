@@ -118,12 +118,31 @@ class TestBatch < Test::Unit::TestCase
     
     assert_kind_of Array, batches
     assert_kind_of SalesforceBulk::Batch, batches.first
-    
     assert_equal batches.length, 2
-    assert_equal batches.first.job_id, job_id
-    assert_equal batches.first.id, "751E00000004ZRbIAM"
-    assert_equal batches[1].job_id, job_id
-    assert_equal batches[1].id, "751E00000004ZQsIAM"
+    
+    batch = batches.first
+    assert_equal batch.id, "751E00000004ZRbIAM"
+    assert_equal batch.job_id, job_id
+    assert_equal batch.state, 'Completed'
+    assert_equal batch.started_at, DateTime.parse('2012-05-31T01:22:47.000Z')
+    assert_equal batch.ended_at, DateTime.parse('2012-05-31T01:22:47.000Z')
+    assert_equal batch.processed_records, 2
+    assert_equal batch.failed_records, 0
+    assert_equal batch.total_processing_time, 72
+    assert_equal batch.api_active_processing_time, 28
+    assert_equal batch.apex_processing_time, 0
+    
+    batch = batches.last
+    assert_equal batch.id, "751E00000004ZQsIAM"
+    assert_equal batch.job_id, job_id
+    assert_equal batch.state, 'Completed'
+    assert_equal batch.started_at, DateTime.parse('2012-05-31T01:23:20.000Z')
+    assert_equal batch.ended_at, DateTime.parse('2012-05-31T01:23:20.000Z')
+    assert_equal batch.processed_records, 2
+    assert_equal batch.failed_records, 0
+    assert_equal batch.total_processing_time, 72
+    assert_equal batch.api_active_processing_time, 28
+    assert_equal batch.apex_processing_time, 0
   end
   
   test "should retrieve batch info" do
