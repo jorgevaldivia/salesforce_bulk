@@ -97,6 +97,13 @@ class TestBatch < Test::Unit::TestCase
     assert_equal batch.id, batch_id
     assert_equal batch.job_id, job_id
     assert_equal batch.state, 'Queued'
+    assert_equal batch.started_at, DateTime.parse('2012-06-02T21:03:56.000Z')
+    assert_equal batch.ended_at, DateTime.parse('2012-06-02T21:03:56.000Z')
+    assert_equal batch.processed_records, 0
+    assert_equal batch.failed_records, 0
+    assert_equal batch.total_processing_time, 0
+    assert_equal batch.api_active_processing_time, 0
+    assert_equal batch.apex_processing_time, 0
   end
   
   test "should retrieve info for all batches in a job in a single request" do
