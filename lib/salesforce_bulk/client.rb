@@ -110,11 +110,7 @@ module SalesforceBulk
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       #puts "","",result,"",""
       
-      batch = Batch.new
-      batch.id = result['id']
-      batch.job_id = result['jobId']
-      batch.state = result['state']
-      batch
+      Batch.new_from_xml(result)
     end
     
     def add_job(operation, sobject, options={})
