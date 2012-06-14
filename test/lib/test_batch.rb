@@ -139,8 +139,16 @@ class TestBatch < Test::Unit::TestCase
     
     assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}", :headers => @headersWithXml, :times => 1
     
+    assert_equal batch.id, batch_id
     assert_equal batch.job_id, job_id
     assert_equal batch.state, 'Completed'
+    assert_equal batch.started_at, DateTime.parse('2012-05-31T01:22:47.000Z')
+    assert_equal batch.ended_at, DateTime.parse('2012-05-31T01:22:47.000Z')
+    assert_equal batch.processed_records, 2
+    assert_equal batch.failed_records, 0
+    assert_equal batch.total_processing_time, 72
+    assert_equal batch.api_active_processing_time, 28
+    assert_equal batch.apex_processing_time, 0
   end
   
   test "should return batch result for a non-querying job" do
