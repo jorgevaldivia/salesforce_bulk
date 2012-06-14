@@ -1,9 +1,12 @@
 module SalesforceBulk
   class Batch
     
+    attr_accessor :created_at
     attr_accessor :id
     attr_accessor :job_id
+    attr_accessor :processed_records
     attr_accessor :state
+    attr_accessor :updated_at
     
 # <id>751D0000000004rIAA</id>
 # <jobId>750D0000000002lIAA</jobId>
