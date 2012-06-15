@@ -256,6 +256,22 @@ module SalesforceBulk
       url.match(/:\/\/([a-zA-Z0-9-]{2,}).salesforce/)[1]
     end
     
+    def insert(sobject, data)
+      job = add_job(:insert, sobject)
+      batch = add_batch(job.id, data)
+      job = close_job(job.id)
+      
+      while true
+        batch = batch_info(job.id, batch.id)
+        
+        break if !batch.queued? && !batch.in_progress?
+        
+        sleep 2
+      end
+      
+      batch_result_list(job.id, batch.id)
+    end
+    
     def delete(sobject, data)
       job = add_job(:delete, sobject)
       batch = add_batch(job.id, data)
