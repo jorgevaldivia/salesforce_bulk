@@ -29,7 +29,7 @@ class TestSimpleApi < Test::Unit::TestCase
   end
   
   test "insert" do
-    data = [{:Id => '123123', :Title__c => 'Test Title'}, {:Id => '234234', :Title__c => 'Test Title'}]
+    data = [{:Title__c => 'Test Title'}, {:Title__c => 'Test Title'}]
     
     @client.expects(:add_job).once.with(:insert, :VideoEvent__c).returns(@job)
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
