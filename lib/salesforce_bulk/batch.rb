@@ -3,12 +3,12 @@ module SalesforceBulk
     
     attr_accessor :apex_processing_time
     attr_accessor :api_active_processing_time
-    attr_accessor :ended_at    
+    attr_accessor :completed_at
+    attr_accessor :created_at
     attr_accessor :failed_records
     attr_accessor :id
     attr_accessor :job_id
     attr_accessor :processed_records
-    attr_accessor :started_at
     attr_accessor :state
     attr_accessor :total_processing_time
     
@@ -17,8 +17,8 @@ module SalesforceBulk
       batch.id = data['id']
       batch.job_id = data['jobId']
       batch.state = data['state']
-      batch.started_at = DateTime.parse(data['createdDate'])
-      batch.ended_at = DateTime.parse(data['systemModstamp'])
+      batch.created_at = DateTime.parse(data['createdDate'])
+      batch.completed_at = DateTime.parse(data['systemModstamp'])
       batch.processed_records = data['numberRecordsProcessed'].to_i
       batch.failed_records = data['numberRecordsFailed'].to_i
       batch.total_processing_time = data['totalProcessingTime'].to_i
