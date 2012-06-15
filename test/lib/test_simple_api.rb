@@ -28,6 +28,18 @@ class TestSimpleApi < Test::Unit::TestCase
     @client.delete(:VideoEvent__c, data)
   end
   
+  test "insert" do
+    data = [{:Id => '123123', :Title__c => 'Test Title'}, {:Id => '234234', :Title__c => 'Test Title'}]
+    
+    @client.expects(:add_job).once.with(:insert, :VideoEvent__c).returns(@job)
+    @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
+    @client.expects(:close_job).once.with(@job.id).returns(@job)
+    @client.expects(:batch_info).at_least_once.returns(@batch)
+    @client.expects(:batch_result_list).once.with(@job.id, @batch.id)
+    
+    @client.insert(:VideoEvent__c, data)
+  end
+  
   test "upsert" do
     data = [{:Id__c => '123123', :Title__c => 'Test Title'}, {:Id__c => '234234', :Title__c => 'A Second Title'}]
     
