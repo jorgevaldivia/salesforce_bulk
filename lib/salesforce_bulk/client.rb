@@ -40,6 +40,7 @@ module SalesforceBulk
       self.version = options[:version]
       
       @api_path_prefix = "/services/async/#{self.version}/"
+      @valid_operations = [:delete, :insert, :update, :upsert, :query]
     end
     
     def authenticate
@@ -113,6 +114,10 @@ module SalesforceBulk
     end
     
     def add_job(operation, sobject, options={})
+      operation = operation.downcase
+      
+      raise ArgumentError.new("Invalid operation: #{operation}") unless @valid_operations.include?(operation)
+      
       xml = '<?xml version="1.0" encoding="utf-8"?>'
       xml += '<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">'
       xml += "<operation>#{operation}</operation>"
