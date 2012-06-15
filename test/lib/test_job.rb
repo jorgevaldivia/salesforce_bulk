@@ -59,7 +59,7 @@ class TestJob < Test::Unit::TestCase
     assert_equal job.api_version, 24.0
   end
   
-  test "should create job and return successful response" do
+  test "add_job returns successful response" do
     request = fixture("job_create_request.xml")
     response = fixture("job_create_response.xml")
     
@@ -73,6 +73,12 @@ class TestJob < Test::Unit::TestCase
     
     assert_equal job.id, '750E00000004MzbIAE'
     assert_equal job.state, 'Open'
+  end
+  
+  test "add_job raises ArgumentError if provided with invalid operation" do
+    assert_raise ArgumentError do
+      job = @client.add_job(:SomeOtherOperation, nil)
+    end
   end
   
   test "should close job and return successful response" do
