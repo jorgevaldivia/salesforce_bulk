@@ -320,8 +320,8 @@ module SalesforceBulk
       batch_result_list(job.id, batch.id)
     end
     
-    def upsert(sobject, external_id, data, concurrency_mode=nil)
-      job = add_job(:upsert, sobject, :concurrency_mode => concurrency_mode, :external_id_field_name => external_id)
+    def upsert(sobject, external_id, data)
+      job = add_job(:upsert, sobject, :external_id_field_name => external_id)
       batch = add_batch(job.id, data)
       job = close_job(job.id)
       
