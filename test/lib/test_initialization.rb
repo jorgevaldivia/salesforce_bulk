@@ -46,9 +46,9 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.version, 88.0
   end
   
-  test "initialization with invalid keys raises ArgumentError" do
+  test "initialization with invalid key raises ArgumentError" do
     assert_raise ArgumentError do
-      SalesforceBulk::Client.new(:username => 'MyUsername', :non_existing_key => '')
+      SalesforceBulk::Client.new(:non_existing_key => '')
     end
   end
   
