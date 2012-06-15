@@ -3,43 +3,36 @@ require 'test_helper'
 class TestInitialization < Test::Unit::TestCase
   
   def setup
-    options = {
-      :username => 'username',
-      :password => 'password',
-      :token => 'token'
+    @options = {
+      :username => 'MyUsername',
+      :password => 'MyPassword',
+      :token => 'MySecurityToken'
     }
     
-    @client = SalesforceBulk::Client.new(options)
+    @client = SalesforceBulk::Client.new(@options)
   end
   
   test "initialization with default values" do
     assert_not_nil @client
-    assert_equal @client.username, 'username'
-    assert_equal @client.password, 'passwordtoken'
-    assert_equal @client.token, 'token'
+    assert_equal @client.username, @options[:username]
+    assert_equal @client.password, "#{@options[:password]}#{@options[:token]}"
+    assert_equal @client.token, @options[:token]
     assert_equal @client.host, 'login.salesforce.com'
     assert_equal @client.version, 24.0
     assert_equal @client.debugging, false
   end
   
   test "initialization overriding all default values" do
-    options = {
-      :username => 'MyUsername',
-      :password => 'MyPassword',
-      :token => 'MySecurityToken',
-      :debugging => true,
-      :host => 'newhost.salesforce.com',
-      :version => 1.0
-    }
+    @options.merge!({:debugging => true, :host => 'newhost.salesforce.com', :version => 1.0})
     
-    client = SalesforceBulk::Client.new(options)
+    client = SalesforceBulk::Client.new(@options)
     
-    assert_equal client.username, options[:username]
-    assert_equal client.password, "#{options[:password]}#{options[:token]}"
-    assert_equal client.token, options[:token]
-    assert_equal client.debugging, options[:debugging]
-    assert_equal client.host, options[:host]
-    assert_equal client.version, options[:version]
+    assert_equal client.username, @options[:username]
+    assert_equal client.password, "#{@options[:password]}#{@options[:token]}"
+    assert_equal client.token, @options[:token]
+    assert_equal client.debugging, @options[:debugging]
+    assert_equal client.host, @options[:host]
+    assert_equal client.version, @options[:version]
   end
   
   test "initialization with a YAML file" do
