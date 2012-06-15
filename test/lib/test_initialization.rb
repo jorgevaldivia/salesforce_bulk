@@ -46,6 +46,12 @@ class TestInitialization < Test::Unit::TestCase
     assert_equal client.version, 88.0
   end
   
+  test "initialization with invalid keys raises ArgumentError" do
+    assert_raise ArgumentError do
+      SalesforceBulk::Client.new(:username => 'MyUsername', :non_existing_key => '')
+    end
+  end
+  
   test "authentication" do
     headers = {'Content-Type' => 'text/xml', 'SOAPAction' => 'login'}
     request = fixture("login_request.xml")
