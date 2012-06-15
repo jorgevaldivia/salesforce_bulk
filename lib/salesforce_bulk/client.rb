@@ -261,72 +261,28 @@ module SalesforceBulk
       url.match(/:\/\/([a-zA-Z0-9-]{2,}).salesforce/)[1]
     end
     
-    def insert(sobject, data)
-      job = add_job(:insert, sobject)
-      batch = add_batch(job.id, data)
-      job = close_job(job.id)
-      
-      while true
-        batch = batch_info(job.id, batch.id)
-        
-        break if !batch.queued? && !batch.in_progress?
-        
-        sleep 2
-      end
-      
-      batch_result_list(job.id, batch.id)
-    end
-    
     def delete(sobject, data)
-      job = add_job(:delete, sobject)
-      batch = add_batch(job.id, data)
-      job = close_job(job.id)
-      
-      while true
-        batch = batch_info(job.id, batch.id)
-        
-        break if !batch.queued? && !batch.in_progress?
-        
-        sleep 2
-      end
-      
-      batch_result_list(job.id, batch.id)
+      perform_operation(:delete, sobject, data)
     end
     
-    def update(sobject, data)
-      job = add_job(:update, sobject)
-      batch = add_batch(job.id, data)
-      job = close_job(job.id)
-      
-      while true
-        batch = batch_info(job.id, batch.id)
-        
-        break if !batch.queued? && !batch.in_progress?
-        
-        sleep 2
-      end
-      
-      batch_result_list(job.id, batch.id)
+    def insert(sobject, data)
+      perform_operation(:insert, sobject, data)
     end
     
     def query(sobject, data)
-      job = add_job(:query, sobject)
-      batch = add_batch(job.id, data)
-      job = close_job(job.id)
-      
-      while true
-        batch = batch_info(job.id, batch.id)
-        
-        break if !batch.queued? && !batch.in_progress?
-        
-        sleep 2
-      end
-      
-      batch_result_list(job.id, batch.id)
+      perform_operation(:query, sobject, data)
+    end
+    
+    def update(sobject, data)
+      perform_operation(:update, sobject, data)
     end
     
     def upsert(sobject, external_id, data)
-      job = add_job(:upsert, sobject, :external_id_field_name => external_id)
+      perform_operation(:upsert, sobject, data, external_id)
+    end
+    
+    def perform_operation(operation, sobject, data, external_id=nil)
+      job = add_job(operation, sobject, :external_id_field_name => external_id)
       batch = add_batch(job.id, data)
       job = close_job(job.id)
       
