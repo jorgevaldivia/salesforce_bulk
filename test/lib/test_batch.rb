@@ -187,10 +187,9 @@ class TestBatch < Test::Unit::TestCase
     
     assert_kind_of SalesforceBulk::BatchResultCollection, results
     assert_kind_of Array, results
-    
+    assert_equal results.length, 2
     assert_equal results.job_id, job_id
     assert_equal results.batch_id, batch_id
-    
     assert_equal results.first.success, true
     assert_equal results.first.created, false
     assert_equal results.first.error?, false
