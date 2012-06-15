@@ -19,7 +19,7 @@ class TestSimpleApi < Test::Unit::TestCase
   test "delete" do
     data = [{:Id => '123123'}, {:Id => '234234'}]
     
-    @client.expects(:add_job).once.with(:delete, :VideoEvent__c).returns(@job)
+    @client.expects(:add_job).once.with(:delete, :VideoEvent__c, :external_id_field_name => nil).returns(@job)
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
@@ -31,7 +31,7 @@ class TestSimpleApi < Test::Unit::TestCase
   test "insert" do
     data = [{:Title__c => 'Test Title'}, {:Title__c => 'Test Title'}]
     
-    @client.expects(:add_job).once.with(:insert, :VideoEvent__c).returns(@job)
+    @client.expects(:add_job).once.with(:insert, :VideoEvent__c, :external_id_field_name => nil).returns(@job)
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
@@ -43,7 +43,7 @@ class TestSimpleApi < Test::Unit::TestCase
   test "query" do
     data = 'SELECT Id, Name FROM Account'
     
-    @client.expects(:add_job).once.with(:query, :VideoEvent__c).returns(@job)
+    @client.expects(:add_job).once.with(:query, :VideoEvent__c, :external_id_field_name => nil).returns(@job)
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
@@ -55,7 +55,7 @@ class TestSimpleApi < Test::Unit::TestCase
   test "update" do
     data = [{:Id => '123123', :Title__c => 'Test Title'}, {:Id => '234234', :Title__c => 'A Second Title'}]
     
-    @client.expects(:add_job).once.with(:update, :VideoEvent__c).returns(@job)
+    @client.expects(:add_job).once.with(:update, :VideoEvent__c, :external_id_field_name => nil).returns(@job)
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
