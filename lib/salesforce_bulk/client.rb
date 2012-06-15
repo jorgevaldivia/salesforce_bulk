@@ -28,14 +28,13 @@ module SalesforceBulk
         options.symbolize_keys!
       end
       
-      # TODO: add assert_valid_keys check
+      options = {:debugging => false, :host => 'login.salesforce.com', :version => 24.0}.merge(options)
+      
+      options.assert_valid_keys(:username, :password, :token, :debugging, :host, :version)
       
       self.username = options[:username]
       self.password = "#{options[:password]}#{options[:token]}"
       self.token = options[:token]
-      
-      options = {:debugging => false, :host => 'login.salesforce.com', :version => 24.0}.merge(options)
-      
       self.debugging = options[:debugging]
       self.host = options[:host]
       self.version = options[:version]
