@@ -67,7 +67,7 @@ class TestSimpleApi < Test::Unit::TestCase
   test "upsert" do
     data = [{:Id__c => '123123', :Title__c => 'Test Title'}, {:Id__c => '234234', :Title__c => 'A Second Title'}]
     
-    @client.expects(:add_job).once.with(:upsert, :VideoEvent__c, :concurrency_mode => nil, :external_id_field_name => :Id__c).returns(@job)
+    @client.expects(:add_job).once.with(:upsert, :VideoEvent__c, :external_id_field_name => :Id__c).returns(@job)
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
