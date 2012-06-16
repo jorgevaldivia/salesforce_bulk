@@ -4,15 +4,13 @@ module SalesforceBulk
     attr_reader :client
     attr_reader :batch_id
     attr_reader :job_id
-    attr_reader :total_size
     attr_reader :result_id
     attr_reader :result_ids
     
-    def initialize(client, job_id, batch_id, total_size=0, result_id=nil, result_ids=[])
+    def initialize(client, job_id, batch_id, result_id=nil, result_ids=[])
       @client = client
       @job_id = job_id
       @batch_id = batch_id
-      @total_size = total_size
       @result_id = result_id
       @result_ids = result_ids
       @current_index = result_ids.index(result_id)
