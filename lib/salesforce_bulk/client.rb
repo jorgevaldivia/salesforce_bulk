@@ -183,7 +183,7 @@ module SalesforceBulk
       lines = response.body.lines.to_a
       headers = CSV.parse_line(lines.shift).collect { |header| header.to_sym }
       
-      result = QueryResultCollection.new(self, job_id, batch_id, lines.length, result_id, result_ids)
+      result = QueryResultCollection.new(self, job_id, batch_id, result_id, result_ids)
       
       #CSV.parse(lines.join, :headers => headers, :converters => [:all, lambda{|s| s.to_b if s.kind_of? String }]) do |row|
       CSV.parse(lines.join, :headers => headers) do |row|

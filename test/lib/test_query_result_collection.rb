@@ -13,9 +13,8 @@ class TestQueryResultCollection < Test::Unit::TestCase
     @job_id = "123"
     @batch_id = "234"
     @result_ids = ["12","23","34"]
-    @total_size = @result_ids.length
     @result_id = @result_ids[1]
-    @collection = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @total_size, @result_id, @result_ids)
+    @collection = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @result_id, @result_ids)
   end
   
   test "initilize using defaults" do
@@ -24,7 +23,6 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal collection.client, @client
     assert_equal collection.job_id, @job_id
     assert_equal collection.batch_id, @batch_id
-    assert_equal collection.total_size, 0
     assert_nil collection.result_id
     assert_equal collection.result_ids, []
   end
@@ -33,7 +31,6 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal @collection.client, @client
     assert_equal @collection.job_id, @job_id
     assert_equal @collection.batch_id, @batch_id
-    assert_equal @collection.total_size, @total_size
     assert_equal @collection.result_id, @result_id
     assert_equal @collection.result_ids, @result_ids
   end
