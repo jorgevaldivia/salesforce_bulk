@@ -178,7 +178,6 @@ module SalesforceBulk
     def query_result(job_id, batch_id, result_id, result_ids)
       headers = {"Content-Type" => "text/csv; charset=UTF-8"}
       response = http_get("job/#{job_id}/batch/#{batch_id}/result/#{result_id}", headers)
-      puts "",response,""
       
       lines = response.body.lines.to_a
       headers = CSV.parse_line(lines.shift).collect { |header| header.to_sym }
@@ -189,7 +188,7 @@ module SalesforceBulk
       CSV.parse(lines.join, :headers => headers) do |row|
         result << Hash[row.headers.zip(row.fields)]
       end
-      puts "",result,""
+      
       result
     end
     
