@@ -38,7 +38,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
   test "next?" do
     assert @collection.next?
     
-    @collection.instance_variable_set('@current_index', @result_ids.length)
+    @collection.instance_variable_set('@current_index', @result_ids.length - 1)
     assert !@collection.next?
     
     @collection.instance_variable_set('@result_ids', nil)
