@@ -29,8 +29,7 @@ module SalesforceBulk
     end
     
     def previous
-      # if has previous, calls method on client to fetch data and returns new collection instance
-      SalesforceBulk::QueryResultCollection.new(self.client, self.job_id, self.batch_id)
+      @client.query_result(job_id, batch_id, result_ids[@current_index - 1], result_ids) if previous?
     end
     
   end
