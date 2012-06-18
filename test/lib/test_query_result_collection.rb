@@ -69,7 +69,16 @@ class TestQueryResultCollection < Test::Unit::TestCase
   end
   
   test "previous" do
-    assert_kind_of SalesforceBulk::QueryResultCollection, @collection.previous
+    result = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @result_ids.first, @result_ids)
+    
+    @client.expects(:query_result).once.with(@job_id, @batch_id, @result_ids.first, @result_ids).returns(result)
+    
+    result = @collection.previous
+    
+    assert_kind_of SalesforceBulk::QueryResultCollection, result
+    assert result.next?
+    assert !result.previous?
+    assert_nil result.previous
   end
   
 end
