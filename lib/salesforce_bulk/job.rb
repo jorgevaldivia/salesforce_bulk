@@ -59,5 +59,20 @@ module SalesforceBulk
       @id = attrs['id']
     end
     
+    def aborted?
+      state? 'Aborted'
+    end
+    
+    def closed?
+      state? 'Closed'
+    end
+    
+    def open?
+      state? 'Open'
+    end
+    
+    def state?(value)
+      self.state.present? && self.state.casecmp(value) == 0
+    end
   end
 end
