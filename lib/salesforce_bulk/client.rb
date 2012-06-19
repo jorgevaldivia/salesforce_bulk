@@ -121,10 +121,8 @@ module SalesforceBulk
       xml += "<contentType>CSV</contentType>"
       xml += "</jobInfo>"
       
-      #puts "", xml, ""
       response = http_post("job", xml)
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
-      #puts "", response
       
       job = Job.new
       job.id = data['id']
@@ -143,9 +141,7 @@ module SalesforceBulk
     
     def batch_info(jobId, batchId)
       response = http_get("job/#{jobId}/batch/#{batchId}")
-      #puts "","",response,"",""
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
-      #puts "","",result,"",""
       Batch.new_from_xml(result)
     end
     
