@@ -128,11 +128,7 @@ module SalesforceBulk
       
       response = http_post("job", xml)
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
-      
-      job = Job.new
-      job.id = data['id']
-      job.state = data['state']
-      job
+      job = Job.new_from_xml(data)
     end
     
     def batch_info_list(jobId)
