@@ -117,6 +117,12 @@ class TestJob < Test::Unit::TestCase
     end
   end
   
+  test "add_job raises ArgumentError if provided with invalid key for options" do
+    assert_raise ArgumentError do
+      job = @client.add_job(:upsert, :VideoEvent__c, :non_existing_key => '')
+    end
+  end
+  
   test "should close job and return successful response" do
     request = fixture("job_close_request.xml")
     response = fixture("job_close_response.xml")
