@@ -194,11 +194,7 @@ module SalesforceBulk
     def job_info(jobId)
       response = http_get("job/#{jobId}")
       data = XmlSimple.xml_in(response.body, :ForceArray => false)
-      
-      job = Job.new
-      job.id = data['id']
-      job.state = data['state']
-      job
+      Job.new_from_xml(data)
     end
     
     def http_post(path, body, headers={})
