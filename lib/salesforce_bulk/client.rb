@@ -56,15 +56,14 @@ module SalesforceBulk
       xml += "</env:Body>"
       xml += "</env:Envelope>"
       
-      headers = {'Content-Type' => 'text/xml', 'SOAPAction' => 'login'}
+      response = http_post("/services/Soap/u/#{self.version}", xml, 'Content-Type' => 'text/xml', 'SOAPAction' => 'login')
       
-      response = http_post("/services/Soap/u/#{self.version}", xml, headers)
+      data = XmlSimple.xml_in(response.body, :ForceArray => false)
+      result = data['Body']['loginResponse']['result']
       
-      data = XmlSimple.xml_in(response.body)
+      @session_id = result['sessionId']
       
-      @session_id = data['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
-      
-      url = data['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
+      url = result['serverUrl']
       
       self.instance_host = "#{instance_id(url)}.salesforce.com"
     end
