@@ -10,6 +10,7 @@ class TestJob < Test::Unit::TestCase
     }
     
     @client = SalesforceBulk::Client.new(options)
+    @job = SalesforceBulk::Job.new
     @headers = {'Content-Type' => 'application/xml', 'X-Sfdc-Session' => '123456789'}
     
     bypass_authentication(@client)
@@ -57,6 +58,41 @@ class TestJob < Test::Unit::TestCase
     assert_equal job.apex_processing_time, 0
     assert_equal job.total_processing_time, 0
     assert_equal job.api_version, 24.0
+  end
+  
+  test "state?" do
+    @job.state = 'Closed'
+    assert @job.state?('closed')
+    
+    @job.state = 'Closed'
+    assert @job.state?('CLOSED')
+    
+    @job.state = nil
+    assert !@job.state?('closed')
+  end
+  
+  test "aborted?" do
+    @job.state = 'Aborted'
+    assert @job.aborted?
+    
+    @job.state = nil
+    assert !@job.aborted?
+  end
+  
+  test "closed?" do
+    @job.state = 'Closed'
+    assert @job.closed?
+    
+    @job.state = nil
+    assert !@job.closed?
+  end
+  
+  test "open?" do
+    @job.state = 'Open'
+    assert @job.open?
+    
+    @job.state = nil
+    assert !@job.open?
   end
   
   test "add_job returns successful response" do
