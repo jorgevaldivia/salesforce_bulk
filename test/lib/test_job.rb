@@ -108,7 +108,27 @@ class TestJob < Test::Unit::TestCase
     assert_requested :post, "#{api_url(@client)}job", :body => request, :headers => @headers, :times => 1
     
     assert_equal job.id, '750E00000004MzbIAE'
+    assert_equal job.operation, 'upsert' 
+    assert_equal job.sobject, 'VideoEvent__c'
+    assert_equal job.created_by, '005E00000017spfIAA'
+    assert_equal job.created_at, DateTime.parse('2012-05-29T21:50:47.000Z')
+    assert_equal job.completed_at, DateTime.parse('2012-05-29T21:50:47.000Z')
     assert_equal job.state, 'Open'
+    assert_equal job.external_id_field_name, 'Id__c'
+    assert_equal job.concurrency_mode, 'Parallel'
+    assert_equal job.content_type, 'CSV'
+    assert_equal job.queued_batches, 0
+    assert_equal job.in_progress_batches, 0
+    assert_equal job.completed_batches, 0
+    assert_equal job.failed_batches, 0
+    assert_equal job.total_batches, 0
+    assert_equal job.processed_records, 0
+    assert_equal job.failed_records, 0
+    assert_equal job.retries, 0
+    assert_equal job.api_active_processing_time, 0
+    assert_equal job.apex_processing_time, 0
+    assert_equal job.total_processing_time, 0
+    assert_equal job.api_version, 24.0
   end
   
   test "add_job raises ArgumentError if provided with invalid operation" do
