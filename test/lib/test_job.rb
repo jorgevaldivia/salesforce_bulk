@@ -163,18 +163,38 @@ class TestJob < Test::Unit::TestCase
   test "should abort job and return successful response" do
     request = fixture("job_abort_request.xml")
     response = fixture("job_abort_response.xml")
-    jobId = "750E00000004N1NIAU"
+    job_id = "750E00000004N1NIAU"
     
-    stub_request(:post, "#{api_url(@client)}job/#{jobId}")
+    stub_request(:post, "#{api_url(@client)}job/#{job_id}")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
     
-    job = @client.abort_job(jobId)
+    job = @client.abort_job(job_id)
     
-    assert_requested :post, "#{api_url(@client)}job/#{jobId}", :body => request, :headers => @headers, :times => 1
+    assert_requested :post, "#{api_url(@client)}job/#{job_id}", :body => request, :headers => @headers, :times => 1
     
-    assert_equal job.id, jobId
+    assert_equal job.id, job_id
+    assert_equal job.operation, 'upsert' 
+    assert_equal job.sobject, 'VideoEvent__c'
+    assert_equal job.created_by, '005E00000017spfIAA'
+    assert_equal job.created_at, DateTime.parse('2012-05-30T00:16:04.000Z')
+    assert_equal job.completed_at, DateTime.parse('2012-05-30T00:16:04.000Z')
     assert_equal job.state, 'Aborted'
+    assert_equal job.external_id_field_name, 'Id__c'
+    assert_equal job.concurrency_mode, 'Parallel'
+    assert_equal job.content_type, 'CSV'
+    assert_equal job.queued_batches, 0
+    assert_equal job.in_progress_batches, 0
+    assert_equal job.completed_batches, 0
+    assert_equal job.failed_batches, 0
+    assert_equal job.total_batches, 0
+    assert_equal job.processed_records, 0
+    assert_equal job.failed_records, 0
+    assert_equal job.retries, 0
+    assert_equal job.api_active_processing_time, 0
+    assert_equal job.apex_processing_time, 0
+    assert_equal job.total_processing_time, 0
+    assert_equal job.api_version, 24.0
   end
   
   test "should return job info" do
