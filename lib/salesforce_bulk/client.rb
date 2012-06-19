@@ -87,27 +87,22 @@ module SalesforceBulk
       # Despite the content for a query operation batch being plain text we 
       # still have to specify CSV content type per API docs.
       headers = {"Content-Type" => "text/csv; charset=UTF-8"}
+      body = data
       
-      if data.is_a? String # query
-        response = http_post("job/#{jobId}/batch", data, headers)
-      else # all other operations
+      if data.is_a?(Array)
         keys = data.first.keys
-        output_csv = keys.to_csv
+        body = keys.to_csv
         
         data.each do |item|
           item_values = keys.map { |key| item[key] }
-          output_csv += item_values.to_csv
+          body += item_values.to_csv
         end
-        
-        #puts "", keys.inspect,"",""
-        #puts "","",output_csv,"",""
-        
-        response = http_post("job/#{jobId}/batch", output_csv, headers)
-        #puts "","",response,"",""
+        #puts "", keys.inspect,"","",output_csv,""
       end
       
+      response = http_post("job/#{jobId}/batch", body, headers)
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
-      #puts "","",result,"",""
+      #puts "",response,"","",result,""
       
       Batch.new_from_xml(result)
     end
