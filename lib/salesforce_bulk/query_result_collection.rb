@@ -13,7 +13,7 @@ module SalesforceBulk
       @batch_id = batch_id
       @result_id = result_id
       @result_ids = result_ids
-      @current_index = result_ids.index(result_id)
+      @current_index = result_ids.index(result_id) || 0
     end
     
     def next?
