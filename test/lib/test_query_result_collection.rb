@@ -25,6 +25,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_equal collection.batch_id, @batch_id
     assert_nil collection.result_id
     assert_equal collection.result_ids, []
+    assert_equal collection.instance_variable_get('@current_index'), 0
   end
   
   test "initilize with all values" do
@@ -39,6 +40,9 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert @collection.next?
     
     @collection.instance_variable_set('@current_index', @result_ids.length - 1)
+    assert !@collection.next?
+    
+    @collection.instance_variable_set('@result_ids', [])
     assert !@collection.next?
     
     @collection.instance_variable_set('@result_ids', nil)
@@ -62,6 +66,9 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert @collection.previous?
     
     @collection.instance_variable_set('@current_index', 0)
+    assert !@collection.previous?
+    
+    @collection.instance_variable_set('@result_ids', [])
     assert !@collection.previous?
     
     @collection.instance_variable_set('@result_ids', nil)
