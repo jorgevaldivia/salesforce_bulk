@@ -46,6 +46,25 @@ Then in a Ruby script:
   client = SalesforceBulk::Client.new("config/salesforce_bulk.yml")
   client.authenticate
 
+==Usage Examples
+
+Some requirements if you are moving from an older version of the gem. You must specify every key even if it has no value for each hash in the data array for a batch.
+
+=== Basic Example
+
+  data1 = [{:Name__c => 'Test 1'}, {:Name__c => 'Test 2'}]
+  data2 = [{:Name__c => 'Test 3'}, {:Name__c => 'Test 4'}]
+  
+  job = client.add_job(:insert, :MyObject__c)
+  
+  batch = client.add_batch(job.id, data1)
+  
+  # You can add multiple batches to a job!
+  batch = client.add_batch(job.id, data2)
+  
+  job = client.close_job(job.id) # Or abort using the abort_job method
+
+
 
 
 
