@@ -2,7 +2,7 @@
 
 ==Overview
 
-Salesforce Bulk is a simple Ruby gem for connecting to and using the [Salesforce Bulk API](http://www.salesforce.com/us/developer/docs/api_asynch/index.htm). 
+Salesforce Bulk is a simple Ruby gem for connecting to and using the Salesforce Bulk API[http://www.salesforce.com/us/developer/docs/api_asynch/index.htm].
 
 ==Installation
 
@@ -10,7 +10,7 @@ Install SalesforceBulk from RubyGems:
 
   gem install salesforce_bulk
 
-Or include it in your project's `Gemfile` with Bundler:
+Or include it in your project's *Gemfile* with Bundler:
 
   gem 'salesforce_bulk'
 
@@ -34,12 +34,14 @@ Using this gem is simple and straight forward.
 
 ==== Configuring from a YAML file
 
-If you initialize by passing only the name of a YAML file when you create a `SalesforceBulk::Client` object, the new Client object will read the YAML file and take all values from there.
+If you initialize by passing only the name of a YAML file, the contents will be read and populate the Client object.
 
   ---
   username: MyUsername
   password: MyPassword
   token: MySecurityToken
+
+Then in a Ruby script:
 
   require 'salesforce_bulk'
   client = SalesforceBulk::Client.new("config/salesforce_bulk.yml")
