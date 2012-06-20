@@ -41,7 +41,7 @@ module SalesforceBulk
       
       @api_path_prefix = "/services/async/#{self.version}/"
       @valid_operations = [:delete, :insert, :update, :upsert, :query]
-      @valid_concurrency_modes = [:parallel, :serial]
+      @valid_concurrency_modes = ['Parallel', 'Serial']
     end
     
     def authenticate
@@ -111,10 +111,9 @@ module SalesforceBulk
       
       options.assert_valid_keys(:external_id_field_name, :concurrency_mode)
       
-      # TODO: Clean this up. I think can be done better.
-      if options[:concurrency_mode] && !@valid_concurrency_modes.include?(options[:concurrency_mode])
-        options[:concurrency_mode].downcase!
-        raise ArgumentError.new("Invalid concurrency mode: #{options[:concurrency_mode]}")
+      if options[:concurrency_mode]
+        concurrency_mode = options[:concurrency_mode].capitalize
+        raise ArgumentError.new("Invalid concurrency mode: #{concurrency_mode}") unless @valid_concurrency_modes.include?(concurrency_mode)
       end
       
       xml = '<?xml version="1.0" encoding="utf-8"?>'
