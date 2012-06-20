@@ -1,19 +1,53 @@
-= salesforce-bulk
+= salesforce_bulk
 
 ==Overview
 
-Salesforce bulk is a simple ruby gem for connecting to and using the Salesforce Bulk API (http://www.salesforce.com/us/developer/docs/api_asynch/index.htm). There are already some gems out there that provide connectivity to the Salesforce SOAP and Rest APIs, if your needs are simple, I recommend using those, specifically raygao's asf-rest-adapter (https://github.com/raygao/asf-rest-adapter).
- 
-==How to use
+Salesforce Bulk is a simple Ruby gem for connecting to and using the [Salesforce Bulk API](http://www.salesforce.com/us/developer/docs/api_asynch/index.htm). 
+
+==Installation
+
+Install SalesforceBulk from RubyGems:
+
+  gem install salesforce_bulk
+
+Or include it in your project's `Gemfile` with Bundler:
+
+  gem 'salesforce_bulk'
+
+==Contribute
+
+To contribute, fork this repo, create a topic branch, make changes, then send a pull request. Pull requests without accompanying tests will *not* be accepted. To run tests in your fork, just do:
+
+  bundle install
+  rake
+
+==Usage
 
 Using this gem is simple and straight forward.
 
-To initialize:
+===Initialization
+
+==== Basic Configuration
 
   require 'salesforce_bulk'
-  salesforce = SalesforceBulk::Api.new("YOUR_SALESFORCE_USERNAME", "YOUR_SALESFORCE_PASSWORD+YOUR_SALESFORCE_TOKEN")
+  client = SalesforceBulk::Client.new(username: 'MyUsername', password: 'MyPassword', token: 'MySecurityToken')
 
-Note: the second parameter is a combination of your Salesforce token and password. So if your password is xxxx and your token is yyyy, the second parameter will be xxxxyyyy
+==== Configuring from a YAML file
+
+If you initialize by passing only the name of a YAML file when you create a `SalesforceBulk::Client` object, the new Client object will read the YAML file and take all values from there.
+
+  ---
+  username: MyUsername
+  password: MyPassword
+  token: MySecurityToken
+
+  require 'salesforce_bulk'
+  client = SalesforceBulk::Client.new("config/salesforce_bulk.yml")
+
+
+
+
+
 
 Sample operations:
 
@@ -44,9 +78,6 @@ Sample operations:
 
   # Query
   res = salesforce.query("Account", "select id, name, createddate from Account limit 3") # We just need to pass the sobject name and the query string
-
-==Installation
-sudo gem install salesforce_bulk
 
 ==TODO
 This is a rough early version of the gem. Immediate plans include better error reporting as there currently is none.
