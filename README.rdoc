@@ -21,20 +21,19 @@ To contribute, fork this repo, create a topic branch, make changes, then send a 
   bundle install
   rake
 
-==Usage
+==Configuration/Initialization
 
-Using this gem is simple and straight forward.
-
-===Initialization
-
-==== Basic Configuration
+=== Basic Configuration
 
   require 'salesforce_bulk'
   client = SalesforceBulk::Client.new(username: 'MyUsername', password: 'MyPassword', token: 'MySecurityToken')
+  client.authenticate
 
-==== Configuring from a YAML file
+Optional keys include host (defaults to "login.salesforce.com"), version (defaults to 24.0) and debugging (defaults to false).
 
-If you initialize by passing only the name of a YAML file, the contents will be read and populate the Client object.
+=== Configuring from a YAML file
+
+If you initialize by passing only the name of a YAML file the contents will be to read to configure the Client object. The optional keys mentioned in the Basic Configuration section can also be used here.
 
   ---
   username: MyUsername
@@ -45,6 +44,8 @@ Then in a Ruby script:
 
   require 'salesforce_bulk'
   client = SalesforceBulk::Client.new("config/salesforce_bulk.yml")
+  client.authenticate
+
 
 
 
