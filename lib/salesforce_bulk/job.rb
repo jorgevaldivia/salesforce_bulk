@@ -51,14 +51,6 @@ module SalesforceBulk
       job
     end
     
-    def initialize(attrs={})
-      @operation = attrs['operation']
-      @external_id_field_name = attrs['external_id_field_name']
-      @concurrency_mode = attrs['concurrency_mode']
-      @sobject = attrs['sobject']
-      @id = attrs['id']
-    end
-    
     def aborted?
       state? 'Aborted'
     end

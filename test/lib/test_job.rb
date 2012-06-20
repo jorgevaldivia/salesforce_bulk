@@ -16,22 +16,6 @@ class TestJob < Test::Unit::TestCase
     bypass_authentication(@client)
   end
   
-  test "initialization" do
-    attrs = {
-      'operation' => 'upsert',
-      'sobject' => 'VideoEvent__c',
-      'external_id_field_name' => 'Id__c',
-      'concurrency_mode' => 'Parallel'
-    }
-    job = SalesforceBulk::Job.new(attrs)
-    
-    assert_not_nil job
-    assert_equal job.operation, attrs['operation']
-    assert_equal job.sobject, attrs['sobject']
-    assert_equal job.external_id_field_name, attrs['external_id_field_name']
-    assert_equal job.concurrency_mode, attrs['concurrency_mode']
-  end
-  
   test "initialization from XML" do
     xml = fixture("job_info_response.xml")
     job = SalesforceBulk::Job.new_from_xml(XmlSimple.xml_in(xml, 'ForceArray' => false))

@@ -27,10 +27,6 @@ module SalesforceBulk
       batch
     end
     
-    def initialize
-      
-    end
-    
     def in_progress?
       state? 'InProgress'
     end
