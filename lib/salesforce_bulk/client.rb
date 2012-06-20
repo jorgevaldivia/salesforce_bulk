@@ -105,7 +105,7 @@ module SalesforceBulk
     end
     
     def add_job(operation, sobject, options={})
-      operation = operation.downcase
+      operation = operation.to_sym.downcase
       
       raise ArgumentError.new("Invalid operation: #{operation}") unless @valid_operations.include?(operation)
       
