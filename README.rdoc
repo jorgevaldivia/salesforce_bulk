@@ -101,12 +101,8 @@ Sample operations:
   # Query
   res = salesforce.query("Account", "select id, name, createddate from Account limit 3") # We just need to pass the sobject name and the query string
 
-==TODO
-This is a rough early version of the gem. Immediate plans include better error reporting as there currently is none.
-
 == Copyright
 
 Copyright (c) 2011 Jorge Valdivia.
 
-===end
-
+Copyright (c) 2012 Javier Julio.
