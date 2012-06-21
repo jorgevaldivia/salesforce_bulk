@@ -43,10 +43,11 @@ If you initialize by passing only the name of a YAML file the contents will be t
 Then in a Ruby script:
 
   require 'salesforce_bulk'
+  
   client = SalesforceBulk::Client.new("config/salesforce_bulk.yml")
   client.authenticate
 
-==Usage Examples
+== Usage Examples
 
 Some requirements if you are moving from an older version of the gem. You must specify every key even if it has no value for each hash in the data array for a batch.
 
@@ -57,17 +58,50 @@ Some requirements if you are moving from an older version of the gem. You must s
   
   job = client.add_job(:insert, :MyObject__c)
   
+  # easily add multiple batches to a job
   batch = client.add_batch(job.id, data1)
-  
-  # You can add multiple batches to a job!
   batch = client.add_batch(job.id, data2)
   
-  job = client.close_job(job.id) # Or abort using the abort_job method
+  job = client.close_job(job.id) # or use the abort_job(id) method
 
+=== Adding a Job
 
+When adding a job you can specify the following operations for the first argument:
+- :delete
+- :insert
+- :update
+- :upsert
+- :query
 
+When using the :upsert operation you must specify an external ID field name:
 
+  job = client.add_job(:upsert, :MyObject__c, :external_id_field_name => :MyId__c)
 
+For any operation you should be able to specify a concurrency mode. The default is Parallel and the other choice is Serial.
+
+  job = client.add_job(:upsert, :MyObject__c, :concurrency_mode => :Serial, :external_id_field_name => :MyId__c)
+
+=== Retrieving Info for a Job
+
+  job = client.job_info(jobId) # returns a Job object
+  
+  puts "Job #{job.id} is closed." if job.closed? # other methods: open?, aborted?
+
+=== Retrieving Info for all Batches
+
+  batches = client.batch_info_list(jobId) # returns an Array of Batch objects
+  
+  batches.each do |batch|
+    puts "Batch #{batch.id} failed." if batch.failed? # other methods: completed?, failed?, in_progress?, queued?
+  end
+
+=== Retrieving Info for a single Batch
+
+  batch = client.batch_info(jobId, batchId) # returns a Batch object
+  
+  puts "Batch #{batch.id} is in progress." if batch.in_progress?
+
+=== Retrieving Query Results
 
 
 
