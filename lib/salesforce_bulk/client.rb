@@ -152,7 +152,10 @@ module SalesforceBulk
         result = XmlSimple.xml_in(response.body)
         
         if result['result'].present?
-          result = query_result(jobId, batchId, result['result'].first, result['result'])
+          results = query_result(jobId, batchId, result['result'].first)
+          
+          collection = QueryResultCollection.new(self, jobId, batchId, result['result'].first, result['result'])
+          collection.replace(results)
         end
       else
         result = BatchResultCollection.new(jobId, batchId)
@@ -160,19 +163,19 @@ module SalesforceBulk
         CSV.parse(response.body, :headers => true) do |row|
           result << BatchResult.new(row[0], row[1].to_b, row[2].to_b, row[3])
         end
+        
+        result
       end
-      
-      result
     end
     
-    def query_result(job_id, batch_id, result_id, result_ids)
+    def query_result(job_id, batch_id, result_id)
       headers = {"Content-Type" => "text/csv; charset=UTF-8"}
       response = http_get("job/#{job_id}/batch/#{batch_id}/result/#{result_id}", headers)
       
       lines = response.body.lines.to_a
       headers = CSV.parse_line(lines.shift).collect { |header| header.to_sym }
       
-      result = QueryResultCollection.new(self, job_id, batch_id, result_id, result_ids)
+      result = []
       
       #CSV.parse(lines.join, :headers => headers, :converters => [:all, lambda{|s| s.to_b if s.kind_of? String }]) do |row|
       CSV.parse(lines.join, :headers => headers) do |row|
