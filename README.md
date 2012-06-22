@@ -128,13 +128,14 @@ Query results are handled differently as the response will not contain the full 
     
     puts "Another set is available." if results.next?
     
-    results = results.next
+    results.next
     
   end
 
 == Todos
 
-- For query results its possible that a set might be empty but there is a next set so doing a `while results.any?` wouldn't work as that would stop the loop from processing the next set. Consider using Array.replace (http://www.ruby-doc.org/core-1.9.3/Array.html#method-i-replace) instead of creating new collection object.
+- For query results its possible that a set might be empty but there is a next set so doing a `while results.any?` wouldn't work as that would stop the loop from processing the next set.
+
 
 
 
