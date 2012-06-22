@@ -145,7 +145,7 @@ module SalesforceBulk
       Batch.new_from_xml(result)
     end
     
-    def batch_result_list(jobId, batchId)
+    def batch_result(jobId, batchId)
       response = http_get("job/#{jobId}/batch/#{batchId}/result")
       
       if response.body =~ /<.*?>/m
@@ -275,7 +275,7 @@ module SalesforceBulk
         sleep 2
       end
       
-      batch_result_list(job.id, batch.id)
+      batch_result(job.id, batch.id)
     end
     
   end
