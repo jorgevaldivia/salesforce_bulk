@@ -59,7 +59,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_kind_of SalesforceBulk::QueryResultCollection, result
     assert result.previous?
     assert !result.next?
-    assert_nil result.next
+    assert !result.next.any?
   end
   
   test "previous?" do
@@ -85,7 +85,7 @@ class TestQueryResultCollection < Test::Unit::TestCase
     assert_kind_of SalesforceBulk::QueryResultCollection, result
     assert result.next?
     assert !result.previous?
-    assert_nil result.previous
+    assert !result.previous.any?
   end
   
 end
