@@ -181,7 +181,7 @@ class TestBatch < Test::Unit::TestCase
     
     stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").to_return(:body => response, :status => 200)
     
-    results = @client.batch_result_list(job_id, batch_id)
+    results = @client.batch_result(job_id, batch_id)
     
     assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :times => 1
     
@@ -210,7 +210,7 @@ class TestBatch < Test::Unit::TestCase
       .with(job_id, batch_id, result_id, [result_id])
       .returns(SalesforceBulk::QueryResultCollection.new(job_id, batch_id, result_id))
     
-    result = @client.batch_result_list(job_id, batch_id)
+    result = @client.batch_result(job_id, batch_id)
     
     assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :headers => @headersWithXml, :times => 1
     assert_kind_of SalesforceBulk::QueryResultCollection, result

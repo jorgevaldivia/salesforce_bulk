@@ -23,7 +23,7 @@ class TestSimpleApi < Test::Unit::TestCase
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
-    @client.expects(:batch_result_list).once.with(@job.id, @batch.id)
+    @client.expects(:batch_result).once.with(@job.id, @batch.id)
     
     @client.delete(:VideoEvent__c, data)
   end
@@ -35,7 +35,7 @@ class TestSimpleApi < Test::Unit::TestCase
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
-    @client.expects(:batch_result_list).once.with(@job.id, @batch.id)
+    @client.expects(:batch_result).once.with(@job.id, @batch.id)
     
     @client.insert(:VideoEvent__c, data)
   end
@@ -47,7 +47,7 @@ class TestSimpleApi < Test::Unit::TestCase
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
-    @client.expects(:batch_result_list).once.with(@job.id, @batch.id)
+    @client.expects(:batch_result).once.with(@job.id, @batch.id)
     
     @client.query(:VideoEvent__c, data)
   end
@@ -59,7 +59,7 @@ class TestSimpleApi < Test::Unit::TestCase
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
-    @client.expects(:batch_result_list).once.with(@job.id, @batch.id)
+    @client.expects(:batch_result).once.with(@job.id, @batch.id)
     
     @client.update(:VideoEvent__c, data)
   end
@@ -71,7 +71,7 @@ class TestSimpleApi < Test::Unit::TestCase
     @client.expects(:add_batch).once.with(@job.id, data).returns(@batch)
     @client.expects(:close_job).once.with(@job.id).returns(@job)
     @client.expects(:batch_info).at_least_once.returns(@batch)
-    @client.expects(:batch_result_list).once.with(@job.id, @batch.id)
+    @client.expects(:batch_result).once.with(@job.id, @batch.id)
     
     @client.upsert(:VideoEvent__c, :Id__c, data)
   end
