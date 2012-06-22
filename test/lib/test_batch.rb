@@ -206,14 +206,15 @@ class TestBatch < Test::Unit::TestCase
       .with(:headers => @headersWithXml)
       .to_return(:body => response, :status => 200)
     
-    @client.expects(:query_result)
-      .with(job_id, batch_id, result_id, [result_id])
-      .returns(SalesforceBulk::QueryResultCollection.new(job_id, batch_id, result_id))
+    @client.expects(:query_result).with(job_id, batch_id, result_id).returns([])
     
     result = @client.batch_result(job_id, batch_id)
     
     assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :headers => @headersWithXml, :times => 1
     assert_kind_of SalesforceBulk::QueryResultCollection, result
+    assert_equal result.job_id, job_id
+    assert_equal result.batch_id, batch_id
+    assert_equal result.result_id, result_id
   end
   
   test "retrieve and parse a query result successfully" do
@@ -226,9 +227,10 @@ class TestBatch < Test::Unit::TestCase
       .with(:headers => @headers)
       .to_return(:body => response, :status => 200)
     
-    result = @client.query_result(job_id, batch_id, result_id, [result_id])
+    result = @client.query_result(job_id, batch_id, result_id)
     
     assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}", :headers => @headers, :times => 1
+    assert_kind_of Array, result
     assert result.length == 4
   end
   

@@ -50,16 +50,14 @@ class TestQueryResultCollection < Test::Unit::TestCase
   end
   
   test "next" do
-    result = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @result_ids.last, @result_ids)
+    @client.expects(:query_result).once.with(@job_id, @batch_id, @result_ids.last).returns([])
     
-    @client.expects(:query_result).once.with(@job_id, @batch_id, @result_ids.last, @result_ids).returns(result)
+    @collection.next
     
-    result = @collection.next
-    
-    assert_kind_of SalesforceBulk::QueryResultCollection, result
-    assert result.previous?
-    assert !result.next?
-    assert !result.next.any?
+    assert_kind_of SalesforceBulk::QueryResultCollection, @collection
+    assert @collection.previous?
+    assert !@collection.next?
+    assert !@collection.next.any?
   end
   
   test "previous?" do
@@ -76,16 +74,14 @@ class TestQueryResultCollection < Test::Unit::TestCase
   end
   
   test "previous" do
-    result = SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id, @result_ids.first, @result_ids)
+    @client.expects(:query_result).once.with(@job_id, @batch_id, @result_ids.first).returns([])
     
-    @client.expects(:query_result).once.with(@job_id, @batch_id, @result_ids.first, @result_ids).returns(result)
+    @collection.previous
     
-    result = @collection.previous
-    
-    assert_kind_of SalesforceBulk::QueryResultCollection, result
-    assert result.next?
-    assert !result.previous?
-    assert !result.previous.any?
+    assert_kind_of SalesforceBulk::QueryResultCollection, @collection
+    assert @collection.next?
+    assert !@collection.previous?
+    assert !@collection.previous.any?
   end
   
 end
