@@ -21,7 +21,11 @@ module SalesforceBulk
     end
     
     def next
-      @client.query_result(job_id, batch_id, result_ids[@current_index + 1], result_ids) if next?
+      if next?
+        @client.query_result(job_id, batch_id, result_ids[@current_index + 1], result_ids)
+      else
+        SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id)
+      end
     end
     
     def previous?
@@ -29,7 +33,11 @@ module SalesforceBulk
     end
     
     def previous
-      @client.query_result(job_id, batch_id, result_ids[@current_index - 1], result_ids) if previous?
+      if previous?
+        @client.query_result(job_id, batch_id, result_ids[@current_index - 1], result_ids)
+      else
+        SalesforceBulk::QueryResultCollection.new(@client, @job_id, @batch_id)
+      end
     end
     
   end
