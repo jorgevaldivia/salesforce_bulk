@@ -2,6 +2,8 @@ module SalesforceBulk
 
   class Job
 
+    attr :result
+
     def initialize(operation, sobject, records, external_field, connection)
 
       @@operation = operation
@@ -10,6 +12,9 @@ module SalesforceBulk
       @@records = records
       @@connection = connection
       @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
+
+      # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
+      @result = JobResult.new
 
     end
 
@@ -27,7 +32,7 @@ module SalesforceBulk
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
 
       response = @@connection.post_xml(nil, path, xml, headers)
-      response_parsed = XmlSimple.xml_in(response)    
+      response_parsed = @@connection.parse_response response
 
       @@job_id = response_parsed['id'][0]
     end
@@ -110,16 +115,60 @@ module SalesforceBulk
         path = "job/#{@@job_id}/batch/#{@@batch_id}/result/#{result_id}"
         headers = Hash.new
         headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
-        #puts "path is: #{path}\n"
         
         response = @@connection.get_request(nil, path, headers)
-        #puts "\n\nres2: #{response.inspect}\n\n"
 
       end
 
+      parse_results response
+
       response = response.lines.to_a[1..-1].join
-      csvRows = CSV.parse(response)
+      # csvRows = CSV.parse(response, :headers => true)
+    end
+
+    def parse_results response
+      @result.success = true
+      @result.raw = response.lines.to_a[1..-1].join
+      csvRows = CSV.parse(response, :headers => true)
+
+      csvRows.each_with_index  do |row, index|
+        if @@operation != "query"
+          row["Created"] = row["Created"] == "true" ? true : false
+          row["Success"] = row["Success"] == "true" ? true : false
+        end
+
+        @result.records.push row
+        if row["Success"] == false
+          @result.success = false 
+          @result.errors.push({"#{index}" => row["Error"]}) if row["Error"]
+        end
+      end
+
+      @result.message = "The job has been closed."
+
     end
 
   end
+
+  class JobResult
+    attr_writer :errors, :success, :records, :raw, :message
+    attr_reader :errors, :success, :records, :raw, :message
+
+    def initialize
+      @errors = []
+      @success = nil
+      @records = []
+      @raw = nil
+      @message = 'The job has been queued.'
+    end
+
+    def success?
+      @success
+    end
+
+    def has_errors?
+      @errors.count > 0
+    end
+  end
+
 end

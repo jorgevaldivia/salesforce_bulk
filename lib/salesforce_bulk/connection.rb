@@ -40,7 +40,8 @@ module SalesforceBulk
       headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
 
       response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
-      response_parsed = XmlSimple.xml_in(response)
+      # response_parsed = XmlSimple.xml_in(response)
+      response_parsed = parse_response response
 
       @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
       @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
@@ -55,11 +56,8 @@ module SalesforceBulk
 
       if host != @@LOGIN_HOST # Not login, need to add session id to header
         headers['X-SFDC-Session'] = @session_id;
-        #puts "session id is: #{@session_id} --- #{headers.inspect}\n"
         path = "#{@@PATH_PREFIX}#{path}"
       end
-
-      #puts "#{host} -- #{path} -- #{headers.inspect}\n"
 
       https(host).post(path, xml, headers).body
     end
@@ -85,6 +83,28 @@ module SalesforceBulk
     def parse_instance()
       @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
       @instance = $~.captures[0]
+    end
+
+    def parse_response response
+      response_parsed = XmlSimple.xml_in(response)
+
+      if response.downcase.include?("faultstring") || response.downcase.include?("exceptionmessage")
+        begin
+          
+          if response.downcase.include?("faultstring")
+            error_message = response_parsed["Body"][0]["Fault"][0]["faultstring"][0]
+          elsif response.downcase.include?("exceptionmessage")
+            error_message = response_parsed["exceptionMessage"][0]
+          end
+
+        rescue
+          raise "An unknown error has occured within the salesforce_bulk gem. This is most likely caused by bad request, but I am unable to parse the correct error message. Here is a dump of the response for your convenience. #{response}"
+        end
+
+        raise error_message
+      end
+
+      response_parsed
     end
 
   end

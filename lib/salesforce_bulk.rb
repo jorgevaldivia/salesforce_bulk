@@ -19,16 +19,16 @@ module SalesforceBulk
       self.do_operation('upsert', sobject, records, external_field, wait)
     end
 
-    def update(sobject, records)
-      self.do_operation('update', sobject, records, nil)
+    def update(sobject, records, wait=false)
+      self.do_operation('update', sobject, records, nil, wait)
     end
     
-    def create(sobject, records)
-      self.do_operation('insert', sobject, records, nil)
+    def create(sobject, records, wait=false)
+      self.do_operation('insert', sobject, records, nil, wait)
     end
 
-    def delete(sobject, records)
-      self.do_operation('delete', sobject, records, nil)
+    def delete(sobject, records, wait=false)
+      self.do_operation('delete', sobject, records, nil, wait)
     end
 
     def query(sobject, query)
@@ -50,7 +50,6 @@ module SalesforceBulk
       if wait or operation == 'query'
         while true
           state = job.check_batch_status()
-          #puts "\nstate is #{state}\n"
           if state != "Queued" && state != "InProgress"
             break
           end
@@ -59,12 +58,26 @@ module SalesforceBulk
         
         if state == 'Completed'
           job.get_batch_result()
+          job
         else
-          return "There is an error in your job."
+          job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
+          job.result.success = false
+          return job
+
         end
       else
-        return "The job has been closed."
+        return job
+      end
+
+    end
+
+    def parse_batch_result result
+      begin
+        CSV.parse(result, :headers => true)
+      rescue
+        result
       end
     end
+
   end  # End class
 end # End module

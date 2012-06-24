@@ -2,8 +2,12 @@
 
 ==Overview
 
-Salesforce bulk is a simple ruby gem for connecting to and using the Salesforce Bulk API (http://www.salesforce.com/us/developer/docs/api_asynch/index.htm). There are already some gems out there that provide connectivity to the Salesforce SOAP and Rest APIs, if your needs are simple, I recommend using those, specifically raygao's asf-rest-adapter (https://github.com/raygao/asf-rest-adapter).
+Salesforce bulk is a simple ruby gem for connecting to and using the Salesforce Bulk API (http://www.salesforce.com/us/developer/docs/api_asynch/index.htm). There are already some gems out there that provide connectivity to the Salesforce SOAP and Rest APIs, if your needs are simple, I recommend using those, specifically raygao's asf-rest-adapter (https://github.com/raygao/asf-rest-adapter) or databasedotcom (https://rubygems.org/gems/databasedotcom).
  
+==Installation
+
+sudo gem install salesforce_bulk
+
 ==How to use
 
 Using this gem is simple and straight forward.
@@ -28,7 +32,7 @@ Sample operations:
   puts "result is: #{result.inspect}"
 
   # Update
-  updated_account = Hash["name" => "Test Account -- Updated", id => "a00A0001009zA2m"] # Nearly identical to an insert, but we need to pass the salesforce id.
+  updated_account = Hash["name" => "Test Account -- Updated", "id" => "a00A0001009zA2m"] # Nearly identical to an insert, but we need to pass the salesforce id.
   records_to_update = Array.new
   records_to_update.push(updated_account)
   salesforce.update("Account", records_to_update)
@@ -51,16 +55,21 @@ Sample operations:
 
   # Query
   res = salesforce.query("Account", "select id, name, createddate from Account limit 3") # We just need to pass the sobject name and the query string
+  puts res.records.inspect
 
-==Installation
-sudo gem install salesforce_bulk
+Result reporting:
 
-==TODO
-This is a rough early version of the gem. Immediate plans include better error reporting as there currently is none.
+  new_account = Hash["type" => "Other"] # Missing required field "name."
+  records_to_insert = Array.new
+  records_to_insert.push(new_account) # You can add as many records as you want here, just keep in mind that Salesforce has governor limits.
+  result = salesforce.create("Account", records_to_insert)
+  puts result.success? # false
+  puts result.has_errors? # true
+  puts result.errors # An indexed hash detailing the errors 
 
 == Copyright
 
-Copyright (c) 2011 Jorge Valdivia.
+Copyright (c) 2012 Jorge Valdivia.
 
 ===end
 
