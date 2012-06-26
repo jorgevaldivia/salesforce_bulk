@@ -105,6 +105,14 @@ class TestBatch < Test::Unit::TestCase
     assert_equal batch.apex_processing_time, 0
   end
   
+  test "should raise ArgumentError when given data array length exceeding 10000" do
+    data = (1..10100).map { |index| {:Id => index} }
+    
+    assert_raise ArgumentError do
+      @client.add_batch("750E00000004NRfIAM", data)
+    end
+  end
+  
   test "should retrieve info for all batches in a job in a single request" do
     response = fixture("batch_info_list_response.xml")
     job_id = "750E00000004N97IAE"
