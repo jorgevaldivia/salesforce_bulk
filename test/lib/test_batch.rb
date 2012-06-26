@@ -241,4 +241,18 @@ class TestBatch < Test::Unit::TestCase
     assert result.length == 4
   end
   
+  test "should raise SalesforceError on invalid batch response" do
+    response = fixture("invalid_batch_error.xml")
+    job_id = "750E00000004NnR"
+    batch_id = "751E00000004aEY"
+    
+    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result")
+      .with(:headers => @headersWithXml)
+      .to_return(:body => response, :status => 400)
+    
+    assert_raise SalesforceBulk::SalesforceError do
+      @client.batch_result(job_id, batch_id)
+    end
+  end
+  
 end
