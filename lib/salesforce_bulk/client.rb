@@ -135,8 +135,12 @@ module SalesforceBulk
       response = http_get("job/#{jobId}/batch")
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       
-      result['batchInfo'].collect do |info|
-        Batch.new_from_xml(info)
+      if result['batchInfo'].is_a?(Array)
+        result['batchInfo'].collect do |info|
+          Batch.new_from_xml(info)
+        end
+      else
+        [Batch.new_from_xml(result['batchInfo'])]
       end
     end
     
