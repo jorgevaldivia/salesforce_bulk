@@ -104,6 +104,8 @@ For any operation you should be able to specify a concurrency mode. The default 
 
 === Retrieving Batch Results (for Delete, Insert, Update and Upsert)
 
+To verify that a batch completed successfully or failed call the `batch_info` or `batch_info_list` methods first, otherwise if you call `batch_result` without verifying and the batch failed the method will raise an error.
+
 The object returned from the following example only applies to the operations: delete, insert, update and upsert. Query results are handled differently.
 
   results = client.batch_result(jobId, batchId) # returns an Array of BatchResult objects
@@ -114,7 +116,9 @@ The object returned from the following example only applies to the operations: d
 
 === Retrieving Query based Batch Results
 
-Query results are handled differently as the response will not contain the full result set. You'll have to page through the sets.
+To verify that a batch completed successfully or failed call the `batch_info` or `batch_info_list` methods first, otherwise if you call `batch_result` without verifying and the batch failed the method will raise an error.
+
+Query results are handled differently as the response will not contain the full result set. You'll have to page through sets if you added multiple batches to a job.
 
   # returns a QueryResultCollection object (an Array)
   results = client.batch_result(jobId, batchId)
