@@ -85,7 +85,6 @@ class TestBatch < Test::Unit::TestCase
       {:Id__c => '23456', :Title__c => "A second test!", :IsPreview__c => true}
     ]
     
-    bypass_authentication(@client)
     stub_request(:post, "#{api_url(@client)}job/#{job_id}/batch")
       .with(:body => request, :headers => @headers)
       .to_return(:body => response, :status => 200)
