@@ -81,12 +81,11 @@ module SalesforceBulk
     end
     
     def add_batch(jobId, data)
-      # Despite the content for a query operation batch being plain text we 
-      # still have to specify CSV content type per API docs.
-      headers = {"Content-Type" => "text/csv; charset=UTF-8"}
       body = data
       
       if data.is_a?(Array)
+        raise ArgumentError, "Data set exceeds 10000 record limit by #{data.length - 10000}" if data.length > 10000
+        
         keys = data.first.keys
         body = keys.to_csv
         
@@ -97,7 +96,9 @@ module SalesforceBulk
         #puts "", keys.inspect,"","",output_csv,""
       end
       
-      response = http_post("job/#{jobId}/batch", body, headers)
+      # Despite the content for a query operation batch being plain text we 
+      # still have to specify CSV content type per API docs.
+      response = http_post("job/#{jobId}/batch", body, "Content-Type" => "text/csv; charset=UTF-8")
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
       #puts "",response,"","",result,""
       
