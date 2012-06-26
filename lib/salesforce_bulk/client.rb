@@ -64,9 +64,7 @@ module SalesforceBulk
       
       @session_id = result['sessionId']
       
-      url = result['serverUrl']
-      
-      self.instance_host = "#{instance_id(url)}.salesforce.com"
+      self.instance_host = "#{instance_id(result['serverUrl'])}.salesforce.com"
     end
     
     def abort_job(jobId)
