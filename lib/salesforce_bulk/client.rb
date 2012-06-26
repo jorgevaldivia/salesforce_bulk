@@ -236,7 +236,13 @@ module SalesforceBulk
         headers['X-SFDC-Session'] = @session_id
       end
       
-      https_request(self.instance_host).get(path, headers)
+      response = https_request(self.instance_host).get(path, headers)
+      
+      if response.is_a?(Net::HTTPSuccess)
+        response
+      else
+        raise SalesforceError.new(response)
+      end
     end
     
     def https_request(host)
