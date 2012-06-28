@@ -55,7 +55,7 @@ Sample operations:
 
   # Query
   res = salesforce.query("Account", "select id, name, createddate from Account limit 3") # We just need to pass the sobject name and the query string
-  puts res.records.inspect
+  puts res.result.records.inspect
 
 Result reporting:
 
@@ -65,7 +65,7 @@ Result reporting:
   result = salesforce.create("Account", records_to_insert, true) # Result reporting can only be used if wait is set to true
   puts result.success? # false
   puts result.has_errors? # true
-  puts result.errors # An indexed hash detailing the errors 
+  puts result.result.errors # An indexed hash detailing the errors 
 
 == Copyright
 
