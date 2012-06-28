@@ -1,10 +1,10 @@
-= salesforce_bulk
+# salesforce_bulk
 
-== Overview
+## Overview
 
 Salesforce Bulk is a simple Ruby gem for connecting to and using the [Salesforce Bulk API](http://www.salesforce.com/us/developer/docs/api_asynch/index.htm).
 
-== Installation
+## Installation
 
 Install SalesforceBulk from RubyGems:
 
@@ -14,16 +14,16 @@ Or include it in your project's `Gemfile` with Bundler:
 
   gem 'salesforce_bulk'
 
-== Contribute
+## Contribute
 
 To contribute, fork this repo, create a topic branch, make changes, then send a pull request. Pull requests without accompanying tests will *not* be accepted. To run tests in your fork, just do:
 
   bundle install
   rake
 
-== Configuration and Initialization
+## Configuration and Initialization
 
-=== Basic Configuration
+### Basic Configuration
 
   require 'salesforce_bulk'
   
@@ -32,7 +32,7 @@ To contribute, fork this repo, create a topic branch, make changes, then send a 
 
 Optional keys include host (default: login.salesforce.com), version (default: 24.0) and debugging (default: false).
 
-=== Configuring from a YAML file
+### Configuring from a YAML file
 
 The optional keys mentioned in the Basic Configuration section can also be used here.
 
@@ -48,11 +48,11 @@ Then in a Ruby script:
   client = SalesforceBulk::Client.new("config/salesforce_bulk.yml")
   client.authenticate
 
-== Usage Examples
+## Usage Examples
 
 Some requirements if you are moving from an older version of the gem. You must specify every key even if it has no value for each hash in the data array for a batch.
 
-=== Basic Example
+### Basic Example
 
   data1 = [{:Name__c => 'Test 1'}, {:Name__c => 'Test 2'}]
   data2 = [{:Name__c => 'Test 3'}, {:Name__c => 'Test 4'}]
@@ -65,7 +65,7 @@ Some requirements if you are moving from an older version of the gem. You must s
   
   job = client.close_job(job.id) # or use the abort_job(id) method
 
-=== Adding a Job
+### Adding a Job
 
 When adding a job you can specify the following operations for the first argument:
 - :delete
@@ -82,13 +82,13 @@ For any operation you should be able to specify a concurrency mode. The default 
 
   job = client.add_job(:upsert, :MyObject__c, :concurrency_mode => :Serial, :external_id_field_name => :MyId__c)
 
-=== Retrieving Info for a Job
+### Retrieving Info for a Job
 
   job = client.job_info(jobId) # returns a Job object
   
   puts "Job #{job.id} is closed." if job.closed? # other: open?, aborted?
 
-=== Retrieving Info for all Batches
+### Retrieving Info for all Batches
 
   batches = client.batch_info_list(jobId) # returns an Array of Batch objects
   
@@ -96,13 +96,13 @@ For any operation you should be able to specify a concurrency mode. The default 
     puts "Batch #{batch.id} failed." if batch.failed? # other: completed?, failed?, in_progress?, queued?
   end
 
-=== Retrieving Info for a single Batch
+### Retrieving Info for a single Batch
 
   batch = client.batch_info(jobId, batchId) # returns a Batch object
   
   puts "Batch #{batch.id} is in progress." if batch.in_progress?
 
-=== Retrieving Batch Results (for Delete, Insert, Update and Upsert)
+### Retrieving Batch Results (for Delete, Insert, Update and Upsert)
 
 To verify that a batch completed successfully or failed call the `batch_info` or `batch_info_list` methods first, otherwise if you call `batch_result` without verifying and the batch failed the method will raise an error.
 
@@ -114,7 +114,7 @@ The object returned from the following example only applies to the operations: d
     puts "Item #{result.id} had an error of: #{result.error}" if result.error?
   end
 
-=== Retrieving Query based Batch Results
+### Retrieving Query based Batch Results
 
 To verify that a batch completed successfully or failed call the `batch_info` or `batch_info_list` methods first, otherwise if you call `batch_result` without verifying and the batch failed the method will raise an error.
 
@@ -136,7 +136,7 @@ Query results are handled differently as the response will not contain the full 
     
   end
 
-== Todos
+## Todos
 
 - For query results its possible that a set might be empty but there is a next set so doing a `while results.any?` wouldn't work as that would stop the loop from processing the next set.
 
@@ -173,7 +173,7 @@ Sample operations:
   # Query
   res = salesforce.query("Account", "select id, name, createddate from Account limit 3") # We just need to pass the sobject name and the query string
 
-== Copyright
+## Copyright
 
 Copyright (c) 2011 Jorge Valdivia.
 
