@@ -91,15 +91,12 @@ module SalesforceBulk
           item_values = keys.map { |key| item[key] }
           body += item_values.to_csv
         end
-        #puts "", keys.inspect,"","",output_csv,""
       end
       
       # Despite the content for a query operation batch being plain text we 
       # still have to specify CSV content type per API docs.
       response = http_post("job/#{jobId}/batch", body, "Content-Type" => "text/csv; charset=UTF-8")
       result = XmlSimple.xml_in(response.body, 'ForceArray' => false)
-      #puts "",response,"","",result,""
-      
       Batch.new_from_xml(result)
     end
     
