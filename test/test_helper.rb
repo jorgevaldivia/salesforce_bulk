@@ -12,7 +12,7 @@ class Test::Unit::TestCase
   end
   
   def api_url(client)
-    "https://#{@client.host}/services/async/#{@client.version}/"
+    "https://#{client.host}/services/async/#{client.version}/"
   end
   
   def bypass_authentication(client)
