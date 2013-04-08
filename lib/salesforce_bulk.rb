@@ -3,13 +3,14 @@ require 'xmlsimple'
 require 'csv'
 require "salesforce_bulk/version"
 require 'salesforce_bulk/job'
+require 'salesforce_bulk/job_status'
 require 'salesforce_bulk/connection'
 
 module SalesforceBulk
   # Your code goes here...
   class Api
 
-    @@SALESFORCE_API_VERSION = '24.0'
+    @@SALESFORCE_API_VERSION = '27.0'
 
     def initialize(username, password, in_sandbox=false)
       @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
@@ -32,14 +33,14 @@ module SalesforceBulk
     end
 
     def query(sobject, query)
-      self.do_operation('query', sobject, query, nil)
+      self.do_operation('query', sobject, query, nil, true)
     end
 
     def do_operation(operation, sobject, records, external_field, wait=false)
       job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection)
 
       # TODO: put this in one function
-      job_id = job.create_job()
+      job.create_job()
       if(operation == "query")
         batch_id = job.add_query()
       else
@@ -47,7 +48,7 @@ module SalesforceBulk
       end
       job.close_job()
 
-      if wait or operation == 'query'
+      if wait
         while true
           state = job.check_batch_status()
           if state != "Queued" && state != "InProgress"
@@ -60,15 +61,13 @@ module SalesforceBulk
           job.get_batch_result()
           job
         else
-          job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
+          job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again. (status: #{job.status})"
           job.result.success = false
           return job
-
         end
       else
         return job
       end
-
     end
 
     def parse_batch_result result

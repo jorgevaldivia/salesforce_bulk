@@ -1,21 +1,18 @@
 module SalesforceBulk
-
   class Job
 
     attr :result
+    @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
 
     def initialize(operation, sobject, records, external_field, connection)
-
       @@operation = operation
       @@sobject = sobject
       @@external_field = external_field
       @@records = records
       @@connection = connection
-      @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
 
       # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
       @result = JobResult.new
-
     end
 
     def create_job()
@@ -46,9 +43,7 @@ module SalesforceBulk
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
 
       response = @@connection.post_xml(nil, path, xml, headers)
-      response_parsed = XmlSimple.xml_in(response)
-
-      #job_id = response_parsed['id'][0]
+      XmlSimple.xml_in(response)
     end
 
     def add_query
@@ -85,21 +80,16 @@ module SalesforceBulk
       @@batch_id = response_parsed['id'][0]
     end
 
-    def check_batch_status()
-      path = "job/#{@@job_id}/batch/#{@@batch_id}"
-      headers = Hash.new
+    def status
+      response = @@connection.get_request(
+        nil,
+        "job/#{@@job_id}/batch/#{@@batch_id}",
+        {})
+      SalesforceBulk::JobStatus.parse response
+    end
 
-      response = @@connection.get_request(nil, path, headers)
-      response_parsed = XmlSimple.xml_in(response)
-
-      begin
-        #puts "check: #{response_parsed.inspect}\n"
-        response_parsed['state'][0]
-      rescue Exception => e
-        #puts "check: #{response_parsed.inspect}\n"
-
-        nil
-      end
+    def check_batch_status
+      status.status
     end
 
     def get_batch_result()
