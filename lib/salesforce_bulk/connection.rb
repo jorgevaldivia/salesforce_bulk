@@ -1,5 +1,4 @@
 module SalesforceBulk
-
   class Connection
 
     @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
@@ -21,26 +20,22 @@ module SalesforceBulk
       login()
     end
 
-    #private
-
     def login()
-
       xml = '<?xml version="1.0" encoding="utf-8" ?>'
-      xml += "<env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-      xml += "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-      xml += "    xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-      xml += "  <env:Body>"
-      xml += "    <n1:login xmlns:n1=\"urn:partner.soap.sforce.com\">"
+      xml += '<env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+      xml += '    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+      xml += '    xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">'
+      xml += '  <env:Body>'
+      xml += '    <n1:login xmlns:n1="urn:partner.soap.sforce.com">'
       xml += "      <n1:username>#{@username}</n1:username>"
       xml += "      <n1:password>#{@password}</n1:password>"
-      xml += "    </n1:login>"
-      xml += "  </env:Body>"
-      xml += "</env:Envelope>"
+      xml += '    </n1:login>'
+      xml += '  </env:Body>'
+      xml += '</env:Envelope>'
       
       headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
 
       response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
-      # response_parsed = XmlSimple.xml_in(response)
       response_parsed = parse_response response
 
       @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
@@ -88,13 +83,13 @@ module SalesforceBulk
     def parse_response response
       response_parsed = XmlSimple.xml_in(response)
 
-      if response.downcase.include?("faultstring") || response.downcase.include?("exceptionmessage")
+      if response.downcase.include?('faultstring') || response.downcase.include?('exceptionmessage')
         begin
           
-          if response.downcase.include?("faultstring")
-            error_message = response_parsed["Body"][0]["Fault"][0]["faultstring"][0]
-          elsif response.downcase.include?("exceptionmessage")
-            error_message = response_parsed["exceptionMessage"][0]
+          if response.downcase.include?('faultstring')
+            error_message = response_parsed['Body'][0]['Fault'][0]['faultstring'][0]
+          elsif response.downcase.include?('exceptionmessage')
+            error_message = response_parsed['exceptionMessage'][0]
           end
 
         rescue
@@ -106,7 +101,5 @@ module SalesforceBulk
 
       response_parsed
     end
-
   end
-
 end

@@ -22,10 +22,10 @@ module SalesforceBulk
       if !@@external_field.nil? # This only happens on upsert
         xml += "<externalIdFieldName>#{@@external_field}</externalIdFieldName>"
       end
-      xml += "<contentType>CSV</contentType>"
-      xml += "</jobInfo>"
+      xml += '<contentType>CSV</contentType>'
+      xml += '</jobInfo>'
 
-      path = "job"
+      path = 'job'
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
 
       response = @@connection.post_xml(nil, path, xml, headers)
@@ -36,8 +36,8 @@ module SalesforceBulk
 
     def close_job()
       xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
-      xml += "<state>Closed</state>"
-      xml += "</jobInfo>"
+      xml += '<state>Closed</state>'
+      xml += '</jobInfo>'
 
       path = "job/#{@@job_id}"
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
@@ -48,7 +48,7 @@ module SalesforceBulk
 
     def add_query
       path = "job/#{@@job_id}/batch/"
-      headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
+      headers = Hash['Content-Type' => 'text/csv; charset=UTF-8']
       
       response = @@connection.post_xml(nil, path, @@records, headers)
       response_parsed = XmlSimple.xml_in(response)
@@ -72,7 +72,7 @@ module SalesforceBulk
       end
 
       path = "job/#{@@job_id}/batch/"
-      headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
+      headers = Hash['Content-Type' => 'text/csv; charset=UTF-8']
       
       response = @@connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
@@ -94,17 +94,17 @@ module SalesforceBulk
 
     def get_batch_result()
       path = "job/#{@@job_id}/batch/#{@@batch_id}/result"
-      headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
+      headers = Hash['Content-Type' => 'text/xml; charset=UTF-8']
 
       response = @@connection.get_request(nil, path, headers)
 
-      if(@@operation == "query") # The query op requires us to do another request to get the results
+      if(@@operation == 'query') # The query op requires us to do another request to get the results
         response_parsed = XmlSimple.xml_in(response)
-        result_id = response_parsed["result"][0]
+        result_id = response_parsed['result'][0]
 
         path = "job/#{@@job_id}/batch/#{@@batch_id}/result/#{result_id}"
         headers = Hash.new
-        headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
+        headers = Hash['Content-Type' => 'text/xml; charset=UTF-8']
         
         response = @@connection.get_request(nil, path, headers)
 
@@ -122,22 +122,21 @@ module SalesforceBulk
       csvRows = CSV.parse(response, :headers => true)
 
       csvRows.each_with_index  do |row, index|
-        if @@operation != "query"
-          row["Created"] = row["Created"] == "true" ? true : false
-          row["Success"] = row["Success"] == "true" ? true : false
+        if @@operation != 'query'
+          row['Created'] = row['Created'] == 'true' ? true : false
+          row['Success'] = row['Success'] == 'true' ? true : false
         end
 
         @result.records.push row
-        if row["Success"] == false
+        if row['Success'] == false
           @result.success = false 
-          @result.errors.push({"#{index}" => row["Error"]}) if row["Error"]
+          @result.errors.push({"#{index}" => row['Error']}) if row['Error']
         end
       end
 
-      @result.message = "The job has been closed."
+      @result.message = 'The job has been closed.'
 
     end
-
   end
 
   class JobResult
@@ -160,5 +159,4 @@ module SalesforceBulk
       @errors.count > 0
     end
   end
-
 end

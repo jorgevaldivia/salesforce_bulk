@@ -1,13 +1,12 @@
 require 'net/https'
 require 'xmlsimple'
 require 'csv'
-require "salesforce_bulk/version"
+require 'salesforce_bulk/version'
 require 'salesforce_bulk/job'
 require 'salesforce_bulk/job_status'
 require 'salesforce_bulk/connection'
 
 module SalesforceBulk
-  # Your code goes here...
   class Api
 
     @@SALESFORCE_API_VERSION = '27.0'
@@ -36,12 +35,12 @@ module SalesforceBulk
       self.do_operation('query', sobject, query, nil, true)
     end
 
-    def do_operation(operation, sobject, records, external_field, wait=false)
+    def do_operation(operation, sobject, records, external_field, wait)
       job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection)
 
       # TODO: put this in one function
       job.create_job()
-      if(operation == "query")
+      if(operation == 'query')
         batch_id = job.add_query()
       else
         batch_id = job.add_batch()
@@ -51,10 +50,10 @@ module SalesforceBulk
       if wait
         while true
           state = job.check_batch_status()
-          if state != "Queued" && state != "InProgress"
+          if state != 'Queued' && state != 'InProgress'
             break
           end
-          sleep(2) # wait x seconds and check again
+          sleep(2)
         end
         
         if state == 'Completed'
@@ -77,6 +76,5 @@ module SalesforceBulk
         result
       end
     end
-
-  end  # End class
-end # End module
+  end
+end
