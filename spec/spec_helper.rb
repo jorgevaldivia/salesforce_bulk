@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 require 'salesforce_bulk'
 
 RSpec.configure do |config|
