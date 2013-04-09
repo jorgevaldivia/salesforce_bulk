@@ -25,7 +25,7 @@ module SalesforceBulk
         "job/#{@job_id}/batch/#{@batch_id}",
         {})
       puts "the response: #{response.inspect}"
-      SalesforceBulk::JobStatus.parse response
+      SalesforceBulk::BatchStatus.parse response
     end
   end
 end

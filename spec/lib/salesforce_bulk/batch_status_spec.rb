@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SalesforceBulk::JobStatus do
+describe SalesforceBulk::BatchStatus do
   let(:field_not_found_response) do
     %Q{
       <?xml version="1.0" encoding="UTF-8"?>
@@ -23,8 +23,8 @@ describe SalesforceBulk::JobStatus do
   end
 
   describe '.parse_response' do
-    it 'should create JobStatus correctly for failed response' do
-      js = SalesforceBulk::JobStatus.new
+    it 'should create BatchStatus correctly for failed response' do
+      js = SalesforceBulk::BatchStatus.new
       js.id = '751M0000000A0htIAC'
       js.job_id = '750M00000008yJsIAI'
       js.name = 'Failed'
@@ -36,7 +36,7 @@ describe SalesforceBulk::JobStatus do
       js.api_active_processing_time = 0
       js.apex_processing_time = 0
 
-      expect(SalesforceBulk::JobStatus.parse(field_not_found_response)).to eq(js)
+      expect(SalesforceBulk::BatchStatus.parse(field_not_found_response)).to eq(js)
     end
   end
 end

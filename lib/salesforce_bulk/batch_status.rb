@@ -1,5 +1,5 @@
 module SalesforceBulk
-  JobStatus = Struct.new(:id,
+  BatchStatus = Struct.new(:id,
     :job_id,
     :name,
     :message,
@@ -25,7 +25,7 @@ module SalesforceBulk
 
     def self.parse response
       response_parsed = XmlSimple.xml_in(response)
-      MAPPING.each_with_object(JobStatus.new) do | (k,v), js |
+      MAPPING.each_with_object(BatchStatus.new) do | (k,v), js |
         js.send(:"#{k}=", extract_value(response_parsed, v))
       end
     end
