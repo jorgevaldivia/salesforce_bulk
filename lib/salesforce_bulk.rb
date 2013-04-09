@@ -5,7 +5,6 @@ require 'salesforce_bulk/version'
 require 'salesforce_bulk/batch'
 require 'salesforce_bulk/batch_status'
 require 'salesforce_bulk/request'
-require 'salesforce_bulk/job'
 require 'salesforce_bulk/connection'
 
 module SalesforceBulk
