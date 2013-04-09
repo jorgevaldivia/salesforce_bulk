@@ -24,7 +24,6 @@ module SalesforceBulk
         nil,
         "job/#{@job_id}/batch/#{@batch_id}",
         {})
-      puts "the response: #{response.inspect}"
       SalesforceBulk::BatchStatus.parse response
     end
   end
