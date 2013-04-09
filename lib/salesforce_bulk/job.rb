@@ -4,12 +4,11 @@ module SalesforceBulk
     attr :result
     @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
 
-    def initialize(operation, sobject, records, external_field, connection)
+    def initialize(operation, sobject, records, external_field)
       @@operation = operation
       @@sobject = sobject
       @@external_field = external_field
       @@records = records
-      @@connection = connection
 
       # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
       @result = JobResult.new
@@ -34,7 +33,7 @@ module SalesforceBulk
       @@job_id = response_parsed['id'][0]
     end
 
-    def close_job()
+    def close_job
       xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
       xml += '<state>Closed</state>'
       xml += '</jobInfo>'
@@ -135,7 +134,6 @@ module SalesforceBulk
       end
 
       @result.message = 'The job has been closed.'
-
     end
   end
 

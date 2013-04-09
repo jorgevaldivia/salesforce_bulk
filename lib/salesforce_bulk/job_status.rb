@@ -1,8 +1,8 @@
 module SalesforceBulk
   JobStatus = Struct.new(:id,
     :job_id,
-    :status,
-    :status_message,
+    :name,
+    :message,
     :created_at,
     :records_processed,
     :records_failed,
@@ -13,8 +13,8 @@ module SalesforceBulk
     MAPPING = {
       id: ['id'],
       job_id: ['jobId'],
-      status: ['state'],
-      status_message: ['stateMessage'],
+      name: ['state'],
+      message: ['stateMessage'],
       created_at: ['createdDate', lambda{|v| DateTime.parse(v)}],
       records_processed: ['numberRecordsProcessed', lambda{|v| v.to_i}],
       records_failed: ['numberRecordsFailed', lambda{|v| v.to_i}],

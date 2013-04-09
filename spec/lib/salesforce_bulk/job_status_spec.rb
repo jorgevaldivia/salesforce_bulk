@@ -27,8 +27,8 @@ describe SalesforceBulk::JobStatus do
       js = SalesforceBulk::JobStatus.new
       js.id = '751M0000000A0htIAC'
       js.job_id = '750M00000008yJsIAI'
-      js.status = 'Failed'
-      js.status_message = 'InvalidBatch : Field name not found : An_Awesome_Field__c'
+      js.name = 'Failed'
+      js.message = 'InvalidBatch : Field name not found : An_Awesome_Field__c'
       js.created_at = DateTime.parse '2013-04-08T16:15:24.000Z'
       js.records_processed = 0
       js.records_failed = 0

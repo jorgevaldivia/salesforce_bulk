@@ -2,9 +2,8 @@ module SalesforceBulk
   class Connection
 
     @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
-    @@API_VERSION = nil
     @@LOGIN_HOST = 'login.salesforce.com'
-    @@INSTANCE_HOST = nil # Gets set in login()
+    @@INSTANCE_HOST = nil
 
     def initialize(username, password, api_version, in_sandbox)
       @username = username
@@ -12,30 +11,17 @@ module SalesforceBulk
       @session_id = nil
       @server_url = nil
       @instance = nil
-      @@API_VERSION = api_version
-      @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
-      @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
+      @sandbox = in_sandbox
+      @@LOGIN_PATH = "/services/Soap/u/#{api_version}"
+      @@PATH_PREFIX = "/services/async/#{api_version}/"
       @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
-
-      login()
+      login
     end
 
-    def login()
-      xml = '<?xml version="1.0" encoding="utf-8" ?>'
-      xml += '<env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
-      xml += '    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-      xml += '    xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">'
-      xml += '  <env:Body>'
-      xml += '    <n1:login xmlns:n1="urn:partner.soap.sforce.com">'
-      xml += "      <n1:username>#{@username}</n1:username>"
-      xml += "      <n1:password>#{@password}</n1:password>"
-      xml += '    </n1:login>'
-      xml += '  </env:Body>'
-      xml += '</env:Envelope>'
-      
-      headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
+    def login
+      r = SalesforceBulk::Request.create_login @sandbox, @username, @password
 
-      response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
+      response = request r
       response_parsed = parse_response response
 
       @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
@@ -45,8 +31,54 @@ module SalesforceBulk
       @@INSTANCE_HOST = "#{@instance}.salesforce.com"
     end
 
-    def post_xml(host, path, xml, headers)
+    def create_job operation, sobject, external_field
+      response = request(SalesforceBulk::Request.create_job(
+        @instance,
+        operation,
+        sobject,
+        external_field))
 
+      response_parsed = parse_response response
+      response_parsed['id'][0]
+    end
+
+    def close_job job_id
+      response = request(SalesforceBulk::Request.close_job(
+        @instance,
+        job_id))
+
+      response_parsed = parse_response response
+      response_parsed['id'][0]
+    end
+
+    def add_batch job_id, records
+      keys = records.first.keys
+
+      rows = keys.to_csv
+      records.each do |r|
+        fields = []
+        keys.each do |k|
+          fields.push(r[k])
+        end
+        rows << fields.to_csv
+      end
+
+      r = SalesforceBulk::Request.add_batch(
+        @instance,
+        job_id,
+        rows)
+
+      response = request(r)
+      response_parsed = XmlSimple.xml_in(response)
+
+      response_parsed['id'][0]
+    end
+
+    def request r
+      post_xml r.host, r.path, r.body, r.headers
+    end
+
+    def post_xml(host, path, xml, headers)
       host = host || @@INSTANCE_HOST
 
       if host != @@LOGIN_HOST # Not login, need to add session id to header
@@ -76,6 +108,7 @@ module SalesforceBulk
     end
 
     def parse_instance()
+      #TODO make more ruby like
       @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
       @instance = $~.captures[0]
     end
