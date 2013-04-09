@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "salesforce_bulk/version"
+require 'salesforce_bulk/version'
 
 Gem::Specification.new do |gem|
-  gem.name        = "salesforce_bulk"
+  gem.name        = 'salesforce_bulk'
   gem.version     = SalesforceBulk::VERSION
   gem.authors     = ["Jorge Valdivia"]
   gem.email       = ["jorge@valdivia.me"]
-  gem.homepage    = "https://github.com/jorgevaldivia/salesforce_bulk"
+  gem.homepage    = 'https://github.com/jorgevaldivia/salesforce_bulk'
   gem.summary     = %q{Ruby support for the Salesforce Bulk API}
   gem.description = %q{This gem provides a super simple interface for the Salesforce Bulk API. It provides support for insert, update, upsert, delete, and query.}
 
@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "xml-simple"
+  gem.add_dependency 'xml-simple'
+  gem.add_dependency 'rake'
   gem.add_development_dependency 'rspec', '~> 2.13'
 end

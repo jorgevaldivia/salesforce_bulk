@@ -1,9 +1,9 @@
-require 'net/https'
 require 'xmlsimple'
 require 'csv'
 require 'salesforce_bulk/version'
 require 'salesforce_bulk/batch'
 require 'salesforce_bulk/batch_status'
+require 'salesforce_bulk/http_wrapper'
 require 'salesforce_bulk/request'
 require 'salesforce_bulk/connection'
 
