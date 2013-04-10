@@ -15,11 +15,15 @@ module SalesforceBulk
       while ['Queued', 'InProgress'].include?(last_status.name)
         sleep poll_interval
         last_status = self.status
+        yield last_status
       end
       last_status
     end
 
     def status
+      SalesforceBulk::Http.query_batch(
+        
+        )
       response = @connection.get_request(
         nil,
         "job/#{@job_id}/batch/#{@batch_id}",

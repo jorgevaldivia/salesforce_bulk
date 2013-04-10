@@ -21,5 +21,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'xml-simple'
   gem.add_dependency 'rake'
+  gem.add_dependency 'nori', '~> 2.0'
+  gem.add_dependency 'nokogiri', '~> 1.5'
   gem.add_development_dependency 'rspec', '~> 2.13'
+  gem.add_development_dependency 'webmock', '~> 1.11'
 end

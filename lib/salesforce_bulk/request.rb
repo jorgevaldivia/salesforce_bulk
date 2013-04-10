@@ -4,15 +4,17 @@ module SalesforceBulk
     attr_reader :host
     attr_reader :body
     attr_reader :headers
+    attr_reader :http_method
 
-    def initialize host, path, body, headers
+    def initialize http_method, host, path, body, headers
+      @http_method = http_method
       @host = host
       @path = path
       @body = body
       @headers = headers
     end
 
-    def self.create_login sandbox, username, password, api_version = '27.0'
+    def self.create_login sandbox, username, password, api_version
       body =  %Q{<?xml version="1.0" encoding="utf-8" ?>
       <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -29,13 +31,15 @@ module SalesforceBulk
         'SOAPAction' => 'login'
       }
       host = sandbox ? 'test.salesforce.com' : 'login.salesforce.com'
-      SalesforceBulk::Request.new(host,
+      SalesforceBulk::Request.new(
+        :post,
+        host,
         "/services/Soap/u/#{api_version}",
         body,
         headers)
     end
 
-    def self.create_job instance, operation, sobject, external_field = nil
+    def self.create_job instance, session_id, operation, sobject, api_version, external_field = nil
       external_field_line = external_field ?
         "<externalIdFieldName>#{external_field}</externalIdFieldName>" : nil
       body = %Q{<?xml version="1.0" encoding="utf-8" ?>
@@ -46,30 +50,36 @@ module SalesforceBulk
           <contentType>CSV</contentType>
         </jobInfo>
       }
-      headers = {'Content-Type' => 'application/xml; charset=utf-8'}
-      SalesforceBulk::Request.new("#{instance}.salesforce.com",
-        'job',
+      headers = {'Content-Type' => 'application/xml; charset=utf-8', 'X-SFDC-Session' => session_id}
+      SalesforceBulk::Request.new(
+        :post,
+        "#{instance}.salesforce.com",
+        "/services/async/#{api_version}/job",
         body,
         headers)
     end
 
-    def self.close_job instance, job_id
+    def self.close_job instance, session_id, job_id, api_version
       body = %Q{<?xml version="1.0" encoding="utf-8" ?>
         <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
           <state>Closed</state>
         </jobInfo>
       }
-      headers = {'Content-Type' => 'application/xml; charset=utf-8'}
-      SalesforceBulk::Request.new("#{instance}.salesforce.com",
-        "job/#{job_id}",
+      headers = {'Content-Type' => 'application/xml; charset=utf-8', 'X-SFDC-Session' => session_id}
+      SalesforceBulk::Request.new(
+        :post,
+        "#{instance}.salesforce.com",
+        "/services/async/#{api_version}/job/#{job_id}",
         body,
         headers)
     end
 
-    def self.add_batch instance, job_id, data
-      headers = {'Content-Type' => 'text/csv; charset=UTF-8'}
-      SalesforceBulk::Request.new("#{instance}.salesforce.com",
-        "job/#{job_id}/batch/",
+    def self.add_batch instance, session_id, job_id, data, api_version
+      headers = {'Content-Type' => 'text/csv; charset=UTF-8', 'X-SFDC-Session' => session_id}
+      SalesforceBulk::Request.new(
+        :post,
+        "#{instance}.salesforce.com",
+        "/services/async/#{api_version}/job/#{job_id}/batch/",
         data,
         headers)
     end

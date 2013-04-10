@@ -1,25 +1,21 @@
 module SalesforceBulk
   class Connection
+    LOGIN_HOST = 'login.salesforce.com'
 
-    @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
-    @@LOGIN_HOST = 'login.salesforce.com'
-    @@INSTANCE_HOST = nil
-
-    def initialize(username, password, api_version, in_sandbox)
+    def initialize(username, password, api_version, sandbox)
       @username = username
       @password = password
-      @session_id = nil
-      @server_url = nil
-      @instance = nil
-      @sandbox = in_sandbox
-      @@LOGIN_PATH = "/services/Soap/u/#{api_version}"
-      @@PATH_PREFIX = "/services/async/#{api_version}/"
-      @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
+      @api_version = api_version
+      @sandbox = sandbox
       login
     end
 
     def login
-      r = SalesforceBulk::Request.create_login @sandbox, @username, @password
+      r = SalesforceBulk::Http::Request.create_login(
+        @sandbox,
+        @username,
+        @password,
+        @api_version)
 
       response = request r
       response_parsed = parse_response response
@@ -27,15 +23,15 @@ module SalesforceBulk
       @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
       @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
       @instance = parse_instance()
-
-      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
     end
 
     def create_job operation, sobject, external_field
-      response = request(SalesforceBulk::Request.create_job(
+      response = request(SalesforceBulk::Http::Request.create_job(
         @instance,
+        @session_id,
         operation,
         sobject,
+        @api_version,
         external_field))
 
       response_parsed = parse_response response
@@ -43,9 +39,15 @@ module SalesforceBulk
     end
 
     def close_job job_id
-      response = request(SalesforceBulk::Request.close_job(
+      response = request(SalesforceBulk::Http::Request.close_job(
         @instance,
-        job_id))
+        @session_id,
+        job_id,
+        @api_version))
+
+      puts "====="
+      puts "close_job response: #{response.inspect}"
+      puts "====="
 
       response_parsed = parse_response response
       response_parsed['id'][0]
@@ -63,40 +65,28 @@ module SalesforceBulk
         rows << fields.to_csv
       end
 
-      r = SalesforceBulk::Request.add_batch(
+      r = SalesforceBulk::Http::Request.add_batch(
         @instance,
+        @session_id,
         job_id,
-        rows)
+        rows,
+        @api_version)
 
       response = request(r)
+      puts '+++++'
+      puts "batch: #{response.inspect}"
+      puts '+++++'
       response_parsed = XmlSimple.xml_in(response)
 
       response_parsed['id'][0]
     end
 
     def request r
-      post_xml r.host, r.path, r.body, r.headers
-    end
-
-    def post_xml(host, path, xml, headers)
-      host = host || @@INSTANCE_HOST
-
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
-        path = "#{@@PATH_PREFIX}#{path}"
-      end
-
-      https(host).post(path, xml, headers).body
+      puts r.inspect
+      https(r.host).post(r.path, r.body, r.headers).body
     end
 
     def get_request(host, path, headers)
-      host = host || @@INSTANCE_HOST
-      path = "#{@@PATH_PREFIX}#{path}"
-
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
-      end
-
       https(host).get(path, headers).body
     end
 
@@ -107,7 +97,7 @@ module SalesforceBulk
       req
     end
 
-    def parse_instance()
+    def parse_instance
       #TODO make more ruby like
       @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
       @instance = $~.captures[0]
