@@ -69,12 +69,7 @@ module SalesforceBulk
     end
 
     def process_csv_response res
-      table = CSV.parse(res.gsub(/[ \t+]/,''), headers: true)
-      table.inject([]) do |array, row|
-        array << table.headers.inject({}) do |hash_row, head|
-          hash_row.merge({head => row[head]})
-        end
-      end
+      CSV.parse(res.gsub(/[ \t+]/,''), headers: true).map{|r| r.to_hash}
     end
 
     def process_soap_response res
