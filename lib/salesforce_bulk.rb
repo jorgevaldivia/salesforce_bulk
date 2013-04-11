@@ -39,7 +39,8 @@ module SalesforceBulk
       batch_id = @connection.add_query(job_id, query)
       @connection.close_job job_id
       batch_reference = SalesforceBulk::Batch.new @connection, job_id, batch_id
-      puts batch_reference.final_status.inspect
+      batch_reference.init_result_id
+      batch_reference.final_status
     end
 
     private

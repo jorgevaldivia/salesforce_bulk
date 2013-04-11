@@ -15,10 +15,8 @@ module SalesforceBulk
         @final_status = self.status
         yield @final_status if block_given?
       end
-      result_id_cache = result_id
       @final_status.merge({
-          result_id: result_id_cache,
-          result_data: result_data(result_id_cache),
+          results: results
         })
     end
 
@@ -26,12 +24,13 @@ module SalesforceBulk
       @connection.query_batch @job_id, @batch_id
     end
 
-    def result_id
-      @connection.query_batch_result_id(@job_id, @batch_id)[:result]
+    # only needed for query
+    def init_result_id
+      @result_id = @connection.query_batch_result_id(@job_id, @batch_id)[:result]
     end
 
-    def result_data result_id
-      @connection.query_batch_result_data(@job_id, @batch_id, result_id)
+    def results
+      @connection.query_batch_result_data(@job_id, @batch_id, @result_id)
     end
   end
 end
