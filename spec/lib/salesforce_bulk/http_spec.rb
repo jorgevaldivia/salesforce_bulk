@@ -101,14 +101,14 @@ describe SalesforceBulk::Http do
     it 'should raise an error for faulty login' do
       SalesforceBulk::Http.should_receive(:process_http_request).
         and_return(login_error)
-      expect{ SalesforceBulk::Http.create_login('a','b','c', 'd') }.
+      expect{ SalesforceBulk::Http.login('a','b','c', 'd') }.
         to raise_error(RuntimeError, login_error_message)
     end
 
     it 'should return hash for correct login' do
       SalesforceBulk::Http.should_receive(:process_http_request).
         and_return(login_success)
-      result = SalesforceBulk::Http.create_login('a','b','c', 'd')
+      result = SalesforceBulk::Http.login('a','b','c', 'd')
       expect(result).to be_a(Hash)
       expect(result).to have_key(:session_id)
       expect(result).to have_key(:server_url)

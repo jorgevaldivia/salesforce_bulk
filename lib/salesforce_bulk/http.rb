@@ -5,8 +5,8 @@ module SalesforceBulk
   module Http
     extend self
 
-    def create_login *args
-      r = Http::Request.create_login *args
+    def login *args
+      r = Http::Request.login *args
       process_soap_response(nori.parse(process_http_request(r)))
     end
 
@@ -81,7 +81,7 @@ module SalesforceBulk
         @headers      = headers
       end
 
-      def self.create_login sandbox, username, password, api_version
+      def self.login sandbox, username, password, api_version
         body =  %Q{<?xml version="1.0" encoding="utf-8" ?>
         <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
