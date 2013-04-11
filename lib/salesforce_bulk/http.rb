@@ -16,7 +16,7 @@ module SalesforceBulk
     end
 
     def close_job *args
-      r = Http::Request.create_job *args
+      r = Http::Request.close_job *args
       process_xml_response(nori.parse(process_http_request(r)))
     end
 

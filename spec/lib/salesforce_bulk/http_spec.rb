@@ -217,7 +217,7 @@ describe SalesforceBulk::Http do
     it 'should return hash for closing job' do
       SalesforceBulk::Http.should_receive(:process_http_request).
         and_return(close_job_success)
-      result = SalesforceBulk::Http.close_job('a','b','c','d','e')
+      result = SalesforceBulk::Http.close_job('a','b','c','d')
       expect(result).to be_a(Hash)
       expect(result).to have_key(:id)
       expect(result).to have_key(:object)
