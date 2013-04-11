@@ -19,7 +19,6 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_dependency 'xml-simple'
   gem.add_dependency 'rake'
   gem.add_dependency 'nori', '~> 2.0'
   gem.add_dependency 'nokogiri', '~> 1.5'
