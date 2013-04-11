@@ -13,7 +13,7 @@ module SalesforceBulk
       while ['Queued', 'InProgress'].include?(@final_status[:state])
         sleep poll_interval
         @final_status = self.status
-        yield last_status if block_given?
+        yield @final_status if block_given?
       end
       result_id_cache = result_id
       @final_status.merge({
