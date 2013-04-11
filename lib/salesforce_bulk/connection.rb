@@ -37,6 +37,10 @@ module SalesforceBulk
         @api_version)[:id]
     end
 
+    def query sobject, query
+      
+    end
+
     def query_batch job_id, batch_id
       SalesforceBulk::Http.query_batch(
         @instance,
