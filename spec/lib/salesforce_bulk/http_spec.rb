@@ -9,7 +9,7 @@ describe SalesforceBulk::Http do
         'test.host',
         '/',
         'post body',
-        [])
+        {'X-SFDC-Session' => 'super_secret'})
     end
   
     let(:get_request) do 
@@ -17,12 +17,14 @@ describe SalesforceBulk::Http do
     end
   
     it 'should return a response object' do
-      expected_body = 'correct result'
-      stub_request(:post, 'https://test.host').with do | request |
-        request.body == post_request.body
-      end.to_return(:body => expected_body)
-      res = SalesforceBulk::Http.process_http_request(post_request)
-      expect(res).to eq(expected_body)
+       expected_body = 'correct result'
+        stub_request(:post, 'https://test.host').
+          with(
+            body: post_request.body,
+            headers: post_request.headers).
+          to_return(:body => expected_body)
+       res = SalesforceBulk::Http.process_http_request(post_request)
+       expect(res).to eq(expected_body)
     end
   end
 
@@ -185,8 +187,8 @@ describe SalesforceBulk::Http do
 
   describe '#close_job' do
     let(:close_job_success) do
-      %Q{<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-          <jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">
+      %Q{<?xml version="1.0" encoding="UTF-8"?>
+          <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
             <id>750D0000000002jIAA</id>
             <operation>upsert</operation>
             <object>Contact</object>
@@ -222,6 +224,23 @@ describe SalesforceBulk::Http do
       expect(result).to have_key(:operation)
       expect(result).to have_key(:state)
       expect(result).to have_key(:content_type)
+    end
+  end
+
+  describe '#add_batch' do
+    let(:invalid_session_id) do
+      %Q{<?xml version="1.0" encoding="UTF-8"?>
+        <error xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+          <exceptionCode>InvalidSessionId</exceptionCode>
+          <exceptionMessage>Invalid session id</exceptionMessage>
+        </error>}
+    end
+
+    it 'should raise an exception on faulty' do
+      SalesforceBulk::Http.should_receive(:process_http_request).
+        and_return(invalid_session_id)
+      expect{SalesforceBulk::Http.query_batch('a','b','c','d','e')}.
+        to raise_error(RuntimeError, 'InvalidSessionId: Invalid session id')
     end
   end
 end

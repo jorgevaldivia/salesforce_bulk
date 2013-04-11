@@ -2,6 +2,10 @@ module SalesforceBulk
   class Connection
     LOGIN_HOST = 'login.salesforce.com'
 
+    attr_reader :instance
+    attr_reader :session_id
+    attr_reader :api_version
+
     def initialize(username, password, api_version, sandbox)
       @username = username
       @password = password
@@ -73,7 +77,9 @@ module SalesforceBulk
         @api_version)
 
       response = request(r)
+
       puts '+++++'
+      puts "headers of request: #{r.headers.inspect}"
       puts "batch: #{response.inspect}"
       puts '+++++'
       response_parsed = XmlSimple.xml_in(response)

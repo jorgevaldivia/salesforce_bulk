@@ -7,34 +7,36 @@ module SalesforceBulk
 
     def create_login *args
       r = Http::Request.create_login *args
-      process_login_response(nori.parse(process_http_request(r)))
+      process_soap_response(nori.parse(process_http_request(r)))
     end
 
     def create_job *args
       r = Http::Request.create_job *args
-      process_operation_response(nori.parse(process_http_request(r)))
+      process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def close_job *args
       r = Http::Request.create_job *args
-      process_operation_response(nori.parse(process_http_request(r)))
+      process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def add_batch *args
       r = Http::Request.add_batch *args
-      process_operation_response(nori.parse(process_http_request(r)))
+      process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def query_batch *args
       r = Http::Request.query_batch *args
-      process_operation_response(nori.parse(process_http_request(r)))
+      process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def process_http_request(r)
       http = Net::HTTP.new(r.host, 443)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      http_request = Net::HTTP.const_get(r.http_method.capitalize).new(r.path)
+      http_request = Net::HTTP.
+      const_get(r.http_method.capitalize).
+        new(r.path, r.headers)
       http_request.body = r.body if r.body
       http.request(http_request).body
     end
@@ -47,11 +49,15 @@ module SalesforceBulk
         :convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
     end
 
-    def process_operation_response res
+    def process_xml_response res
+      if res[:error]
+        raise "#{res[:error][:exception_code]}: #{res[:error][:exception_message]}"
+      end
+
       res.values.first
     end
 
-    def process_login_response res
+    def process_soap_response res
       raw_result = res.fetch(:body){res.fetch(:envelope).fetch(:body)}
       raise raw_result[:fault][:faultstring] if raw_result[:fault]
 
@@ -146,11 +152,11 @@ module SalesforceBulk
       end
 
       def self.query_batch instance, session_id, job_id, batch_id, api_version
-        headers = {'Content-Type' => 'application/xml; charset=utf-8', 'X-SFDC-Session' => session_id}
+        headers = {'X-SFDC-Session' => session_id}
         Http::Request.new(
           :get,
           "#{instance}.salesforce.com",
-          "/services/async/#{api_version}/job/#{job_id}/batch/#{batch_id}/result",
+          "/services/async/#{api_version}/job/#{job_id}/batch/#{batch_id}",
           nil,
           headers)
       end

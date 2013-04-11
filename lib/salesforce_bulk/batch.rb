@@ -12,23 +12,24 @@ module SalesforceBulk
 
     def final_status poll_interval=2
       last_status = self.status
-      while ['Queued', 'InProgress'].include?(last_status.name)
+      while ['Queued', 'InProgress'].include?(last_status[:state])
         sleep poll_interval
         last_status = self.status
-        yield last_status
+        yield last_status if block_given?
       end
       last_status
     end
 
     def status
-      SalesforceBulk::Http.query_batch(
-        
+      response = SalesforceBulk::Http.query_batch(
+        @connection.instance,
+        @connection.session_id,
+        @job_id,
+        @batch_id,
+        @connection.api_version,
         )
-      response = @connection.get_request(
-        nil,
-        "job/#{@job_id}/batch/#{@batch_id}",
-        {})
-      SalesforceBulk::BatchStatus.parse response
+      puts response.inspect
+      response
     end
   end
 end
