@@ -236,7 +236,7 @@ describe SalesforceBulk::Http do
         </error>}
     end
 
-    it 'should raise an exception on faulty' do
+    it 'should raise an exception on faulty authorization' do
       SalesforceBulk::Http.should_receive(:process_http_request).
         and_return(invalid_session_id)
       expect{SalesforceBulk::Http.query_batch('a','b','c','d','e')}.
