@@ -1,9 +1,5 @@
 module SalesforceBulk
   class Batch
-    attr_reader :connection
-    attr_reader :batch_id
-    attr_reader :job_id
-
     def initialize connection, job_id, batch_id
       @connection = connection
       @job_id = job_id
@@ -21,14 +17,7 @@ module SalesforceBulk
     end
 
     def status
-      response = SalesforceBulk::Http.query_batch(
-        @connection.instance,
-        @connection.session_id,
-        @job_id,
-        @batch_id,
-        @connection.api_version,
-        )
-      response
+      @connection.query_batch @job_id, @batch_id
     end
   end
 end

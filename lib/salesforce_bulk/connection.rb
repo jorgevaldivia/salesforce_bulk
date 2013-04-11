@@ -1,9 +1,5 @@
 module SalesforceBulk
   class Connection
-    attr_reader :instance
-    attr_reader :session_id
-    attr_reader :api_version
-
     def initialize(username, password, api_version, sandbox)
       @username = username
       @password = password
@@ -39,6 +35,16 @@ module SalesforceBulk
         @session_id,
         job_id,
         @api_version)[:id]
+    end
+
+    def query_batch job_id, batch_id
+      SalesforceBulk::Http.query_batch(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        @api_version,
+      )
     end
 
     def add_batch job_id, records
