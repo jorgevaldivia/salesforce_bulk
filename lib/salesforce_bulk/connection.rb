@@ -19,8 +19,6 @@ module SalesforceBulk
         @password,
         @api_version)
 
-      puts "the login response: #{response.inspect}"
-
       @session_id = response[:session_id]
       @instance = response[:instance]
     end
