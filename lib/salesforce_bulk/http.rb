@@ -1,5 +1,6 @@
 require 'net/https'
 require 'nori'
+require 'csv'
 
 module SalesforceBulk
   module Http
@@ -30,6 +31,16 @@ module SalesforceBulk
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
+    def query_batch_result_id *args
+      r = Http::Request.query_batch_result_id *args
+      process_xml_response(nori.parse(process_http_request(r)))
+    end
+
+    def query_batch_result_data *args
+      r = Http::Request.query_batch_result_data *args
+      process_csv_response(process_http_request(r))
+    end
+
     def process_http_request(r)
       http = Net::HTTP.new(r.host, 443)
       http.use_ssl = true
@@ -55,6 +66,15 @@ module SalesforceBulk
       end
 
       res.values.first
+    end
+
+    def process_csv_response res
+      table = CSV.parse(res.gsub(/[ \t+]/,''), headers: true)
+      table.inject([]) do |array, row|
+        array << table.headers.inject({}) do |hash_row, head|
+          hash_row.merge({head => row[head]})
+        end
+      end
     end
 
     def process_soap_response res
@@ -117,7 +137,9 @@ module SalesforceBulk
             <contentType>CSV</contentType>
           </jobInfo>
         }
-        headers = {'Content-Type' => 'application/xml; charset=utf-8', 'X-SFDC-Session' => session_id}
+        headers = {
+          'Content-Type' => 'application/xml; charset=utf-8',
+          'X-SFDC-Session' => session_id}
         Http::Request.new(
           :post,
           "#{instance}.salesforce.com",
@@ -132,7 +154,9 @@ module SalesforceBulk
             <state>Closed</state>
           </jobInfo>
         }
-        headers = {'Content-Type' => 'application/xml; charset=utf-8', 'X-SFDC-Session' => session_id}
+        headers = {
+          'Content-Type' => 'application/xml; charset=utf-8',
+          'X-SFDC-Session' => session_id}
         Http::Request.new(
           :post,
           "#{instance}.salesforce.com",
@@ -146,7 +170,7 @@ module SalesforceBulk
         Http::Request.new(
           :post,
           "#{instance}.salesforce.com",
-          "/services/async/#{api_version}/job/#{job_id}/batch/",
+          "/services/async/#{api_version}/job/#{job_id}/batch",
           data,
           headers)
       end
@@ -157,6 +181,36 @@ module SalesforceBulk
           :get,
           "#{instance}.salesforce.com",
           "/services/async/#{api_version}/job/#{job_id}/batch/#{batch_id}",
+          nil,
+          headers)
+      end
+
+      def self.query_batch_result_id instance, session_id, job_id, batch_id, api_version
+        headers = {
+          'Content-Type' => 'application/xml; charset=utf-8',
+          'X-SFDC-Session' => session_id}
+        Http::Request.new(
+          :get,
+          "#{instance}.salesforce.com",
+          "/services/async/#{api_version}/job/#{job_id}/batch/#{batch_id}/result",
+          nil,
+          headers)
+      end
+
+      def self.query_batch_result_data(instance,
+        session_id,
+        job_id,
+        batch_id,
+        result_id,
+        api_version)
+        headers = {
+          'Content-Type' => 'text/csv; charset=UTF-8',
+          'X-SFDC-Session' => session_id}
+        Http::Request.new(
+          :get,
+          "#{instance}.salesforce.com",
+          "/services/async/#{api_version}" \
+            "/job/#{job_id}/batch/#{batch_id}/result/#{result_id}",
           nil,
           headers)
       end

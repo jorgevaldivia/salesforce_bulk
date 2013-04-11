@@ -37,8 +37,13 @@ module SalesforceBulk
         @api_version)[:id]
     end
 
-    def query sobject, query
-      
+    def add_query job_id, data_or_soql
+      SalesforceBulk::Http.add_batch(
+        @instance,
+        @session_id,
+        job_id,
+        data_or_soql,
+        @api_version)[:id]
     end
 
     def query_batch job_id, batch_id
@@ -47,6 +52,27 @@ module SalesforceBulk
         @session_id,
         job_id,
         batch_id,
+        @api_version,
+      )
+    end
+
+    def query_batch_result_id job_id, batch_id
+      SalesforceBulk::Http.query_batch_result_id(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        @api_version,
+      )
+    end
+
+    def query_batch_result_data job_id, batch_id, result_id
+      SalesforceBulk::Http.query_batch_result_data(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        result_id,
         @api_version,
       )
     end

@@ -243,4 +243,37 @@ describe SalesforceBulk::Http do
         to raise_error(RuntimeError, 'InvalidSessionId: Invalid session id')
     end
   end
+
+  describe '#query_batch_result_id' do
+    let(:batch_result_success) do
+      %Q{<result-list xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+          <result>750D0000002jIAA</result>
+        </result-list>}
+    end
+
+    it 'should return hash including the result id' do
+      SalesforceBulk::Http.should_receive(:process_http_request).
+        and_return(batch_result_success)
+      result = SalesforceBulk::Http.query_batch_result_id('a','b','c','d','e')
+      expect(result).to be_a(Hash)
+      expect(result).to have_key(:result)
+    end
+  end
+
+  describe '#query_batch_result_data' do
+    let(:batch_result_data_success) do
+      %Q{"Id","my_external_id__c"
+        "003M000057GH39aIAD","K-00J799"
+        "003M001200KO82cIAD","K-015699"}
+    end
+
+    it 'should return array of arrays for data' do
+      SalesforceBulk::Http.should_receive(:process_http_request).
+        and_return(batch_result_data_success)
+      result = SalesforceBulk::Http.query_batch_result_data('a','b','c','d','e','f')
+      expect(result).to eq([
+        {'Id' => '003M000057GH39aIAD', 'my_external_id__c' => 'K-00J799'},
+        {'Id' => '003M001200KO82cIAD', 'my_external_id__c' => 'K-015699'}])
+    end
+  end
 end

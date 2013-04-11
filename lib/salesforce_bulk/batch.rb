@@ -7,17 +7,31 @@ module SalesforceBulk
     end
 
     def final_status poll_interval=2
-      last_status = self.status
-      while ['Queued', 'InProgress'].include?(last_status[:state])
+      return @final_status if @final_status
+
+      @final_status = self.status
+      while ['Queued', 'InProgress'].include?(@final_status[:state])
         sleep poll_interval
-        last_status = self.status
+        @final_status = self.status
         yield last_status if block_given?
       end
-      last_status
+      result_id_cache = result_id
+      @final_status.merge({
+          result_id: result_id_cache,
+          result_data: result_data(result_id_cache),
+        })
     end
 
     def status
       @connection.query_batch @job_id, @batch_id
+    end
+
+    def result_id
+      @connection.query_batch_result_id(@job_id, @batch_id)[:result]
+    end
+
+    def result_data result_id
+      @connection.query_batch_result_data(@job_id, @batch_id, result_id)
     end
   end
 end

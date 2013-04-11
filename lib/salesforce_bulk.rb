@@ -16,28 +16,34 @@ module SalesforceBulk
     end
 
     def upsert(sobject, records, external_field)
-      process('upsert', sobject, records, external_field)
+      start_job('upsert', sobject, records, external_field)
     end
 
     def update(sobject, records)
-      process('update', sobject, records)
+      start_job('update', sobject, records)
     end
 
     def create(sobject, records)
-      process('insert', sobject, records)
+      start_job('insert', sobject, records)
     end
 
     def delete(sobject, records)
-      process('delete', sobject, records)
+      start_job('delete', sobject, records)
     end
 
-    # TODO won't work, need to add method `add_query`
     def query(sobject, query)
-      process('query', sobject, records)
+      job_id = @connection.create_job(
+        'query',
+        sobject,
+        nil)
+      batch_id = @connection.add_query(job_id, query)
+      @connection.close_job job_id
+      batch_reference = SalesforceBulk::Batch.new @connection, job_id, batch_id
+      puts batch_reference.final_status.inspect
     end
 
     private
-    def process(operation, sobject, records, external_field=nil)
+    def start_job(operation, sobject, records, external_field=nil)
       job_id = @connection.create_job(
         operation,
         sobject,
