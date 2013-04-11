@@ -28,7 +28,6 @@ module SalesforceBulk
         @batch_id,
         @connection.api_version,
         )
-      puts response.inspect
       response
     end
   end
