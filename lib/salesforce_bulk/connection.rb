@@ -84,6 +84,8 @@ module SalesforceBulk
     end
 
     def add_batch job_id, records
+      return -1 if records.nil? || records.empty?
+
       keys = records.first.keys
 
       rows = keys.to_csv(CSV_OPTIONS)

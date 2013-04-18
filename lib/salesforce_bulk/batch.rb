@@ -4,6 +4,13 @@ module SalesforceBulk
       @connection = connection
       @job_id = job_id
       @batch_id = batch_id
+
+      if @batch_id == -1
+        @final_status = {
+          state: 'Completed',
+          state_message: 'Empty Request'
+        }
+      end
     end
 
     def final_status poll_interval=2
