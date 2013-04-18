@@ -1,5 +1,11 @@
 module SalesforceBulk
   class Connection
+    CSV_OPTIONS = {
+      col_sep: ',',
+      quote_char: '"',
+      force_quotes: true,
+    }
+
     def initialize(username, password, api_version, sandbox)
       @username = username
       @password = password
@@ -80,13 +86,13 @@ module SalesforceBulk
     def add_batch job_id, records
       keys = records.first.keys
 
-      rows = keys.to_csv
+      rows = keys.to_csv(CSV_OPTIONS)
       records.each do |r|
         fields = []
         keys.each do |k|
           fields.push(r[k])
         end
-        rows << fields.to_csv
+        rows << fields.to_csv(CSV_OPTIONS)
       end
 
       SalesforceBulk::Http.add_batch(
