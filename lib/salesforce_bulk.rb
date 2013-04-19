@@ -1,5 +1,5 @@
-require 'csv'
 require 'salesforce_bulk/version'
+require 'salesforce_bulk/helper'
 require 'salesforce_bulk/batch'
 require 'salesforce_bulk/http'
 require 'salesforce_bulk/connection'
