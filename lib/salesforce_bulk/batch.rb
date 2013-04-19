@@ -36,7 +36,12 @@ module SalesforceBulk
 
     # only needed for query
     def init_result_id
-      @result_id = @connection.query_batch_result_id(@job_id, @batch_id)[:result]
+      max_retries = 5
+      retry_count = 0
+      while @result_id.nil? && retry_count < max_retries
+        @result_id = @connection.query_batch_result_id(@job_id, @batch_id)[:result]
+        retry_count += 1
+      end
     end
 
     def results
