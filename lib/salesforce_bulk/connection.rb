@@ -5,7 +5,6 @@ module SalesforceBulk
       @password = password
       @api_version = api_version
       @sandbox = sandbox
-      login
     end
 
     def login
@@ -86,6 +85,11 @@ module SalesforceBulk
         job_id,
         SalesforceBulk::Helper.records_to_csv(records),
         @api_version)[:id]
+    end
+
+    def self.connect(username, password, api_version, sandbox)
+      self.new(username, password, api_version, sandbox)
+      login
     end
   end
 end
