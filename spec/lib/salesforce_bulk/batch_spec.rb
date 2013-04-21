@@ -20,5 +20,13 @@ describe SalesforceBulk::Batch do
       b.should_not_receive(:status)
       expect(b.final_status).to eq(expected_status)
     end
+
+    it 'should query the status correctly' do
+      b = described_class.new nil, nil, nil
+      b.should_receive(:status).once.and_return({w: :tf})
+      # TODO lookup the actual result
+      b.should_receive(:results).once.and_return({g: :tfo})
+      expect(b.final_status).to eq({w: :tf, results: {g: :tfo}})
+    end
   end
 end
