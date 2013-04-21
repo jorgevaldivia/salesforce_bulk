@@ -28,5 +28,11 @@ describe SalesforceBulk::Batch do
       b.should_receive(:results).once.and_return({g: :tfo})
       expect(b.final_status).to eq({w: :tf, results: {g: :tfo}})
     end
+
+    # TODO look up how to correctly test for yielding
+    # TODO look up correct should_receive with multiple returns
+    it 'should yield block when quering status' do
+      pending 'to be implemented'
+    end
   end
 end
