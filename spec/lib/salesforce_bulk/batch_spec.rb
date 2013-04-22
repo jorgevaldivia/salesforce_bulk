@@ -29,6 +29,22 @@ describe SalesforceBulk::Batch do
       expect(b.final_status).to eq({w: :tf, results: {g: :tfo}})
     end
 
+    it 'should yield status correctly' do
+      expected_running_state = {
+          state: 'InProgress'
+        }
+      expected_final_state = {
+          state: 'Completed'
+        }
+      b = described_class.new nil, nil, nil
+      b.should_receive(:status).once.and_return(expected_running_state)
+      b.should_receive(:status).once.and_return(expected_running_state)
+      b.should_receive(:status).once.and_return(expected_final_state)
+      b.should_receive(:results).once.and_return({g: :tfo})
+      expect{|blk| b.final_status(0, &blk)}.
+        to yield_successive_args(expected_running_state, expected_final_state)
+    end
+
     it 'should raise exception when batch fails' do
       b = described_class.new nil, nil, nil
       expected_error_message = 'Generic Error Message'
