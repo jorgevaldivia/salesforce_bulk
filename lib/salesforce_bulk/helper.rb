@@ -17,7 +17,11 @@ module SalesforceBulk
       all_rows = []
       records.each do |hash|
         row = CSV::Row.new([],[],false)
-        row << hash
+        to_store = hash.inject({}) do |h, (k, v)|
+          h[k] = v.class == Array ? v.join(';') : v
+          h
+        end
+        row << to_store
         all_headers << row.headers
         all_rows << row
       end

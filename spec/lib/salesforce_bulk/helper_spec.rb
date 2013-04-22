@@ -27,9 +27,7 @@ describe SalesforceBulk::Helper do
       expect(described_class.records_to_csv(input)).to eq(expected_csv)
     end
 
-    # TODO verify structure for multi picklist
     it 'should correctly convert Array to Multi-Picklist' do
-      pending 'still needs to be implemented'
       input = [
         {'Title' => 'Awesome Title', 'Picklist' => ['Several', 'Values']},
         {'Title' => 'A second Title', 'Picklist' => ['SingleValue']},
