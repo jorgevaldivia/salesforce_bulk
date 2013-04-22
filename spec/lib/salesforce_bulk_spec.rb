@@ -6,8 +6,6 @@ describe SalesforceBulk::Api do
     SalesforceBulk::Connection.new(nil, nil, nil, nil)
   end
 
-  #TODO lookup how implicit subject works
-  #TODO lookup how forced refresh of let works
   {
     upsert: 3,
     update: 2,
