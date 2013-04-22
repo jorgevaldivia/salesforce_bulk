@@ -30,7 +30,6 @@ describe SalesforceBulk::Api do
           should_receive(:connect).
           and_return(empty_connection)
         s = described_class.new(nil, nil)
-        # TODO lookup how to chain receiver
         empty_connection.should_receive(:create_job).ordered
         empty_connection.should_receive(:add_batch).ordered
         empty_connection.should_receive(:close_job).ordered
@@ -49,7 +48,6 @@ describe SalesforceBulk::Api do
       s = described_class.new(nil, nil)
       sobject_input = 'sobject_stub'
       query_input = 'query_stub'
-      # TODO lookup how to partial check with should_receive with
       empty_connection.should_receive(:add_query).ordered.
         and_return(123)
       empty_connection.should_receive(:close_job).ordered
