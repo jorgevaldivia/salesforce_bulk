@@ -24,7 +24,7 @@ module SalesforceBulk
       start_job('update', sobject, records)
     end
 
-    def create(sobject, records)
+    def insert(sobject, records)
       start_job('insert', sobject, records)
     end
 
