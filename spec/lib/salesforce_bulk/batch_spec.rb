@@ -29,16 +29,15 @@ describe SalesforceBulk::Batch do
       expect(b.final_status).to eq({w: :tf, results: {g: :tfo}})
     end
 
-    it 'should yield block when querying status' do
+    it 'should raise exception when batch fails' do
       b = described_class.new nil, nil, nil
-      expected_state = {state: 'Completed'}
-      b.should_receive(:status).once.and_return({
-        state: 'InProgress'
-        })
-      b.should_receive(:status).once.and_return(expected_state)
-      # TODO lookup the actual result
-      b.should_receive(:results).once.and_return({g: :tfo})
-      expect{|blk| b.final_status(&blk)}.to yield_with_args(expected_state)
+      expected_error_message = 'Generic Error Message'
+      b.should_receive(:status).once.and_return(
+        {
+          state: 'Failed',
+          state_message: expected_error_message})
+      expect{b.final_status}.
+        to raise_error(StandardError, expected_error_message)
     end
   end
 end
