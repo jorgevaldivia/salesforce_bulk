@@ -6,6 +6,10 @@ describe SalesforceBulk::Api do
     SalesforceBulk::Connection.new(nil, nil, nil, nil)
   end
 
+  let(:empty_batch) do
+    Object.new
+  end
+
   {
     upsert: 3,
     update: 2,
@@ -39,16 +43,21 @@ describe SalesforceBulk::Api do
 
   describe '#query' do
     it 'should trigger correct workflow' do
-      pending 'investigation necessary'
       SalesforceBulk::Connection.
           should_receive(:connect).
           and_return(empty_connection)
+      SalesforceBulk::Batch.
+        should_receive(:new).
+        and_return(empty_batch)
+
       s = described_class.new(nil, nil)
       sobject_input = 'sobject_stub'
       query_input = 'query_stub'
-      empty_connection.should_receive(:add_query).ordered.
-        and_return(123)
+      empty_connection.should_receive(:create_job).ordered
+      empty_connection.should_receive(:add_query).ordered
       empty_connection.should_receive(:close_job).ordered
+      empty_batch.should_receive(:init_result_id).ordered
+      empty_batch.should_receive(:final_status).ordered
       s.query(sobject_input, query_input)
     end
   end
