@@ -18,7 +18,6 @@ describe SalesforceBulk::Connection do
         SalesforceBulk::Http.
           should_receive(method_name).
           and_return({})
-        #TODO lookup how to call methods with generic arguments
         subject.send(method_name, *Array.new(num_of_params))
       end
     end
