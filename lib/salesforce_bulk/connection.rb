@@ -16,6 +16,7 @@ module SalesforceBulk
 
       @session_id = response[:session_id]
       @instance = response[:instance]
+      self
     end
 
     def create_job operation, sobject, external_field
@@ -88,8 +89,7 @@ module SalesforceBulk
     end
 
     def self.connect(username, password, api_version, sandbox)
-      self.new(username, password, api_version, sandbox)
-      login
+      self.new(username, password, api_version, sandbox).login
     end
   end
 end
