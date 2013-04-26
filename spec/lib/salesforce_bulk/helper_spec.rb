@@ -3,6 +3,16 @@ require 'spec_helper'
 
 describe SalesforceBulk::Helper do
   describe '.records_to_csv' do
+    it 'should return valid csv for single record' do
+      input = [
+        {'Title' => 'Awesome Title', 'Name' => 'A name'},
+      ]
+
+      expected_csv = "\"Title\",\"Name\"\n" \
+      "\"Awesome Title\",\"A name\"\n"
+      expect(described_class.records_to_csv(input)).to eq(expected_csv)
+    end
+
     it 'should return valid csv for basic records' do
       input = [
         {'Title' => 'Awesome Title', 'Name' => 'A name'},

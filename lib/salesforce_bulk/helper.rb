@@ -25,7 +25,8 @@ module SalesforceBulk
         all_headers << row.headers
         all_rows << row
       end
-      csv_client << all_headers.flatten!.uniq!
+      all_headers.flatten!.uniq!
+      csv_client << all_headers
       all_rows.each do |row|
         csv_client << row.fields(*all_headers)
       end
