@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.summary     = %q{Ruby support for the Salesforce Bulk API}
   gem.description = %q{This gem provides a super simple interface for the Salesforce Bulk API. It provides support for insert, update, upsert, delete, and query.}
 
-  gem.rubyforge_project = "salesforce_bulk"
+  gem.rubyforge_project = 'salesforce_bulk'
 
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
