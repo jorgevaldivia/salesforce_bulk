@@ -267,6 +267,12 @@ describe SalesforceBulk::Http do
         "003M001200KO82cIAD","K-015699"}
     end
 
+    let(:batch_result_data_with_spaces_success) do
+      %Q{"Id","Name"
+        "003K000057GH39aIAD","Master of Disaster"
+        "003K001200KO82cIAD","King of the Hill"}
+    end
+
     it 'should return array of arrays for data' do
       SalesforceBulk::Http.should_receive(:process_http_request).
         and_return(batch_result_data_success)
@@ -274,6 +280,16 @@ describe SalesforceBulk::Http do
       expect(result).to eq([
         {'Id' => '003M000057GH39aIAD', 'my_external_id__c' => 'K-00J799'},
         {'Id' => '003M001200KO82cIAD', 'my_external_id__c' => 'K-015699'}])
+    end
+
+    it 'should return correct array with spaces' do
+      pending 'needs to be fixed'
+      SalesforceBulk::Http.should_receive(:process_http_request).
+        and_return(batch_result_data_with_spaces_success)
+      result = SalesforceBulk::Http.query_batch_result_data('a','b','c','d','e','f')
+      expect(result).to eq([
+        {'Id' => '003K000057GH39aIAD', 'Name' => 'Master of Disaster'},
+        {'Id' => '003K001200KO82cIAD', 'Name' => 'King of the Hill'}])
     end
   end
 end
