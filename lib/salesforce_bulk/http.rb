@@ -69,7 +69,7 @@ module SalesforceBulk
     end
 
     def process_csv_response res
-      CSV.parse(res.gsub(/[ \t+]/,''), headers: true).map{|r| r.to_hash}
+      CSV.parse(res.gsub(/\n\s+/, "\n"), headers: true).map{|r| r.to_hash}
     end
 
     def process_soap_response res

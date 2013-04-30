@@ -270,7 +270,7 @@ describe SalesforceBulk::Http do
     let(:batch_result_data_with_spaces_success) do
       %Q{"Id","Name"
         "003K000057GH39aIAD","Master of Disaster"
-        "003K001200KO82cIAD","King of the Hill"}
+        "003K001200KO82cIAD","King of the  Hill"}
     end
 
     it 'should return array of arrays for data' do
@@ -283,13 +283,12 @@ describe SalesforceBulk::Http do
     end
 
     it 'should return correct array with spaces' do
-      pending 'needs to be fixed'
       SalesforceBulk::Http.should_receive(:process_http_request).
         and_return(batch_result_data_with_spaces_success)
       result = SalesforceBulk::Http.query_batch_result_data('a','b','c','d','e','f')
       expect(result).to eq([
         {'Id' => '003K000057GH39aIAD', 'Name' => 'Master of Disaster'},
-        {'Id' => '003K001200KO82cIAD', 'Name' => 'King of the Hill'}])
+        {'Id' => '003K001200KO82cIAD', 'Name' => 'King of the  Hill'}])
     end
   end
 end
