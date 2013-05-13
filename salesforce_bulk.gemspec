@@ -1,27 +1,27 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "salesforce_bulk/version"
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'salesforce_bulk/version'
 
-Gem::Specification.new do |s|
-  s.name        = "salesforce_bulk"
-  s.version     = SalesforceBulk::VERSION
-  s.authors     = ["Jorge Valdivia"]
-  s.email       = ["jorge@valdivia.me"]
-  s.homepage    = "https://github.com/jorgevaldivia/salesforce_bulk"
-  s.summary     = %q{Ruby support for the Salesforce Bulk API}
-  s.description = %q{This gem provides a super simple interface for the Salesforce Bulk API. It provides support for insert, update, upsert, delete, and query.}
+Gem::Specification.new do |gem|
+  gem.name        = 'salesforce_bulk'
+  gem.version     = SalesforceBulk::VERSION
+  gem.authors     = ["Jorge Valdivia"]
+  gem.email       = ["jorge@valdivia.me"]
+  gem.homepage    = 'https://github.com/jorgevaldivia/salesforce_bulk'
+  gem.summary     = %q{Ruby support for the Salesforce Bulk API}
+  gem.description = %q{This gem provides a super simple interface for the Salesforce Bulk API. It provides support for insert, update, upsert, delete, and query.}
 
-  s.rubyforge_project = "salesforce_bulk"
+  gem.rubyforge_project = 'salesforce_bulk'
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.require_paths = ["lib"]
 
-  # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
-
-  s.add_dependency "xml-simple"
-
+  gem.add_dependency 'rake'
+  gem.add_dependency 'nori', '~> 2.0'
+  gem.add_dependency 'nokogiri', '~> 1.5'
+  gem.add_development_dependency 'rspec', '~> 2.13'
+  gem.add_development_dependency 'webmock', '~> 1.11'
 end

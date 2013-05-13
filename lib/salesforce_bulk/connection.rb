@@ -1,112 +1,95 @@
 module SalesforceBulk
-
   class Connection
-
-    @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
-    @@API_VERSION = nil
-    @@LOGIN_HOST = 'login.salesforce.com'
-    @@INSTANCE_HOST = nil # Gets set in login()
-
-    def initialize(username, password, api_version, in_sandbox)
+    def initialize(username, password, api_version, sandbox)
       @username = username
       @password = password
-      @session_id = nil
-      @server_url = nil
-      @instance = nil
-      @@API_VERSION = api_version
-      @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
-      @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-      @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
-
-      login()
+      @api_version = api_version
+      @sandbox = sandbox
     end
 
-    #private
+    def login
+      response = SalesforceBulk::Http.login(
+        @sandbox,
+        @username,
+        @password,
+        @api_version)
 
-    def login()
-
-      xml = '<?xml version="1.0" encoding="utf-8" ?>'
-      xml += "<env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-      xml += "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-      xml += "    xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-      xml += "  <env:Body>"
-      xml += "    <n1:login xmlns:n1=\"urn:partner.soap.sforce.com\">"
-      xml += "      <n1:username>#{@username}</n1:username>"
-      xml += "      <n1:password>#{@password}</n1:password>"
-      xml += "    </n1:login>"
-      xml += "  </env:Body>"
-      xml += "</env:Envelope>"
-      
-      headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
-
-      response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
-      # response_parsed = XmlSimple.xml_in(response)
-      response_parsed = parse_response response
-
-      @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
-      @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
-      @instance = parse_instance()
-
-      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
+      @session_id = response[:session_id]
+      @instance = response[:instance]
+      self
     end
 
-    def post_xml(host, path, xml, headers)
-
-      host = host || @@INSTANCE_HOST
-
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
-        path = "#{@@PATH_PREFIX}#{path}"
-      end
-
-      https(host).post(path, xml, headers).body
+    def create_job operation, sobject, external_field
+      SalesforceBulk::Http.create_job(
+        @instance,
+        @session_id,
+        operation,
+        sobject,
+        @api_version,
+        external_field)[:id]
     end
 
-    def get_request(host, path, headers)
-      host = host || @@INSTANCE_HOST
-      path = "#{@@PATH_PREFIX}#{path}"
-
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
-      end
-
-      https(host).get(path, headers).body
+    def close_job job_id
+      SalesforceBulk::Http.close_job(
+        @instance,
+        @session_id,
+        job_id,
+        @api_version)[:id]
     end
 
-    def https(host)
-      req = Net::HTTP.new(host, 443)
-      req.use_ssl = true
-      req.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      req
+    def add_query job_id, data_or_soql
+      SalesforceBulk::Http.add_batch(
+        @instance,
+        @session_id,
+        job_id,
+        data_or_soql,
+        @api_version)[:id]
     end
 
-    def parse_instance()
-      @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
-      @instance = $~.captures[0]
+    def query_batch job_id, batch_id
+      SalesforceBulk::Http.query_batch(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        @api_version,
+      )
     end
 
-    def parse_response response
-      response_parsed = XmlSimple.xml_in(response)
-
-      if response.downcase.include?("faultstring") || response.downcase.include?("exceptionmessage")
-        begin
-          
-          if response.downcase.include?("faultstring")
-            error_message = response_parsed["Body"][0]["Fault"][0]["faultstring"][0]
-          elsif response.downcase.include?("exceptionmessage")
-            error_message = response_parsed["exceptionMessage"][0]
-          end
-
-        rescue
-          raise "An unknown error has occured within the salesforce_bulk gem. This is most likely caused by bad request, but I am unable to parse the correct error message. Here is a dump of the response for your convenience. #{response}"
-        end
-
-        raise error_message
-      end
-
-      response_parsed
+    def query_batch_result_id job_id, batch_id
+      SalesforceBulk::Http.query_batch_result_id(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        @api_version,
+      )
     end
 
+    def query_batch_result_data job_id, batch_id, result_id
+      SalesforceBulk::Http.query_batch_result_data(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        result_id,
+        @api_version,
+      )
+    end
+
+    def add_batch job_id, records
+      return -1 if records.nil? || records.empty?
+
+      SalesforceBulk::Http.add_batch(
+        @instance,
+        @session_id,
+        job_id,
+        SalesforceBulk::Helper.records_to_csv(records),
+        @api_version)[:id]
+    end
+
+    def self.connect(username, password, api_version, sandbox)
+      self.new(username, password, api_version, sandbox).login
+    end
   end
-
 end

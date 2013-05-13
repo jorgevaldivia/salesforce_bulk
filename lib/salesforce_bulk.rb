@@ -1,83 +1,58 @@
-require 'net/https'
-require 'xmlsimple'
-require 'csv'
-require "salesforce_bulk/version"
-require 'salesforce_bulk/job'
+require 'salesforce_bulk/version'
+require 'salesforce_bulk/helper'
+require 'salesforce_bulk/batch'
+require 'salesforce_bulk/http'
 require 'salesforce_bulk/connection'
 
 module SalesforceBulk
-  # Your code goes here...
   class Api
+    SALESFORCE_API_VERSION = '27.0'
 
-    @@SALESFORCE_API_VERSION = '24.0'
-
-    def initialize(username, password, in_sandbox=false)
-      @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
+    def initialize(username, password, sandbox = false, api_version = SALESFORCE_API_VERSION)
+      @connection = SalesforceBulk::Connection.connect(
+        username,
+        password,
+        api_version,
+        sandbox)
     end
 
-    def upsert(sobject, records, external_field, wait=false)
-      self.do_operation('upsert', sobject, records, external_field, wait)
+    def upsert(sobject, records, external_field)
+      start_job('upsert', sobject, records, external_field)
     end
 
-    def update(sobject, records, wait=false)
-      self.do_operation('update', sobject, records, nil, wait)
-    end
-    
-    def create(sobject, records, wait=false)
-      self.do_operation('insert', sobject, records, nil, wait)
+    def update(sobject, records)
+      start_job('update', sobject, records)
     end
 
-    def delete(sobject, records, wait=false)
-      self.do_operation('delete', sobject, records, nil, wait)
+    def insert(sobject, records)
+      start_job('insert', sobject, records)
+    end
+
+    def delete(sobject, records)
+      start_job('delete', sobject, records)
     end
 
     def query(sobject, query)
-      self.do_operation('query', sobject, query, nil)
+      job_id = @connection.create_job(
+        'query',
+        sobject,
+        nil)
+      batch_id = @connection.add_query(job_id, query)
+      @connection.close_job job_id
+      batch_reference = SalesforceBulk::Batch.new @connection, job_id, batch_id
+      batch_reference.init_result_id
+      batch_reference.final_status
     end
 
-    def do_operation(operation, sobject, records, external_field, wait=false)
-      job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection)
-
-      # TODO: put this in one function
-      job_id = job.create_job()
-      if(operation == "query")
-        batch_id = job.add_query()
-      else
-        batch_id = job.add_batch()
-      end
-      job.close_job()
-
-      if wait or operation == 'query'
-        while true
-          state = job.check_batch_status()
-          if state != "Queued" && state != "InProgress"
-            break
-          end
-          sleep(2) # wait x seconds and check again
-        end
-        
-        if state == 'Completed'
-          job.get_batch_result()
-          job
-        else
-          job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
-          job.result.success = false
-          return job
-
-        end
-      else
-        return job
-      end
-
+    private
+    def start_job(operation, sobject, records, external_field=nil)
+      job_id = @connection.create_job(
+        operation,
+        sobject,
+        external_field)
+      batch_id = @connection.add_batch job_id, records
+      @connection.close_job job_id
+      SalesforceBulk::Batch.new @connection, job_id, batch_id
     end
-
-    def parse_batch_result result
-      begin
-        CSV.parse(result, :headers => true)
-      rescue
-        result
-      end
-    end
-
-  end  # End class
-end # End module
+  end
+end
