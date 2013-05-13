@@ -7,37 +7,37 @@ module SalesforceBulk
     extend self
 
     def login *args
-      r = Http::Request.login *args
+      r = Http::Request.login(*args)
       process_soap_response(nori.parse(process_http_request(r)))
     end
 
     def create_job *args
-      r = Http::Request.create_job *args
+      r = Http::Request.create_job(*args)
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def close_job *args
-      r = Http::Request.close_job *args
+      r = Http::Request.close_job(*args)
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def add_batch *args
-      r = Http::Request.add_batch *args
+      r = Http::Request.add_batch(*args)
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def query_batch *args
-      r = Http::Request.query_batch *args
+      r = Http::Request.query_batch(*args)
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def query_batch_result_id *args
-      r = Http::Request.query_batch_result_id *args
+      r = Http::Request.query_batch_result_id(*args)
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
     def query_batch_result_data *args
-      r = Http::Request.query_batch_result_data *args
+      r = Http::Request.query_batch_result_data(*args)
       process_csv_response(process_http_request(r))
     end
 
