@@ -78,6 +78,48 @@ describe SalesforceBulk::Http do
           </soapenv:Envelope>}
     end
 
+    let(:login_success_new) do
+      %Q{<?xml version="1.0" encoding="UTF-8"?>
+          <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:partner.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <soapenv:Body>
+              <loginResponse>
+                <result>
+                  <metadataServerUrl>https://#{sf_instance}.salesforce.com/services/Soap/m/27.0/00EU00000095Y5b</metadataServerUrl>
+                  <passwordExpired>false</passwordExpired>
+                  <sandbox>true</sandbox>
+                  <serverUrl>https://#{sf_instance}.salesforce.com/services/Soap/u/27.0/00EU00000095Y5b</serverUrl>
+                  <sessionId>00DM00000099X9a!AQ7AQJ9BjrYfF2h_G9_VERsCRVjTMAPaWjz2zuqqRBduYvKCmHexVbKdtxFMrgTnV9Xi.M80AhIkjnwuEVxI00ChG09._Q_X</sessionId>
+                  <userId>005K001100243YPIAY</userId>
+                  <userInfo>
+                    <accessibilityMode>false</accessibilityMode>
+                    <currencySymbol xsi:nil="true"/>
+                    <orgAttachmentFileSizeLimit>2621440</orgAttachmentFileSizeLimit>
+                    <orgDefaultCurrencyIsoCode xsi:nil="true"/>
+                    <orgDisallowHtmlAttachments>false</orgDisallowHtmlAttachments>
+                    <orgHasPersonAccounts>false</orgHasPersonAccounts>
+                    <organizationId>00ID0000OrgFoo</organizationId>
+                    <organizationMultiCurrency>true</organizationMultiCurrency>
+                    <organizationName>Hinz &amp; Kunz</organizationName>
+                    <profileId>00eA0000000nJEY</profileId>
+                    <roleId xsi:nil="true"/>
+                    <sessionSecondsValid>3600</sessionSecondsValid>
+                    <userDefaultCurrencyIsoCode>EUR</userDefaultCurrencyIsoCode>
+                    <userEmail>theadmin@example.com</userEmail>
+                    <userFullName>John Doe</userFullName>
+                    <userId>005D0000002b3SPIAY</userId>
+                    <userLanguage>de</userLanguage>
+                    <userLocale>de_DE_EURO</userLocale>
+                    <userName>theadmin@exammple.com.euvconfig</userName>
+                    <userTimeZone>Europe/Berlin</userTimeZone>
+                    <userType>Standard</userType>
+                    <userUiSkin>Theme42</userUiSkin>
+                  </userInfo>
+                </result>
+              </loginResponse>
+            </soapenv:Body>
+          </soapenv:Envelope>}
+    end
+
     let(:login_error) do
       %Q{<?xml version="1.0" encoding="UTF-8"?>
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
@@ -106,13 +148,15 @@ describe SalesforceBulk::Http do
     end
 
     it 'should return hash for correct login' do
-      SalesforceBulk::Http.should_receive(:process_http_request).
-        and_return(login_success)
-      result = SalesforceBulk::Http.login('a','b','c', 'd')
-      expect(result).to be_a(Hash)
-      expect(result).to have_key(:session_id)
-      expect(result).to have_key(:server_url)
-      expect(result[:instance]).to eq(sf_instance)
+      [login_success, login_success_new].each do |login_response|
+        SalesforceBulk::Http.should_receive(:process_http_request).
+          and_return(login_response)
+        result = SalesforceBulk::Http.login('a','b','c', 'd')
+        expect(result).to be_a(Hash)
+        expect(result).to have_key(:session_id)
+        expect(result).to have_key(:server_url)
+        expect(result[:instance]).to eq(sf_instance)
+      end
     end
   end
 

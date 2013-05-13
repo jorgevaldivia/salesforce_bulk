@@ -77,7 +77,7 @@ module SalesforceBulk
       raise raw_result[:fault][:faultstring] if raw_result[:fault]
 
       login_result = raw_result[:login_response][:result]
-      instance = login_result[:server_url][/^https?:\/\/(\w+)-api/, 1]
+      instance = login_result[:server_url][/^https?:\/\/(\w+)(-api)?/, 1]
       login_result.merge(instance: instance)
     end
 
