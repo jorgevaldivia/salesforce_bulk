@@ -81,8 +81,10 @@ module SalesforceBulk
     end
 
     def parse_instance()
-      @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
-      @instance = $~.captures[0]
+      #@server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
+      #@instance = $~.captures[0]
+      # JOHN RYAN: had to do this fix quick after a Salesforce API change
+      @server_url = @instance
     end
 
     def parse_response response
