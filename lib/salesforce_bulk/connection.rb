@@ -81,11 +81,9 @@ module SalesforceBulk
     end
 
     def parse_instance()
-      #@server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})-api/
-      #@instance = $~.captures[0]
-      #TODO: JOHN RYAN: had to do this fix quick after a Salesforce API change
-      puts 'Bypassing regex for sfdc URI'
-      @server_url = @instance
+      # Removed "-api" from URI
+      @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})/
+      @instance = $~.captures[0]
     end
 
     def parse_response response
