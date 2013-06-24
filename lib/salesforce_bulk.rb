@@ -62,13 +62,19 @@ module SalesforceBulk
         else
           job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
           job.result.success = false
+          self.dbdc_query records if operation == 'query' # retry query when descriptive error message when error happened
           return job
-
         end
       else
         return job
       end
 
+    end
+
+    def dbdc_query soql
+      client = Databasedotcom::Client.new(host: @connection.info[:host], verify_mode:  OpenSSL::SSL::VERIFY_NONE)
+      client.authenticate token: @connection.info[:token], instance_url: @connection.info[:instance_url]
+      client.query soql
     end
 
     def parse_batch_result result

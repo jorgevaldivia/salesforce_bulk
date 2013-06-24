@@ -21,6 +21,12 @@ module SalesforceBulk
       login()
     end
 
+    def info
+      { host: @@LOGIN_HOST,
+        instance_url: @server_url,
+        token: @session_id}
+    end
+
     #private
 
     def login()
