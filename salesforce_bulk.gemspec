@@ -23,5 +23,6 @@ Gem::Specification.new do |s|
   # s.add_runtime_dependency "rest-client"
 
   s.add_dependency "xml-simple"
+  s.add_dependency "databasedotcom-rails"
 
 end
