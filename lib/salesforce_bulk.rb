@@ -62,7 +62,7 @@ module SalesforceBulk
         else
           job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
           job.result.success = false
-          self.dbdc_query records # retry query when descriptive error message when error happened
+          self.dbdc_query records if operation == 'query' # retry query when descriptive error message when error happened
           return job
         end
       else
