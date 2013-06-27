@@ -82,7 +82,17 @@ module SalesforceBulk
       response = @@connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
 
-      @@batch_id = response_parsed['id'][0]
+      if response_parsed['id'] == nil
+        exceptionMessage = response_parsed['exceptionMessage']
+        if (exceptionMessage == nil)
+          problemMessage = 'no exceptionMessage returned'
+        else
+            problemMessage = exceptionMessage.join(',')
+        end
+        raise "Could not add a batch to the bulk job id=#{@@job_id}: #{problemMessage}"
+      else
+        @@batch_id = response_parsed['id'][0]
+      end
     end
 
     def check_batch_status()
