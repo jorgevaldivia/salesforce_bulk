@@ -7,7 +7,7 @@ module SalesforceBulk
     @@LOGIN_HOST = 'login.salesforce.com'
     @@INSTANCE_HOST = nil # Gets set in login()
 
-    def initialize(sid, instance, orgid, api_version, in_sandbox = nil)
+    def initialize(sid, instance, orgid, api_version, in_sandbox)
       @session_id = sid
       @instance = instance
       @server_url = "https://#{instance}.salesforce.com/services/Soap/u/28.0/#{orgid}"
