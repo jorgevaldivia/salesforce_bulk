@@ -26,7 +26,7 @@ module SalesforceBulk
       @session_id = sid
       @instance = instance
       @server_url = "https://#{instance}.salesforce.com/services/Soap/u/28.0/#{orgid}"
-      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
+      @@INSTANCE_HOST = "#{instance}.salesforce.com"
     end
 
     #private
