@@ -7,57 +7,18 @@ module SalesforceBulk
     @@LOGIN_HOST = 'login.salesforce.com'
     @@INSTANCE_HOST = nil # Gets set in login()
 
-    def initialize(username, password, api_version, in_sandbox)
-      @username = username
-      @password = password
-      @session_id = nil
-      @server_url = nil
-      @instance = nil
-      @@API_VERSION = api_version
-      @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
-      @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-      @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
-
-      login()
-    end
-    
-    # Used when a restforce client is used for making the initial connection
-    def set_session_info(sid, instance, orgid)
+    def initialize(sid, instance, orgid, api_version, in_sandbox = nil)
       @session_id = sid
       @instance = instance
       @server_url = "https://#{instance}.salesforce.com/services/Soap/u/28.0/#{orgid}"
       @@INSTANCE_HOST = "#{instance}.salesforce.com"
+      @@API_VERSION = api_version
+      @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
+      @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
+      @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
     end
 
     #private
-
-    def login()
-
-      xml = '<?xml version="1.0" encoding="utf-8" ?>'
-      xml += "<env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-      xml += "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-      xml += "    xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-      xml += "  <env:Body>"
-      xml += "    <n1:login xmlns:n1=\"urn:partner.soap.sforce.com\">"
-      xml += "      <n1:username>#{@username}</n1:username>"
-      xml += "      <n1:password>#{@password}</n1:password>"
-      xml += "    </n1:login>"
-      xml += "  </env:Body>"
-      xml += "</env:Envelope>"
-      
-      headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
-
-      response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
-      # response_parsed = XmlSimple.xml_in(response)
-      response_parsed = parse_response response
-
-      @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
-      @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
-      @instance = parse_instance()
-
-      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
-    end
-
     def post_xml(host, path, xml, headers)
 
       host = host || @@INSTANCE_HOST
