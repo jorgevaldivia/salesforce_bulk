@@ -20,6 +20,14 @@ module SalesforceBulk
 
       login()
     end
+    
+    # Used when a restforce client is used for making the initial connection
+    def set_session_info(sid, instance, orgid)
+      @session_id = sid
+      @instance = instance
+      @server_url = "https://#{instance}.salesforce.com/services/Soap/u/28.0/#{orgid}"
+      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
+    end
 
     #private
 
