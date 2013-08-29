@@ -3,6 +3,8 @@
 ==Overview
 
 Salesforce bulk is a simple ruby gem for connecting to and using the Salesforce Bulk API (http://www.salesforce.com/us/developer/docs/api_asynch/index.htm). There are already some gems out there that provide connectivity to the Salesforce SOAP and Rest APIs, if your needs are simple, I recommend using those, specifically raygao's asf-rest-adapter (https://github.com/raygao/asf-rest-adapter) or databasedotcom (https://rubygems.org/gems/databasedotcom).
+
+This is a modified version of the original gem, which allows you to pass in an existing auth_token and organization_id from a previously authenticated API (such as Restforce).  This allows for server-side OAuth flow where a username and password is not readily available.
  
 ==Installation
 
@@ -14,13 +16,18 @@ Using this gem is simple and straight forward.
 
 To initialize:
 
+  Minimum signature:
   require 'salesforce_bulk'
-  salesforce = SalesforceBulk::Api.new("YOUR_SALESFORCE_USERNAME", "YOUR_SALESFORCE_PASSWORD+YOUR_SALESFORCE_TOKEN")
+  salesforce = SalesforceBulk::Api.new("EXISTING_AUTH_TOKEN", "SF_INSTANCE_DOMAIN", "YOUR_ORG_ID")
+  
+  Full signature:
+  salesforce = SalesforceBulk::Api.new("EXISTING_AUTH_TOKEN", "SF_INSTANCE_DOMAIN", "YOUR_ORG_ID", "API_VERSION", false)
+  
+  Where SF_INSTANCE_DOMAIN is the "na12" portion of the instance URL: "https://na12.salesforce.com"
 
 To use sandbox:
-  salesforce = SalesforceBulk::Api.new("YOUR_SALESFORCE_SANDBOX_USERNAME", "YOUR_SALESFORCE_PASSWORD+YOUR_SALESFORCE_SANDBOX_TOKEN", true)
+  salesforce = SalesforceBulk::Api.new("EXISTING_AUTH_TOKEN", "SF_INSTANCE_DOMAIN", "YOUR_ORG_ID", "API_VERSION", true)
 
-Note: the second parameter is a combination of your Salesforce token and password. So if your password is xxxx and your token is yyyy, the second parameter will be xxxxyyyy
 
 Sample operations:
 
