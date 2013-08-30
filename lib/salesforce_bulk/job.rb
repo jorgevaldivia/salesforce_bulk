@@ -69,7 +69,11 @@ module SalesforceBulk
       @@records.each do |r|
         fields = Array.new
         keys.each do |k|
-          fields.push(r[k])
+          if r[k].is_a? Array
+            fields.push(r[k].join(';'))
+          else
+            fields.push(r[k])
+          end
         end
 
         row_csv = fields.to_csv
