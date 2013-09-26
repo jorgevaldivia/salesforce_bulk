@@ -84,8 +84,11 @@ module SalesforceBulk
       
       response = @connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
-
-      @batch_id = response_parsed['id'][0]
+      if response_parsed['id'].nil?
+        raise "unable to parse response for #{response_parsed}"
+      else
+        @batch_id = response_parsed['id'][0]
+      end
     end
 
     def check_batch_status
