@@ -20,19 +20,8 @@ module SalesforceBulk
 
       login()
     end
-    
 
-    private
-
-    def login_path
-      "/services/Soap/u/#{@api_version}"
-    end
-    
-    def path_prefix
-      "/services/async/#{@api_version}/"
-    end
-    
-    def login()
+    def login
       xml = XML_HEADER
       xml += "<env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
       xml += "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
@@ -88,7 +77,7 @@ module SalesforceBulk
       req
     end
 
-    def parse_instance()
+    def parse_instance
       @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})(-api)?/
       if $~.nil?
         # Check for a "My Domain" subdomain
@@ -123,6 +112,16 @@ module SalesforceBulk
       end
 
       response_parsed
+    end
+
+    private
+
+    def login_path
+      "/services/Soap/u/#{@api_version}"
+    end
+
+    def path_prefix
+      "/services/async/#{@api_version}/"
     end
 
   end

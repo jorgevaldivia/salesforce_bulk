@@ -60,7 +60,7 @@ module SalesforceBulk
       @batch_id = response_parsed['id'][0]
     end
 
-    def add_batch()
+    def add_batch
       keys = @records.first.keys
       
       output_csv = keys.to_csv
@@ -132,19 +132,24 @@ module SalesforceBulk
     def parse_results response
       @result.success = true
       @result.raw = response.lines.to_a[1..-1].join
-      csvRows = CSV.parse(response, :headers => true)
+      
+      begin
+        csvRows = CSV.parse(response, :headers => true)
+        csvRows.each_with_index  do |row, index|
+          if @operation != "query"
+            row["Created"] = row["Created"] == "true" ? true : false
+            row["Success"] = row["Success"] == "true" ? true : false
+          end
 
-      csvRows.each_with_index  do |row, index|
-        if @operation != "query"
-          row["Created"] = row["Created"] == "true" ? true : false
-          row["Success"] = row["Success"] == "true" ? true : false
+          @result.records.push row
+          if row["Success"] == false
+            @result.success = false
+            @result.errors.push({"#{index}" => row["Error"]}) if row["Error"]
+          end
         end
 
-        @result.records.push row
-        if row["Success"] == false
-          @result.success = false 
-          @result.errors.push({"#{index}" => row["Error"]}) if row["Error"]
-        end
+      rescue CSV::MalformedCSVError => e
+        raise "unable to parse #{response.raw} as a csv"
       end
 
       @result.message = "The job has been closed."
