@@ -8,8 +8,8 @@ module SalesforceBulk
     def initialize(operation, sobject, records, external_field, connection)
       @operation = operation
       @sobject = sobject
-      @external_field = external_field
       @records = records
+      @external_field = external_field
       @connection = connection
 
       # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
@@ -84,8 +84,8 @@ module SalesforceBulk
       
       response = @connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
-      if response_parsed['id'].nil?
-        raise "unable to parse response for #{response_parsed}"
+      if response_parsed.nil?
+        raise "unable to parse response for #{response}"
       else
         @batch_id = response_parsed['id'][0]
       end
