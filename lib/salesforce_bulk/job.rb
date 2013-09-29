@@ -57,7 +57,7 @@ module SalesforceBulk
       response = @connection.post_xml(nil, path, @records, headers)
       response_parsed = XmlSimple.xml_in(response)
 
-      if response_parsed.nil?
+      if response_parsed.nil? || response_parsed['id'].nil?
         raise "unable to parse response for #{response}"
       else
         @batch_id = response_parsed['id'][0]
@@ -88,7 +88,7 @@ module SalesforceBulk
       
       response = @connection.post_xml(nil, path, output_csv, headers)
       response_parsed = XmlSimple.xml_in(response)
-      if response_parsed.nil?
+      if response_parsed.nil? || response_parsed['id'].nil?
         raise "unable to parse response for #{response}"
       else
         @batch_id = response_parsed['id'][0]
