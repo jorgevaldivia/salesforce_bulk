@@ -87,8 +87,7 @@ module SalesforceBulk
     end
 
     def parse_instance()
-      @server_url =~ /https:\/\/([a-z0-9]+)/
-      @instance = $~.captures[0]
+      @instance = URI(@server_url).host.sub(".salesforce.com", "")
     end
 
     def parse_response response
