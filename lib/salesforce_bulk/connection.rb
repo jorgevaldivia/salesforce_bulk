@@ -2,10 +2,7 @@ module SalesforceBulk
 
   class Connection
 
-    @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
-    @@API_VERSION = nil
-    @@LOGIN_HOST = 'login.salesforce.com'
-    @@INSTANCE_HOST = nil # Gets set in login()
+    XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
 
     def initialize(username, password, api_version, in_sandbox)
       @username = username
@@ -13,19 +10,19 @@ module SalesforceBulk
       @session_id = nil
       @server_url = nil
       @instance = nil
-      @@API_VERSION = api_version
-      @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
-      @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-      @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
+      @api_version = api_version
+
+      if in_sandbox
+        @login_host = 'test.salesforce.com' 
+      else
+        @login_host = 'login.salesforce.com'
+      end
 
       login()
     end
 
-    #private
-
-    def login()
-
-      xml = '<?xml version="1.0" encoding="utf-8" ?>'
+    def login
+      xml = XML_HEADER
       xml += "<env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
       xml += "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
       xml += "    xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -39,7 +36,7 @@ module SalesforceBulk
       
       headers = Hash['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => 'login']
 
-      response = post_xml(@@LOGIN_HOST, @@LOGIN_PATH, xml, headers)
+      response = post_xml(@login_host, login_path, xml, headers)
       # response_parsed = XmlSimple.xml_in(response)
       response_parsed = parse_response response
 
@@ -47,27 +44,27 @@ module SalesforceBulk
       @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
       @instance = parse_instance()
 
-      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
+      @instance_host = "#{@instance}.salesforce.com"
     end
 
     def post_xml(host, path, xml, headers)
 
-      host = host || @@INSTANCE_HOST
+      host = host || @instance_host
 
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
-        path = "#{@@PATH_PREFIX}#{path}"
+      if host != @login_host # Not login, need to add session id to header
+        headers['X-SFDC-Session'] = @session_id
+        path = "#{path_prefix}#{path}"
       end
 
       https(host).post(path, xml, headers).body
     end
 
     def get_request(host, path, headers)
-      host = host || @@INSTANCE_HOST
-      path = "#{@@PATH_PREFIX}#{path}"
+      host = host || @instance_host
+      path = "#{path_prefix}#{path}"
 
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
+      if host != @login_host # Not login, need to add session id to header
+        headers['X-SFDC-Session'] = @session_id
       end
 
       https(host).get(path, headers).body
@@ -80,7 +77,7 @@ module SalesforceBulk
       req
     end
 
-    def parse_instance()
+    def parse_instance
       @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})(-api)?/
       if $~.nil?
         # Check for a "My Domain" subdomain
@@ -115,6 +112,16 @@ module SalesforceBulk
       end
 
       response_parsed
+    end
+
+    private
+
+    def login_path
+      "/services/Soap/u/#{@api_version}"
+    end
+
+    def path_prefix
+      "/services/async/#{@api_version}/"
     end
 
   end
