@@ -84,7 +84,7 @@ module SalesforceBulk
       regexps = [
         /https:\/\/([a-z]{2,2}[0-9]{1,2})(-api)?/,
         /https:\/\/[a-zA-Z\-0-9]*.([a-z]{2,2}[0-9]{1,2})(-api)?/,
-        /https:\/\/([a-zA-Z\-0-9]*.my)?/
+        /https:\/\/([a-zA-Z\-0-9]*\.my)/
       ]
 
       for r in regexps
