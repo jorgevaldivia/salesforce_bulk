@@ -89,7 +89,7 @@ module SalesforceBulk
 
       for r in regexps
         m = r.match(@server_url)
-        return m.caputures[0] if m
+        return m.captures[0] if m
       end
 
       raise "Unable to parse Salesforce instance from server url (#{@server_url})."
