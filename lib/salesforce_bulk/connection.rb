@@ -2,40 +2,41 @@ module SalesforceBulk
 
   class Connection
 
-    @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
-    @@API_VERSION = nil
-    @@LOGIN_HOST = 'login.salesforce.com'
-    @@INSTANCE_HOST = nil # Gets set in login()
+    XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'.freeze
+    LOGIN_HOST = 'login.salesforce.com'.freeze
+    SANDBOX_LOGIN_HOST = 'test.salesforce.com'.freeze
+
+    attr_accessor :session_id
 
     def initialize(sid, instance, orgid, api_version, in_sandbox)
       @session_id = sid
       @instance = instance
       @server_url = "https://#{instance}.salesforce.com/services/Soap/u/28.0/#{orgid}"
-      @@INSTANCE_HOST = "#{instance}.salesforce.com"
-      @@API_VERSION = api_version
-      @@LOGIN_PATH = "/services/Soap/u/#{@@API_VERSION}"
-      @@PATH_PREFIX = "/services/async/#{@@API_VERSION}/"
-      @@LOGIN_HOST = 'test.salesforce.com' if in_sandbox
+      @instance_url = "#{instance}.salesforce.com"
+      @api_version = api_version
+      @login_path = "/services/Soap/u/#{@api_version}"
+      @path_prefix = "/services/async/#{@api_version}/"
+      @login_host =  in_sandbox ? SANDBOX_LOGIN_HOST : LOGIN_HOST
     end
 
     #private
     def post_xml(host, path, xml, headers)
 
-      host = host || @@INSTANCE_HOST
+      host = host || @instance_url
 
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
-        headers['X-SFDC-Session'] = @session_id;
-        path = "#{@@PATH_PREFIX}#{path}"
+      if host != @login_host # Not login, need to add session id to header
+        headers['X-SFDC-Session'] = @session_id
+        path = "#{@path_prefix}#{path}"
       end
 
       https(host).post(path, xml, headers).body
     end
 
     def get_request(host, path, headers)
-      host = host || @@INSTANCE_HOST
-      path = "#{@@PATH_PREFIX}#{path}"
+      host = host || @instance_url
+      path = "#{@path_prefix}#{path}"
 
-      if host != @@LOGIN_HOST # Not login, need to add session id to header
+      if host != @login_host # Not login, need to add session id to header
         headers['X-SFDC-Session'] = @session_id;
       end
 
