@@ -9,10 +9,10 @@ module SalesforceBulk
   # Your code goes here...
   class Api
 
-    @@SALESFORCE_API_VERSION = '24.0'
+    SALESFORCE_API_VERSION = '24.0'.freeze
 
     def initialize(sid, instance, orgid, api_version, in_sandbox=false)
-      api_version ||= @@SALESFORCE_API_VERSION
+      api_version ||= SALESFORCE_API_VERSION
       @connection = SalesforceBulk::Connection.new(sid, instance, orgid, api_version, in_sandbox)
     end
 
