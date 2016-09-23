@@ -45,9 +45,7 @@ module SalesforceBulk
 
       @session_id = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['sessionId'][0]
       @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
-      @instance = parse_instance()
-
-      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
+      @@INSTANCE_HOST = URI.parse(@server_url).host
     end
 
     def post_xml(host, path, xml, headers)
@@ -78,21 +76,6 @@ module SalesforceBulk
       req.use_ssl = true
       req.verify_mode = OpenSSL::SSL::VERIFY_NONE
       req
-    end
-
-    def parse_instance()
-      @server_url =~ /https:\/\/([a-z]{2,2}[0-9]{1,2})(-api)?/
-      if $~.nil?
-        # Check for a "My Domain" subdomain
-        @server_url =~ /https:\/\/[a-zA-Z\-0-9]*.([a-z]{2,2}[0-9]{1,2})(-api)?/
-        if $~.nil?
-          raise "Unable to parse Salesforce instance from server url (#{@server_url})."
-        else
-          @instance = $~.captures[0]
-        end
-      else
-        @instance = $~.captures[0]
-      end
     end
 
     def parse_response response
