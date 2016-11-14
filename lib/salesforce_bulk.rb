@@ -11,8 +11,9 @@ module SalesforceBulk
 
     @@SALESFORCE_API_VERSION = '24.0'
 
-    def initialize(username, password, in_sandbox=false)
+    def initialize(username, password, in_sandbox=false, is_serial = false)
       @connection = SalesforceBulk::Connection.new(username, password, @@SALESFORCE_API_VERSION, in_sandbox)
+      @serial = is_serial
     end
 
     def upsert(sobject, records, external_field, wait=false)
@@ -36,7 +37,7 @@ module SalesforceBulk
     end
 
     def do_operation(operation, sobject, records, external_field, wait=false)
-      job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection)
+      job = SalesforceBulk::Job.new(operation, sobject, records, external_field, @connection, @serial)
 
       # TODO: put this in one function
       job_id = job.create_job()
