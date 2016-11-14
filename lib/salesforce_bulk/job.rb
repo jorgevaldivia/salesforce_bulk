@@ -4,13 +4,14 @@ module SalesforceBulk
 
     attr :result
 
-    def initialize(operation, sobject, records, external_field, connection)
+    def initialize(operation, sobject, records, external_field, connection, serial)
 
       @@operation = operation
       @@sobject = sobject
       @@external_field = external_field
       @@records = records
       @@connection = connection
+      @@serial = serial
       @@XML_HEADER = '<?xml version="1.0" encoding="utf-8" ?>'
 
       # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
@@ -26,6 +27,9 @@ module SalesforceBulk
         xml += "<externalIdFieldName>#{@@external_field}</externalIdFieldName>"
       end
       xml += "<contentType>CSV</contentType>"
+      if @@serial
+        xml += "<concurrencyMode>Serial</concurrencyMode>"
+      end
       xml += "</jobInfo>"
 
       path = "job"
