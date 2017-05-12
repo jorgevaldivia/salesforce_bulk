@@ -2,7 +2,7 @@ module SalesforceBulk
 
   class Job
 
-    attr :result
+    attr :result, :pk_batch_ids
 
     def initialize(operation, sobject, records, external_field, connection)
 
@@ -15,10 +15,13 @@ module SalesforceBulk
 
       # @result = {"errors" => [], "success" => nil, "records" => [], "raw" => nil, "message" => 'The job has been queued.'}
       @result = JobResult.new
+      @pk_batch_ids = []
 
     end
 
-    def create_job()
+    def create_job(pk_chunk=false)
+      @@pk_chunk = pk_chunk      
+
       xml = "#{@@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
       xml += "<operation>#{@@operation}</operation>"
       xml += "<object>#{@@sobject}</object>"
@@ -30,6 +33,10 @@ module SalesforceBulk
 
       path = "job"
       headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
+
+      if pk_chunk
+        headers['Sforce-Enable-PKChunking'] = "chunkSize=50000;"
+      end
 
       response = @@connection.post_xml(nil, path, xml, headers)
       response_parsed = @@connection.parse_response response
@@ -54,7 +61,6 @@ module SalesforceBulk
     def add_query
       path = "job/#{@@job_id}/batch/"
       headers = Hash["Content-Type" => "text/csv; charset=UTF-8"]
-      
       response = @@connection.post_xml(nil, path, @@records, headers)
       response_parsed = XmlSimple.xml_in(response)
 
@@ -85,13 +91,27 @@ module SalesforceBulk
       @@batch_id = response_parsed['id'][0]
     end
 
-    def check_batch_status()
-      path = "job/#{@@job_id}/batch/#{@@batch_id}"
+    def fetch_pk_batch_ids()
+      path = "job/#{@@job_id}/batch"
       headers = Hash.new
 
       response = @@connection.get_request(nil, path, headers)
       response_parsed = XmlSimple.xml_in(response)
+    
+      response_parsed['batchInfo'].each do |batch|
+        next if batch['id'][0] == @@batch_id
+        @pk_batch_ids << batch['id'][0]
+      end 
+      @pk_batch_ids
+    end
 
+    def check_batch_status(batch_id=@@batch_id)
+      path = "job/#{@@job_id}/batch/#{batch_id}"
+      headers = Hash.new
+
+      response = @@connection.get_request(nil, path, headers)
+      response_parsed = XmlSimple.xml_in(response)
+      
       begin
         #puts "check: #{response_parsed.inspect}\n"
         response_parsed['state'][0]
@@ -101,13 +121,12 @@ module SalesforceBulk
         nil
       end
     end
-
-    def get_batch_result()
-      path = "job/#{@@job_id}/batch/#{@@batch_id}/result"
+    
+    def get_batch_result(batch_id=@@batch_id)
+      path = "job/#{@@job_id}/batch/#{batch_id}/result"
       headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
 
       response = @@connection.get_request(nil, path, headers)
-
       if(@@operation == "query") # The query op requires us to do another request to get the results
         response_parsed = XmlSimple.xml_in(response)
         result_id = response_parsed["result"][0]
@@ -117,16 +136,38 @@ module SalesforceBulk
         headers = Hash["Content-Type" => "text/xml; charset=UTF-8"]
         
         response = @@connection.get_request(nil, path, headers)
-
       end
 
       parse_results response
-
+      
       response = response.lines.to_a[1..-1].join
       # csvRows = CSV.parse(response, :headers => true)
     end
 
+    def get_pk_batch_result_when_completed(batch_id)
+      while true 
+        state = check_batch_status(batch_id)
+        if state != "Queued" && state != "InProgress"
+          break
+        end
+        sleep(2)
+      end
+      
+      if state == 'Completed'
+        get_batch_result(batch_id)
+      else
+        @result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
+        @result.success = false
+      end
+    end
+
+
     def parse_results response
+      # if pk-chunking, replace old results with new vs. appending 
+      if (@@pk_chunk and @@operation == "query")
+        @result = JobResult.new
+      end
+
       @result.success = true
       @result.raw = response.lines.to_a[1..-1].join
       csvRows = CSV.parse(response, :headers => true)
