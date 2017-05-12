@@ -49,7 +49,6 @@ module SalesforceBulk
       else
         batch_id = job.add_batch()
       end
-      #job.close_job()
      
       if wait or operation == 'query'
         while true
