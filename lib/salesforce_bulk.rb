@@ -67,7 +67,6 @@ module SalesforceBulk
           job.close_job()
           return job
         else
-          puts 'uh oh', state
           job.result.message = "There is an error in your job. The response returned a state of #{state}. Please check your query/parameters and try again."
           job.result.success = false
           job.close_job()
