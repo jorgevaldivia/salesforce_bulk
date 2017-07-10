@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "xml-simple"
 
+  s.add_development_dependency 'geminabox'
 end
