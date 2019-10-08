@@ -46,7 +46,6 @@ module SalesforceBulk
     def https(host)
       req = Net::HTTP.new(host, 443)
       req.use_ssl = true
-      req.verify_mode = OpenSSL::SSL::VERIFY_NONE
       req
     end
 
