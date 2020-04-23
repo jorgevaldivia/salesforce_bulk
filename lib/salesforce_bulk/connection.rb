@@ -10,7 +10,7 @@ module SalesforceBulk
     def initialize(username, password, api_version, in_sandbox)
       @in_sandbox = in_sandbox
       @username = username
-      @password = password
+      @password = CGI.escapeHTML(password)
       @session_id = nil
       @server_url = nil
       @instance = nil
@@ -48,7 +48,7 @@ module SalesforceBulk
       @server_url = response_parsed['Body'][0]['loginResponse'][0]['result'][0]['serverUrl'][0]
       @instance = parse_instance()
 
-      @@INSTANCE_HOST = @in_sandbox ? "#{@instance}.my.salesforce.com" : "#{@instance}.salesforce.com"
+      @@INSTANCE_HOST = "#{@instance}.salesforce.com"
     end
 
     def post_xml(host, path, xml, headers)
