@@ -1,0 +1,38 @@
+name: Gemsmith
+
+on:
+  push:
+    branches: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          ref: ${{github.head_ref}}
+      - name: Setup
+        run: |
+          git config --global --add safe.directory $(realpath .)
+          git config user.email "engineering@justworks.com"
+          git config user.name "Justworks Publisher"
+          mkdir -p $HOME/.gem
+          printf "%s\n" "https://rubygems.pkg.github.com/justworkshr: Bearer ${{secrets.GITHUB_TOKEN}}" > $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+      - name: Install
+        run: gem install gemsmith
+      - name: Publish
+        run: |
+          if git describe --tags --abbrev=0 > /dev/null 2>&1; then
+            gemsmith --publish
+          else
+            printf "%s\n" "First gem version must be manually created. Skipping."
+          fi
